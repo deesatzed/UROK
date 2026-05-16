@@ -68,10 +68,13 @@ Introduce versioned validators for preferences, support contact, toolkit items, 
 
 **Acceptance Criteria:**
 
-- [ ] Wrong-shape data falls back or migrates safely.
-- [ ] Existing valid data remains readable.
-- [ ] Storage write failures are handled without crashing the UI.
-- [ ] Tests cover invalid JSON, wrong shapes, missing fields, and migration.
+- [x] Wrong-shape data falls back or migrates safely.
+- [x] Existing valid data remains readable.
+- [x] Storage write failures are handled without crashing the UI.
+- [x] Tests cover invalid JSON, wrong shapes, missing fields, and migration.
+
+**Completion Note (2026-05-16):**
+`useLocalStorage` now accepts per-key validators and migrators, catches write failures, and ClearSpace validates persisted preferences, contact data, focus profile, toolkit items, journal entries, check-ins, and SOS session count. Legacy toolkit text arrays migrate to typed toolkit items.
 
 **Verification:**
 

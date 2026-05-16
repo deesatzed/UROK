@@ -30,7 +30,8 @@ This map converts the planned `prefile.md` prototype behavior, as summarized in 
 | `data/education.ts` | Bounded stress education and safety guidance. |
 | `data/grounding.ts` | 5-4-3-2-1 grounding steps. |
 | `data/joy.ts` | Offline fun/early-stress prompts. |
-| `hooks/useLocalStorage.ts` | Typed, namespaced local storage with malformed-value fallback. |
+| `hooks/useLocalStorage.ts` | Typed, namespaced local storage with malformed-value fallback, per-key validation, migration, and write-failure handling. |
+| `storage/appStorage.ts` | ClearSpace storage validators and legacy toolkit migration. |
 | `services/guardrails.ts` | Deterministic red-flag routing for self-harm and possible medical-emergency text. |
 
 ## Current State Ownership

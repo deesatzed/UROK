@@ -29,14 +29,15 @@
 | TQ-014 | 6 | Add journal export/delete controls | Medium | Done | TQ-009 |
 | TQ-015 | 7 | Create full-function mitigation plan | High | Done | REVIEW.md |
 | TQ-016 | 8 | Add scripted browser TTS voice guide | High | Done | TQ-015 |
-| TQ-017 | 8 | Add storage schema validation and migrations | High | Ready | TQ-016 |
+| TQ-017 | 8 | Add storage schema validation and migrations | High | Done | TQ-016 |
 | TQ-018 | 9 | Initialize GitHub repo and create landing page | High | Done | User request |
 | TQ-019 | 9 | Fix GitHub Pages checkout failure | High | Done | TQ-018 |
 | TQ-020 | 10 | Implement `redesign.md` visual refresh | High | Done | User request |
 | TQ-021 | 11 | Implement UX theory mitigations | High | Done | User `/goal` |
 | TQ-022 | 12 | Replace user-facing stronger symptom labels with stress language and clarify AI/TTS/STT status | High | Done | User request |
+| TQ-023 | 13 | Expand deterministic guardrails before AI/STT | High | Ready | TQ-017 |
 
-The MVP queue, first mitigation voice-guide pass, GitHub Pages mitigation, `redesign.md` visual refresh, UX theory mitigation pass, and stress-language UX correction are complete. The next unblocked task remains TQ-017.
+The MVP queue, first mitigation voice-guide pass, storage validation pass, GitHub Pages mitigation, `redesign.md` visual refresh, UX theory mitigation pass, and stress-language UX correction are complete. The next unblocked task is TQ-023: expand deterministic guardrails before any STT/AI work.
 
 ## Task Details
 
@@ -297,15 +298,16 @@ The MVP queue, first mitigation voice-guide pass, GitHub Pages mitigation, `rede
 
 - Goal: Prevent malformed but parseable local storage from creating broken UI states.
 - Likely files: `clearspace/src/hooks/useLocalStorage.ts`, `clearspace/src/storage/*`, `clearspace/src/types.ts`, tests.
-- Status: Ready.
+- Status: Done.
+- Outcome: Added generic local-storage validator/migrator options, safe write-failure handling, concrete app storage validators, and a legacy toolkit text-array migration.
 - Acceptance criteria:
   - Wrong-shape data falls back or migrates safely.
   - Existing valid data remains readable.
   - Storage write failures are handled without crashing the UI.
   - Tests cover invalid JSON, wrong shapes, missing fields, and migration.
 - Verification:
-  - `cd clearspace && npm test`
-  - `cd clearspace && npm run build`
+  - `cd clearspace && npm test`: passed, 7 test files and 46 tests.
+  - `cd clearspace && npm run build`: passed.
 - Rollback:
   - Keep previous `clearspace:` keys readable; revert validators without deleting user data.
 
@@ -403,6 +405,23 @@ The MVP queue, first mitigation voice-guide pass, GitHub Pages mitigation, `rede
   - Search app and public docs for the removed product wording.
 - Rollback:
   - Revert copy-only changes if a future clinical/legal review requires different wording.
+
+### TQ-023: Expand Deterministic Guardrails
+
+- Goal: Extend local red-flag routing beyond the first journal integration before any STT or AI work.
+- Likely files: `clearspace/src/services/guardrails.ts`, `clearspace/src/services/guardrails.test.ts`, `clearspace/src/components/*`, safety copy/docs.
+- Status: Ready.
+- Dependencies: TQ-017.
+- Acceptance criteria:
+  - Red-flag inputs route to emergency/trusted-person guidance.
+  - Guardrails never depend on AI.
+  - Refusal/help templates avoid diagnosis and absolute reassurance.
+  - Tests cover self-harm, chest pain, fainting, severe breathing trouble, stroke-like symptoms, medical uncertainty, unsafe diagnosis/medication requests, and benign text.
+- Verification:
+  - `cd clearspace && npm test`
+  - `cd clearspace && npm run build`
+- Rollback:
+  - Remove expanded guardrail categories/templates; retain existing static safety copy.
 
 ## Backlog
 

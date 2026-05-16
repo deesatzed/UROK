@@ -14,6 +14,10 @@ import { defaultReassurancePhrases } from "./data/reassurance";
 import { defaultToolkitItems } from "./data/toolkit";
 import { useLocalStorage } from "./hooks/useLocalStorage";
 import { useSpeechGuide } from "./hooks/useSpeechGuide";
+import {
+  migrateToolkitItems,
+  storageValidators,
+} from "./storage/appStorage";
 import type {
   FocusProfileId,
   JournalEntry,
@@ -54,38 +58,50 @@ function App() {
   const [lowStimEnabled, setLowStimEnabled] = useLocalStorage(
     "low-stim-enabled",
     false,
+    { validate: storageValidators.boolean },
   );
   const [voiceGuideEnabled, setVoiceGuideEnabled] = useLocalStorage(
     "voice-guide-enabled",
     false,
+    { validate: storageValidators.boolean },
   );
   const [reassurancePhrases, setReassurancePhrases] = useLocalStorage(
     "reassurance-phrases",
     defaultReassurancePhrases,
+    { validate: storageValidators.reassurancePhrases },
   );
   const [supportContact, setSupportContact] = useLocalStorage<SupportContact>(
     "support-contact",
     emptySupportContact,
+    { validate: storageValidators.supportContact },
   );
   const [focusProfile, setFocusProfile] = useLocalStorage<FocusProfileId>(
     "focus-profile",
     defaultFocusProfile,
+    { validate: storageValidators.focusProfile },
   );
   const [toolkitItems, setToolkitItems] = useLocalStorage(
     "toolkit-items",
     defaultToolkitItems,
+    {
+      migrate: migrateToolkitItems,
+      validate: storageValidators.toolkitItems,
+    },
   );
   const [journalEntries, setJournalEntries] = useLocalStorage<JournalEntry[]>(
     "journal-entries",
     [],
+    { validate: storageValidators.journalEntries },
   );
   const [supportCheckIns, setSupportCheckIns] = useLocalStorage<SupportCheckIn[]>(
     "support-check-ins",
     [],
+    { validate: storageValidators.supportCheckIns },
   );
   const [sosSessionCount, setSosSessionCount] = useLocalStorage(
     "sos-session-count",
     0,
+    { validate: storageValidators.nonNegativeInteger },
   );
   const speechGuide = useSpeechGuide(voiceGuideEnabled);
 

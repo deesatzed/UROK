@@ -16,6 +16,8 @@ UX mitigation implementation pass complete as of 2026-05-16.
 
 Stress-language UX correction pass complete as of 2026-05-16.
 
+Storage schema validation pass complete as of 2026-05-16.
+
 `clearspace/` now contains a working local-first React/TypeScript stress-support app with:
 
 - guided SOS flow,
@@ -36,6 +38,7 @@ Stress-language UX correction pass complete as of 2026-05-16.
 - deterministic red-flag routing for journal text that mentions self-harm or possible medical emergencies,
 - user-facing stress-support language in place of stronger symptom labels,
 - clear capability copy stating that AI and STT are not connected and TTS is optional local scripted browser speech,
+- per-key local-storage validation, migration, and write-failure fallback,
 - automated tests for the core flows.
 
 The root `/Volumes/WS4TB/UROK` is now initialized as the main Git repository for `https://github.com/deesatzed/UROK.git`.
@@ -81,6 +84,7 @@ The root `/Volumes/WS4TB/UROK` is now initialized as the main Git repository for
 | TQ-020: Implement `redesign.md` visual refresh | Done | Codex | Added redesigned shell/navigation, home bento layout, red SOS action, calm visual, grounding progress rail, updated CSS tokens, and kept existing safety/privacy behavior. |
 | TQ-021: Implement UX theory mitigations | Done | Codex | Added `clearspace/UX_MITIGATION_AUDIT.md`, SOS focus mode, breathing escape, focus profiles, optional local check-ins, deterministic red-flag routing, and tests. |
 | TQ-022: Stress-language UX correction | Done | Codex | Replaced user-facing stronger symptom labels with stress-support language and added explicit AI/TTS/STT capability copy in settings, README, and landing page. |
+| TQ-017: Storage schema validation and migrations | Done | Codex | Added validator/migrator support to `useLocalStorage`, concrete app storage schemas, safe write-failure handling, and legacy toolkit migration tests. |
 
 Claude Code was not invoked in this pass because the implementation tasks were small, sequential, and directly verified locally.
 
@@ -93,6 +97,7 @@ Claude Code was not invoked in this pass because the implementation tasks were s
 - Test note: Node prints nonfatal `ExperimentalWarning: localStorage is not available because --localstorage-file was not provided`; tests use a controlled memory storage fallback and still pass.
 - Voice guide checks: automated tests cover enabled, disabled, unsupported, stop, cleanup, pause/resume service controls, and deterministic scripted SOS, breathing, and grounding reading.
 - Capability-language check on 2026-05-16: app/docs search excluding local support reference folders found no remaining stronger symptom-label product copy; support reference folders remain outside the root Git-tracked app.
+- Storage validation check on 2026-05-16: `cd clearspace && npm test` passed, 7 test files and 46 tests; `cd clearspace && npm run build` passed. Tests cover malformed JSON, wrong shapes, missing fields, migration, and write-failure fallback.
 - Live smoke check from the MVP pass: guest Chrome confirmed corrected home copy, dominant SOS action, SOS branch to breathing, breathing timer start/pause, and narrow-window responsive layout without visible overlap.
 - Accessibility smoke check: guest Chrome accessibility tree shows the skip link and `Home content` main landmark; automated tests cover view focus and main landmark naming.
 - Journal controls check: automated tests cover local JSON export link, per-entry delete, and two-click delete-all behavior.
@@ -119,17 +124,18 @@ Claude Code was not invoked in this pass because the implementation tasks were s
 - D-020: `redesign.md` is implemented as local bundled React/CSS/lucide visual direction, not as runtime CDN dependencies.
 - D-021: UX theory mitigations stay deterministic and local-first before any AI/STT expansion.
 - D-022: user-facing product language uses stress-support wording; live AI and STT remain absent, while scripted local browser TTS remains optional.
+- D-023: local storage reads use per-key validators/migrators and preserve readable existing data while falling back from invalid shapes.
 
 ## Current Milestone
 
-M5: UX theory mitigation pass complete.
+M6: storage validation gate complete.
 
 ## Next Actions
 
-1. Implement `TASKS.md` Task 2: storage schema validation and migrations.
-2. Extend deterministic guardrails beyond the first journal red-flag routing pass before any STT/AI work.
-3. Add privacy/private-mode controls before optional STT.
-4. Decide whether to make the first release a PWA with offline cache.
+1. Extend deterministic guardrails beyond the first journal red-flag routing pass before any STT/AI work.
+2. Add privacy/private-mode controls before optional STT.
+3. Decide whether to make the first release a PWA with offline cache.
+4. Run a focused mobile and accessibility QA pass after the guardrail expansion.
 5. Decide whether to enable GitHub Pages from `docs/` for the landing page.
 
 ## Blockers

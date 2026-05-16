@@ -111,8 +111,9 @@ Reference app entry points:
 | `clearspace/src/components/SparkJoyView.tsx` | Offline fun/early-stress prompts. |
 | `clearspace/src/data/*.ts` | Default copy/content for education, grounding, joy, reassurance, and toolkit. |
 | `clearspace/src/data/focusProfiles.ts` | Local focus profiles and tool-order preferences. |
-| `clearspace/src/hooks/useLocalStorage.ts` | Typed namespaced local storage hook. |
+| `clearspace/src/hooks/useLocalStorage.ts` | Typed namespaced local storage hook with validator, migrator, malformed JSON, and write-failure fallback support. |
 | `clearspace/src/hooks/useSpeechGuide.ts` | React wrapper for optional voice-guide status and cleanup. |
+| `clearspace/src/storage/appStorage.ts` | Concrete ClearSpace storage schemas and legacy toolkit migration. |
 | `clearspace/src/services/guardrails.ts` | Deterministic red-flag phrase routing for self-harm and possible medical-emergency text. |
 | `clearspace/src/services/speechSynthesis.ts` | Local Web Speech service for scripted TTS support detection, speak, pause, resume, and stop. |
 | `clearspace/src/**/*.test.tsx` | Component/integration tests. |
