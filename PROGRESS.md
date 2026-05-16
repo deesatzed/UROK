@@ -72,7 +72,7 @@ Claude Code was not invoked in this pass because the implementation tasks were s
 - Accessibility smoke check: guest Chrome accessibility tree shows the skip link and `Home content` main landmark; automated tests cover view focus and main landmark naming.
 - Journal controls check: automated tests cover local JSON export link, per-entry delete, and two-click delete-all behavior.
 - Dev server is serving at `http://127.0.0.1:5173/`; `curl -I` returned HTTP 200 after the latest changes.
-- Repository setup: root Git repository initialized on `main` with remote `https://github.com/deesatzed/UROK.git`; push status should be verified after the initial push command completes.
+- Repository setup: root Git repository initialized on `main` with remote `https://github.com/deesatzed/UROK.git`; initial push to `origin/main` completed.
 
 ## Decision Links
 
