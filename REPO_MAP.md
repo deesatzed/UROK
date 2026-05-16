@@ -9,7 +9,7 @@ The current project contains:
 - `clearspace/`: the first-party MVP app.
 - `prefile.md`: primary original build/prototype source.
 - project-control docs: `GOAL.md`, `STANDARDS.md`, `IMPLEMENT.md`, `DECISIONS.md`, `PROGRESS.md`, `TASK_QUEUE.md`, `REPO_MAP.md`.
-- supporting reference codebases: `lumina/` and `virtual-puppet-theater/`.
+- supporting reference codebases: local-only `lumina/` and `virtual-puppet-theater/`.
 - landing surface: `README.md` and `docs/index.html`.
 
 ## Current Main App Stack
@@ -134,7 +134,7 @@ Do not reuse these `virtual-puppet-theater/` pieces in the current MVP without a
 - Three.js stage as a required shell,
 - Bun server deployment.
 
-The support folders are tracked from the root as submodules:
+The support folders are local-only references and ignored by the root Git repo because GitHub Pages could not clone the `lumina` submodule:
 
 - `lumina`: `https://github.com/deesatzed/lumina.git`
 - `virtual-puppet-theater`: `https://github.com/rhmoller/virtual-puppet-theater.git`

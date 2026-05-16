@@ -8,6 +8,8 @@ First mitigation implementation pass complete as of 2026-05-15.
 
 GitHub repository setup and landing page pass complete as of 2026-05-16.
 
+GitHub Pages checkout mitigation complete as of 2026-05-16.
+
 `clearspace/` now contains a working local-first React/TypeScript panic-support app with:
 
 - guided SOS flow,
@@ -33,7 +35,7 @@ The root `/Volumes/WS4TB/UROK` is now initialized as the main Git repository for
 - The MVP must stay local-first: no account, cloud sync, telemetry, AI, camera, microphone, or required server.
 - Browser TTS may use local Web Speech `speechSynthesis`; cloud TTS remains out of scope.
 - Any future AI, voice, character, export, PWA, or deployment feature requires explicit privacy/safety review.
-- `lumina/` and `virtual-puppet-theater/` remain support references and are tracked as submodules to preserve their existing upstream histories.
+- `lumina/` and `virtual-puppet-theater/` remain local-only support references. They are ignored by the root Git repo because the `lumina` submodule URL was not publicly cloneable by GitHub Pages.
 
 ## Task Tracker
 
@@ -59,6 +61,7 @@ The root `/Volumes/WS4TB/UROK` is now initialized as the main Git repository for
 | Mitigation plan | Done | Codex | Created `MITIGATION_PLAN.md` and `TASKS.md`; added D-016 and mapped the next full-function work into gated atomic tasks. |
 | TQ-016: Scripted browser TTS voice guide | Done | Codex | Resolved dormant voice preference with local `speechSynthesis` service/hook, deterministic read/stop controls in SOS/breathing/grounding, unsupported-browser fallback, and tests. |
 | TQ-018: GitHub repo setup and landing page | Done | Codex | Added root Git config, README landing surface, `docs/index.html` GitHub Pages landing page, and submodule metadata for support references. |
+| TQ-019: Fix GitHub Pages checkout failure | Done | Codex | Removed support folders from root Git tracking, ignored them locally, and added `docs/.nojekyll` so Pages can deploy from `docs/`. |
 
 Claude Code was not invoked in this pass because the implementation tasks were small, sequential, and directly verified locally.
 
@@ -73,6 +76,7 @@ Claude Code was not invoked in this pass because the implementation tasks were s
 - Journal controls check: automated tests cover local JSON export link, per-entry delete, and two-click delete-all behavior.
 - Dev server is serving at `http://127.0.0.1:5173/`; `curl -I` returned HTTP 200 after the latest changes.
 - Repository setup: root Git repository initialized on `main` with remote `https://github.com/deesatzed/UROK.git`; initial push to `origin/main` completed.
+- Pages mitigation: removed inaccessible support submodules from root Git tracking after GitHub Pages failed during checkout of `lumina`.
 
 ## Decision Links
 
@@ -89,6 +93,7 @@ Claude Code was not invoked in this pass because the implementation tasks were s
 - D-016: full-function expansion is gated; no live AI/STT before guardrails, privacy controls, storage validation, and fallbacks.
 - D-017: use local browser Web Speech `speechSynthesis` for scripted TTS; no cloud TTS or AI-spoken health guidance.
 - D-018: root Git repository uses the requested UROK remote and tracks support folders as submodules.
+- D-019: support folders are local-only references, not root Git submodules, so GitHub Pages can check out the repo.
 
 ## Current Milestone
 

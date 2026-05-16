@@ -10,5 +10,8 @@ node_modules/
 dist/
 coverage/
 
+/lumina/
+/virtual-puppet-theater/
+
 *.log
 *.zip

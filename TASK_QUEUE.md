@@ -31,6 +31,7 @@
 | TQ-016 | 8 | Add scripted browser TTS voice guide | High | Done | TQ-015 |
 | TQ-017 | 8 | Add storage schema validation and migrations | High | Ready | TQ-016 |
 | TQ-018 | 9 | Initialize GitHub repo and create landing page | High | Done | User request |
+| TQ-019 | 9 | Fix GitHub Pages checkout failure | High | Done | TQ-018 |
 
 The MVP queue and first mitigation voice-guide pass are complete. The next unblocked task is TQ-017.
 
@@ -325,6 +326,23 @@ The MVP queue and first mitigation voice-guide pass are complete. The next unblo
   - `git push -u origin main`
 - Rollback:
   - Remove the remote or Git metadata only if explicitly requested; do not delete project files.
+
+### TQ-019: Fix GitHub Pages Checkout Failure
+
+- Goal: Let GitHub Pages deploy from `docs/` after checkout failed on the private/missing `lumina` submodule.
+- Likely files: `.gitignore`, `.gitmodules`, `docs/.nojekyll`, `PROGRESS.md`, `DECISIONS.md`, `REPO_MAP.md`, `TASK_QUEUE.md`.
+- Status: Done.
+- Outcome: Removed support-folder gitlinks from the root index, deleted `.gitmodules`, ignored local support folders, and added `docs/.nojekyll`.
+- Acceptance criteria:
+  - `git submodule status` has no root submodules.
+  - Local support folders remain on disk but are not tracked by root Git.
+  - GitHub Pages can check out the repo without cloning support references.
+- Verification:
+  - `git status --short`
+  - `git submodule status`
+  - `git push`
+- Rollback:
+  - Re-add submodules only if their URLs are public/access-controlled correctly and Pages checkout can clone them.
 
 ## Backlog
 
