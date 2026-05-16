@@ -6,8 +6,12 @@ import {
   Sparkles,
   Wind,
 } from "lucide-react";
+import { getFocusProfile } from "../data/focusProfiles";
+import type { FocusProfileId, SupportCheckIn, ViewName } from "../types";
 
 type HomeViewProps = {
+  focusProfile: FocusProfileId;
+  lastCheckIn?: SupportCheckIn;
   onOpenBreathing: () => void;
   onOpenGrounding: () => void;
   onOpenJoy: () => void;
@@ -24,6 +28,8 @@ const practiceItems = [
 ];
 
 export function HomeView({
+  focusProfile,
+  lastCheckIn,
   onOpenBreathing,
   onOpenGrounding,
   onOpenJoy,
@@ -31,6 +37,36 @@ export function HomeView({
   onOpenSettings,
   onStartSos,
 }: HomeViewProps) {
+  const activeProfile = getFocusProfile(focusProfile);
+  const toolCards: Record<
+    Extract<ViewName, "breathe" | "ground">,
+    {
+      className: string;
+      kicker: string;
+      title: string;
+      body: string;
+      icon: typeof Wind;
+      onOpen: () => void;
+    }
+  > = {
+    breathe: {
+      className: "bento-card primary-card",
+      kicker: "Breathe",
+      title: "Paced breathing",
+      body: "Use a simple inhale/exhale timer with optional local voice cues.",
+      icon: Wind,
+      onOpen: onOpenBreathing,
+    },
+    ground: {
+      className: "bento-card",
+      kicker: "Ground",
+      title: "5-4-3-2-1 senses",
+      body: "Move attention from racing thoughts into what you can see, touch, hear, smell, and taste.",
+      icon: ShieldCheck,
+      onOpen: onOpenGrounding,
+    },
+  };
+
   return (
     <>
       <section className="hero-panel" aria-labelledby="app-title">
@@ -42,6 +78,9 @@ export function HomeView({
             guided support flow, practice a tool, or choose a small offline
             shift.
           </p>
+          {lastCheckIn ? (
+            <p className="local-note">Last check-in saved locally.</p>
+          ) : null}
         </div>
 
         <div className="calm-visual" aria-hidden="true">
@@ -79,22 +118,24 @@ export function HomeView({
       </section>
 
       <section className="status-grid" aria-label="Support areas">
-        <button className="bento-card primary-card" type="button" onClick={onOpenBreathing}>
-          <Wind size={22} aria-hidden="true" />
-          <span className="card-kicker">Breathe</span>
-          <h2>Paced breathing</h2>
-          <p>Use a simple inhale/exhale timer with optional local voice cues.</p>
-        </button>
+        {activeProfile.toolOrder.map((viewName) => {
+          const card = toolCards[viewName];
+          const Icon = card.icon;
 
-        <button className="bento-card" type="button" onClick={onOpenGrounding}>
-          <ShieldCheck size={22} aria-hidden="true" />
-          <span className="card-kicker">Ground</span>
-          <h2>5-4-3-2-1 senses</h2>
-          <p>
-            Move attention from racing thoughts into what you can see, touch,
-            hear, smell, and taste.
-          </p>
-        </button>
+          return (
+            <button
+              className={card.className}
+              key={viewName}
+              type="button"
+              onClick={card.onOpen}
+            >
+              <Icon size={22} aria-hidden="true" />
+              <span className="card-kicker">{card.kicker}</span>
+              <h2>{card.title}</h2>
+              <p>{card.body}</p>
+            </button>
+          );
+        })}
 
         <button className="bento-card" type="button" onClick={onOpenSettings}>
           <Settings size={22} aria-hidden="true" />

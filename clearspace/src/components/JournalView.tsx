@@ -1,5 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
+import { detectSafetyRoute, type SafetyRoute } from "../services/guardrails";
 import type { JournalEntry } from "../types";
+import { SafetyAlert } from "./SafetyAlert";
 
 type JournalViewProps = {
   entries: JournalEntry[];
@@ -30,6 +32,7 @@ export function JournalView({
   const [trigger, setTrigger] = useState("");
   const [helped, setHelped] = useState("");
   const [clearRequested, setClearRequested] = useState(false);
+  const [safetyRoute, setSafetyRoute] = useState<SafetyRoute | null>(null);
   const exportText = useMemo(() => createJournalExportText(entries), [entries]);
   const exportHref = `data:application/json;charset=utf-8,${encodeURIComponent(
     exportText,
@@ -40,6 +43,12 @@ export function JournalView({
   }, [entries.length]);
 
   const save = () => {
+    const route = detectSafetyRoute(`${trigger} ${helped}`);
+    if (route) {
+      setSafetyRoute(route);
+      return;
+    }
+
     onSaveEntry({
       trigger: trigger.trim(),
       helped: helped.trim(),
@@ -69,6 +78,8 @@ export function JournalView({
           fine; the goal is noticing, not judging.
         </p>
       </div>
+
+      {safetyRoute ? <SafetyAlert route={safetyRoute} /> : null}
 
       <div className="journal-form">
         <label>

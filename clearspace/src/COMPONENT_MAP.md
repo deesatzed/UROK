@@ -15,19 +15,23 @@ This map converts the planned `prefile.md` prototype behavior, as summarized in 
 | `EducationView` | Panic education, bounded safety copy, toolkit guidance. | No. | Education sections. | Must avoid diagnosis and absolute reassurance. |
 | `SettingsView` | Personalization for phrases, toolkit, support contact, low-stim, voice preference. | Local form drafts only. | Persisted settings and setters. | Settings must not block active SOS path. |
 | `JournalView` | Optional post-episode note capture and save/skip actions. | Current entry draft. | `addJournalEntry`, navigation callback. | Local-only, nonjudgmental copy. |
+| `CheckInView` | Optional post-tool reflection on what changed and what helped. | Current check-in selections. | `addSupportCheckIn`, navigation callback. | Local-only and optional; not a clinical score. |
 | `SparkJoyView` | Optional pre-panic/offline fun prompts. | Current prompt index or selection. | Offline content list. | Not part of the critical SOS path. |
 | `SafetyNotice` | Reusable support-tool disclaimer and escalation guidance. | No. | Optional compact/full variant. | Should be visible in education/settings, not a panic-path blocker. |
+| `SafetyAlert` | Deterministic urgent-support alert when free text contains red flags. | No. | Guardrail route. | Should not diagnose; routes to emergency/trusted-human support. |
 
 ## Data Modules
 
 | Module | Contents |
 | --- | --- |
-| `types.ts` | `ViewName`, `SupportContact`, `ToolkitItem`, `JournalEntry`, `AppPreferences`. |
+| `types.ts` | `ViewName`, `FocusProfileId`, `SupportContact`, `ToolkitItem`, `JournalEntry`, `SupportCheckIn`, `AppPreferences`. |
+| `data/focusProfiles.ts` | Local context profiles and suggested tool order. |
 | `data/reassurance.ts` | Default reassurance phrases. |
 | `data/education.ts` | Bounded panic education and safety guidance. |
 | `data/grounding.ts` | 5-4-3-2-1 grounding steps. |
 | `data/joy.ts` | Offline fun/pre-panic prompts. |
 | `hooks/useLocalStorage.ts` | Typed, namespaced local storage with malformed-value fallback. |
+| `services/guardrails.ts` | Deterministic red-flag routing for self-harm and possible medical-emergency text. |
 
 ## Current State Ownership
 
@@ -37,14 +41,18 @@ This map converts the planned `prefile.md` prototype behavior, as summarized in 
 - support contact,
 - low-stimulation preference,
 - voice guide preference,
+- focus profile,
 - toolkit items,
-- journal entries.
+- journal entries,
+- optional support check-ins,
+- SOS session count for deterministic reassurance rotation.
 
 Feature components should own only transient interaction state:
 
 - SOS current step,
 - breathing timer phase,
 - grounding checklist progress,
+- check-in selections,
 - form drafts.
 
 ## Prototype Fixes Applied

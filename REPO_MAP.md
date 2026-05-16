@@ -27,6 +27,7 @@ The current project contains:
 - browser local storage via namespaced `clearspace:` keys
 - browser Web Speech `speechSynthesis` for optional scripted local TTS
 - redesigned bundled CSS shell and navigation based on `redesign.md`
+- deterministic UX safety helpers for focus profiles, local post-tool check-ins, and journal red-flag routing
 - no required server, account, AI API, camera, microphone, analytics, telemetry, or runtime CDN dependency for MVP
 
 ## Package Manager
@@ -63,6 +64,7 @@ Main app planning map:
 
 - `clearspace/src/COMPONENT_MAP.md`
 - `clearspace/ACCESSIBILITY_AUDIT.md`
+- `clearspace/UX_MITIGATION_AUDIT.md`
 
 Public landing:
 
@@ -98,15 +100,20 @@ Reference app entry points:
 | `clearspace/src/components/SosWizard.tsx` | Active guided SOS flow and branch to breathing or grounding. |
 | `clearspace/src/components/BreathingTool.tsx` | Paced breathing timer. |
 | `clearspace/src/components/GroundingTool.tsx` | 5-4-3-2-1 grounding checklist. |
+| `clearspace/src/components/CheckInView.tsx` | Optional post-tool local check-in for what changed and what helped. |
 | `clearspace/src/components/EducationView.tsx` | Panic-support education copy. |
 | `clearspace/src/components/SafetyNotice.tsx` | Reusable bounded safety guidance. |
+| `clearspace/src/components/SafetyAlert.tsx` | Deterministic urgent-support alert for red-flag free text. |
 | `clearspace/src/components/SettingsView.tsx` | Local personalization settings. |
 | `clearspace/src/components/JournalView.tsx` | Optional local journal save/skip and history display. |
 | `clearspace/ACCESSIBILITY_AUDIT.md` | Current accessibility audit notes, fixes, and remaining gaps. |
+| `clearspace/UX_MITIGATION_AUDIT.md` | UX theory risk findings and mitigations implemented in TQ-021. |
 | `clearspace/src/components/SparkJoyView.tsx` | Offline fun/pre-panic prompts. |
 | `clearspace/src/data/*.ts` | Default copy/content for education, grounding, joy, reassurance, and toolkit. |
+| `clearspace/src/data/focusProfiles.ts` | Local focus profiles and tool-order preferences. |
 | `clearspace/src/hooks/useLocalStorage.ts` | Typed namespaced local storage hook. |
 | `clearspace/src/hooks/useSpeechGuide.ts` | React wrapper for optional voice-guide status and cleanup. |
+| `clearspace/src/services/guardrails.ts` | Deterministic red-flag phrase routing for self-harm and possible medical-emergency text. |
 | `clearspace/src/services/speechSynthesis.ts` | Local Web Speech service for scripted TTS support detection, speak, pause, resume, and stop. |
 | `clearspace/src/**/*.test.tsx` | Component/integration tests. |
 | `clearspace/src/services/speechSynthesis.test.ts` | Speech service tests with deterministic browser API mocks. |
@@ -158,8 +165,9 @@ The support folders are local-only references and ignored by the root Git repo b
 Current main app verification:
 
 - `cd clearspace && npm run build`: passed.
-- `cd clearspace && npm test`: passed, 6 test files and 31 tests.
+- `cd clearspace && npm test`: passed, 6 test files and 36 tests.
 - Redesign pass verification: `cd clearspace && npm run build` passed, `cd clearspace && npm test` passed with 6 test files and 31 tests, and `curl -sS -I http://127.0.0.1:5173/` returned HTTP 200.
+- UX mitigation pass verification: `cd clearspace && npm run build` passed, `cd clearspace && npm test` passed with 6 test files and 36 tests, and Chrome desktop/mobile-width smoke checks found no obvious control/text overlap after the mobile hero adjustment.
 - Guest Chrome desktop smoke: passed for home, SOS branching, and breathing timer.
 - Guest Chrome narrow-window smoke: passed without visible overlap.
 - Accessibility smoke: skip link and named main landmark present in Chrome accessibility tree.

@@ -99,6 +99,10 @@ textarea:focus-visible {
   background: #101820;
 }
 
+.app-frame.focus-mode .app-shell {
+  width: min(100%, 920px);
+}
+
 .top-bar {
   position: sticky;
   z-index: 10;
@@ -361,6 +365,17 @@ h1 {
   color: var(--color-muted);
   font-size: clamp(1rem, 2vw, 1.22rem);
   line-height: 1.65;
+}
+
+.local-note {
+  margin-top: 14px;
+  padding: 10px 12px;
+  border: 1px solid rgba(0, 80, 75, 0.16);
+  border-radius: var(--radius);
+  color: var(--color-primary);
+  background: rgba(255, 255, 255, 0.74);
+  font-size: 0.92rem;
+  font-weight: 800;
 }
 
 .calm-visual {
@@ -759,6 +774,11 @@ h1 {
   gap: 18px;
 }
 
+.checkin-view {
+  display: grid;
+  gap: 18px;
+}
+
 .joy-view {
   min-height: calc(100vh - 124px);
   display: grid;
@@ -767,11 +787,14 @@ h1 {
 
 .education-view > div:first-child,
 .journal-view > div:first-child,
+.checkin-view > div:first-child,
 .education-grid article,
 .safety-notice,
+.safety-alert,
 .journal-form,
 .journal-controls,
-.journal-history {
+.journal-history,
+.checkin-section {
   padding: clamp(22px, 4vw, 36px);
   border: 1px solid var(--color-border);
   border-radius: var(--radius);
@@ -781,10 +804,13 @@ h1 {
 
 .education-view > div:first-child p:not(.eyebrow),
 .journal-view > div:first-child p:not(.eyebrow),
+.checkin-view > div:first-child p:not(.eyebrow),
 .education-grid p,
 .safety-notice p,
+.safety-alert p,
 .journal-controls p,
-.journal-history p {
+.journal-history p,
+.checkin-section p {
   color: var(--color-muted);
   line-height: 1.6;
 }
@@ -804,6 +830,20 @@ h1 {
 .safety-notice {
   border-color: rgba(180, 83, 9, 0.24);
   background: #fff7ed;
+}
+
+.safety-alert {
+  border-color: rgba(211, 47, 47, 0.28);
+  background: #fff5f5;
+}
+
+.safety-alert h2 {
+  margin: 0 0 12px;
+  color: #991b1b;
+}
+
+.safety-alert strong {
+  color: #7f1d1d;
 }
 
 .safety-notice.compact {
@@ -972,7 +1012,9 @@ textarea {
 
 .input-row,
 .contact-grid,
-.toggle-grid {
+.toggle-grid,
+.profile-grid,
+.checkin-options {
   display: grid;
   gap: 10px;
 }
@@ -985,6 +1027,42 @@ textarea {
 .contact-grid,
 .toggle-grid {
   grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.profile-grid {
+  margin: 14px 0;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.profile-grid button,
+.checkin-options button {
+  min-height: 64px;
+  padding: 12px;
+  display: grid;
+  gap: 4px;
+  align-content: center;
+  border: 1px solid rgba(0, 80, 75, 0.18);
+  border-radius: var(--radius);
+  color: var(--color-primary);
+  background: #fff;
+  text-align: left;
+  font-weight: 800;
+}
+
+.profile-grid button small {
+  color: var(--color-muted);
+  font-weight: 600;
+  line-height: 1.35;
+}
+
+.profile-grid button[aria-pressed="true"],
+.checkin-options button[aria-pressed="true"] {
+  color: #fff;
+  background: var(--color-primary);
+}
+
+.profile-grid button[aria-pressed="true"] small {
+  color: #e6fffb;
 }
 
 label {
@@ -1149,6 +1227,8 @@ input {
 .low-stim .settings-row button,
 .low-stim .input-row button,
 .low-stim .toggle-grid button,
+.low-stim .profile-grid button,
+.low-stim .checkin-options button,
 .low-stim input {
   color: #9ee6dc;
   background: #263541;
@@ -1156,18 +1236,27 @@ input {
 }
 
 .low-stim .settings-row .check-row-button[aria-pressed="true"],
-.low-stim .toggle-grid button[aria-pressed="true"] {
+.low-stim .toggle-grid button[aria-pressed="true"],
+.low-stim .profile-grid button[aria-pressed="true"],
+.low-stim .checkin-options button[aria-pressed="true"] {
   color: #102a43;
   background: #9ee6dc;
 }
 
+.low-stim .profile-grid button small {
+  color: #bcccdc;
+}
+
 .low-stim .education-view > div:first-child,
 .low-stim .journal-view > div:first-child,
+.low-stim .checkin-view > div:first-child,
 .low-stim .education-grid article,
 .low-stim .safety-notice,
+.low-stim .safety-alert,
 .low-stim .journal-form,
 .low-stim .journal-controls,
-.low-stim .journal-history {
+.low-stim .journal-history,
+.low-stim .checkin-section {
   border-color: rgba(130, 167, 161, 0.22);
   background: #1f2933;
   box-shadow: none;
@@ -1178,19 +1267,29 @@ input {
   background: #29251b;
 }
 
+.low-stim .safety-alert {
+  border-color: rgba(252, 165, 165, 0.26);
+  background: #3b1f26;
+}
+
 .low-stim .education-view > div:first-child p:not(.eyebrow),
 .low-stim .journal-view > div:first-child p:not(.eyebrow),
+.low-stim .checkin-view > div:first-child p:not(.eyebrow),
 .low-stim .education-grid p,
 .low-stim .safety-notice p,
+.low-stim .safety-alert p,
 .low-stim .journal-controls p,
-.low-stim .journal-history p {
+.low-stim .journal-history p,
+.low-stim .checkin-section p {
   color: #bcccdc;
 }
 
 .low-stim .education-grid h2,
 .low-stim .safety-notice h2,
+.low-stim .safety-alert h2,
 .low-stim .journal-controls h2,
-.low-stim .journal-history h2 {
+.low-stim .journal-history h2,
+.low-stim .checkin-section h2 {
   color: #f0f4f8;
 }
 
@@ -1259,10 +1358,11 @@ input {
 
   .status-grid {
     grid-template-columns: 1fr;
+    margin-top: 86px;
   }
 
   .calm-visual {
-    min-height: 220px;
+    display: none;
   }
 
   .education-grid {

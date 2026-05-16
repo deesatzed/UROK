@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from "@testing-library/react";
+import { render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import "@testing-library/jest-dom/vitest";
 import { afterEach, vi } from "vitest";
@@ -98,6 +98,126 @@ describe("App shell", () => {
     expect(
       screen.getByRole("heading", { name: /breathe in gently/i }),
     ).toBeInTheDocument();
+  });
+
+  it("keeps active SOS focused by hiding shell navigation shortcuts", async () => {
+    const user = userEvent.setup();
+    render(<App />);
+
+    expect(
+      screen.getByRole("navigation", { name: /mobile navigation/i }),
+    ).toBeInTheDocument();
+
+    await user.click(
+      screen.getByRole("button", { name: /start calming support/i }),
+    );
+
+    expect(
+      screen.queryByRole("navigation", { name: /mobile navigation/i }),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("complementary", { name: /primary navigation/i }),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: /open settings/i }),
+    ).not.toBeInTheDocument();
+  });
+
+  it("lets the user switch from breathing to grounding when breathing feels uncomfortable", async () => {
+    const user = userEvent.setup();
+    render(<App />);
+
+    await user.click(screen.getByRole("button", { name: /paced breathing/i }));
+    expect(
+      screen.getByRole("heading", { name: /breathe in gently/i }),
+    ).toBeInTheDocument();
+
+    await user.click(
+      screen.getByRole("button", { name: /breathing feels worse/i }),
+    );
+
+    expect(
+      screen.getByRole("heading", { name: /name 5 things you can see/i }),
+    ).toBeInTheDocument();
+  });
+
+  it("stores an optional post-calm check-in locally after a tool", async () => {
+    const user = userEvent.setup();
+    render(<App />);
+
+    await user.click(screen.getByRole("button", { name: /paced breathing/i }));
+    await user.click(screen.getByRole("button", { name: /^done$/i }));
+
+    expect(
+      screen.getByRole("heading", { name: /what changed/i }),
+    ).toBeInTheDocument();
+
+    await user.click(screen.getByRole("button", { name: /a little calmer/i }));
+    await user.click(screen.getByRole("button", { name: /grounding helped/i }));
+    await user.click(screen.getByRole("button", { name: /save check-in/i }));
+
+    const storedCheckIns = window.localStorage.getItem(
+      "clearspace:support-check-ins",
+    );
+    expect(storedCheckIns).toContain("a-little-calmer");
+    expect(storedCheckIns).toContain("grounding-helped");
+    expect(
+      screen.getByText(/last check-in saved locally/i),
+    ).toBeInTheDocument();
+  });
+
+  it("uses focus profile context to change suggested tool order without hiding SOS", async () => {
+    const user = userEvent.setup();
+    render(<App />);
+
+    await user.click(screen.getByRole("button", { name: /^settings$/i }));
+    await user.click(
+      screen.getByRole("button", { name: /breathing feels sensitive/i }),
+    );
+    await user.click(screen.getByRole("button", { name: /back to home/i }));
+
+    expect(
+      screen.getByRole("button", { name: /start calming support/i }),
+    ).toBeInTheDocument();
+
+    const supportAreas = screen.getByLabelText(/support areas/i);
+    const supportButtons = within(supportAreas).getAllByRole("button");
+    expect(supportButtons[0]).toHaveTextContent(/5-4-3-2-1 senses/i);
+
+    await user.click(
+      screen.getByRole("button", { name: /start calming support/i }),
+    );
+    await user.click(screen.getByRole("button", { name: /i am here/i }));
+    await user.click(screen.getByRole("button", { name: /i read it/i }));
+    await user.click(screen.getByRole("button", { name: /^next$/i }));
+    await user.click(screen.getByRole("button", { name: /^next$/i }));
+
+    const branchActions = screen.getByLabelText(/next support options/i);
+    const branchButtons = within(branchActions).getAllByRole("button");
+    expect(branchButtons[0]).toHaveTextContent(/5-4-3-2-1 grounding/i);
+  });
+
+  it("routes red-flag journal text to deterministic emergency guidance", async () => {
+    const user = userEvent.setup();
+    render(<App />);
+
+    await user.click(
+      screen.getByRole("button", { name: /start calming support/i }),
+    );
+    await user.click(screen.getByRole("button", { name: /^journal$/i }));
+    await user.type(
+      screen.getByLabelText(/what may have triggered this/i),
+      "I have chest pain and might faint",
+    );
+    await user.click(screen.getByRole("button", { name: /save note/i }));
+
+    expect(
+      screen.getByRole("heading", { name: /get urgent support now/i }),
+    ).toBeInTheDocument();
+    expect(screen.getByText(/emergency services/i)).toBeInTheDocument();
+    expect(
+      screen.queryByText(/trigger: i have chest pain/i),
+    ).not.toBeInTheDocument();
   });
 
   it("updates personalization settings and passes support contact into SOS", async () => {

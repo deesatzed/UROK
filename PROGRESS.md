@@ -12,6 +12,8 @@ GitHub Pages checkout mitigation complete as of 2026-05-16.
 
 `redesign.md` implementation pass complete as of 2026-05-16.
 
+UX mitigation implementation pass complete as of 2026-05-16.
+
 `clearspace/` now contains a working local-first React/TypeScript panic-support app with:
 
 - guided SOS flow,
@@ -25,6 +27,11 @@ GitHub Pages checkout mitigation complete as of 2026-05-16.
 - deterministic local browser TTS voice guide for scripted SOS, breathing, and grounding cues,
 - baseline accessibility improvements,
 - redesigned local CSS shell with desktop side navigation, mobile bottom navigation, bento home cards, and calmer breathing/grounding surfaces from `redesign.md`,
+- SOS focus mode that hides shell navigation during active support,
+- local focus profiles that reorder suggested tools by context,
+- breathing-to-grounding escape for users who feel worse when focusing on breath,
+- optional post-tool check-ins saved only in local storage,
+- deterministic red-flag routing for journal text that mentions self-harm or possible medical emergencies,
 - automated tests for the core flows.
 
 The root `/Volumes/WS4TB/UROK` is now initialized as the main Git repository for `https://github.com/deesatzed/UROK.git`.
@@ -67,14 +74,16 @@ The root `/Volumes/WS4TB/UROK` is now initialized as the main Git repository for
 | TQ-018: GitHub repo setup and landing page | Done | Codex | Added root Git config, README landing surface, `docs/index.html` GitHub Pages landing page, and submodule metadata for support references. |
 | TQ-019: Fix GitHub Pages checkout failure | Done | Codex | Removed support folders from root Git tracking, ignored them locally, and added `docs/.nojekyll` so Pages can deploy from `docs/`. |
 | TQ-020: Implement `redesign.md` visual refresh | Done | Codex | Added redesigned shell/navigation, home bento layout, red SOS action, calm visual, grounding progress rail, updated CSS tokens, and kept existing safety/privacy behavior. |
+| TQ-021: Implement UX theory mitigations | Done | Codex | Added `clearspace/UX_MITIGATION_AUDIT.md`, SOS focus mode, breathing escape, focus profiles, optional local check-ins, deterministic red-flag routing, and tests. |
 
 Claude Code was not invoked in this pass because the implementation tasks were small, sequential, and directly verified locally.
 
 ## Verification
 
 - `cd clearspace && npm run build`: passed.
-- `cd clearspace && npm test`: passed, 6 test files and 31 tests.
+- `cd clearspace && npm test`: passed, 6 test files and 36 tests.
 - Redesign verification on 2026-05-16: `cd clearspace && npm test` passed, 6 test files and 31 tests; `cd clearspace && npm run build` passed; `curl -sS -I http://127.0.0.1:5173/` returned HTTP 200.
+- UX mitigation verification on 2026-05-16: `cd clearspace && npm test` passed, 6 test files and 36 tests; `cd clearspace && npm run build` passed; desktop and mobile-width Chrome smoke checks confirmed no obvious control/text overlap after reducing the mobile hero visual and preserving SOS focus mode.
 - Test note: Node prints nonfatal `ExperimentalWarning: localStorage is not available because --localstorage-file was not provided`; tests use a controlled memory storage fallback and still pass.
 - Voice guide checks: automated tests cover enabled, disabled, unsupported, stop, cleanup, pause/resume service controls, and deterministic scripted SOS, breathing, and grounding reading.
 - Live smoke check from the MVP pass: guest Chrome confirmed corrected home copy, dominant SOS action, SOS branch to breathing, breathing timer start/pause, and narrow-window responsive layout without visible overlap.
@@ -101,16 +110,17 @@ Claude Code was not invoked in this pass because the implementation tasks were s
 - D-018: root Git repository uses the requested UROK remote and tracks support folders as submodules.
 - D-019: support folders are local-only references, not root Git submodules, so GitHub Pages can check out the repo.
 - D-020: `redesign.md` is implemented as local bundled React/CSS/lucide visual direction, not as runtime CDN dependencies.
+- D-021: UX theory mitigations stay deterministic and local-first before any AI/STT expansion.
 
 ## Current Milestone
 
-M4: `redesign.md` visual refresh complete.
+M5: UX theory mitigation pass complete.
 
 ## Next Actions
 
 1. Implement `TASKS.md` Task 2: storage schema validation and migrations.
-2. Implement `TASKS.md` Task 3 before any STT/AI work: deterministic guardrail module and tests.
-3. Add local focus profiles and privacy controls before optional STT.
+2. Extend deterministic guardrails beyond the first journal red-flag routing pass before any STT/AI work.
+3. Add privacy/private-mode controls before optional STT.
 4. Decide whether to make the first release a PWA with offline cache.
 5. Decide whether to enable GitHub Pages from `docs/` for the landing page.
 

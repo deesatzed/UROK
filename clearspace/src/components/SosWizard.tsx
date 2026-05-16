@@ -4,9 +4,11 @@ import {
   inactiveSpeechGuide,
   type SpeechGuideControls,
 } from "../hooks/useSpeechGuide";
-import type { SupportContact } from "../types";
+import type { FocusProfileId, SupportContact } from "../types";
 
 type SosWizardProps = {
+  focusProfile: FocusProfileId;
+  phraseOffset?: number;
   phrases: string[];
   speechGuide?: SpeechGuideControls;
   supportContact: SupportContact;
@@ -41,6 +43,8 @@ const baseSteps: Step[] = [
 ];
 
 export function SosWizard({
+  focusProfile,
+  phraseOffset = 0,
   phrases,
   speechGuide = inactiveSpeechGuide,
   supportContact,
@@ -50,7 +54,9 @@ export function SosWizard({
   onStartGrounding,
 }: SosWizardProps) {
   const [stepIndex, setStepIndex] = useState(0);
-  const [selectedPhrase] = useState(() => phrases[0] ?? "Take one small step.");
+  const [selectedPhrase] = useState(
+    () => phrases[phraseOffset % phrases.length] ?? "Take one small step.",
+  );
   const {
     enabled: voiceEnabled,
     isPaused: voicePaused,
@@ -84,6 +90,32 @@ export function SosWizard({
     : `Step ${stepIndex + 1} of ${steps.length}`;
   const hasSupportContact = supportContact.phone.trim().length > 0;
   const showVoiceControls = voiceEnabled && voiceSupported;
+  const branchOptions =
+    focusProfile === "breath-sensitive" || focusProfile === "sensory-overload"
+      ? [
+          {
+            label: "5-4-3-2-1 grounding",
+            icon: null,
+            onClick: onStartGrounding,
+          },
+          {
+            label: "Paced breathing",
+            icon: Wind,
+            onClick: onStartBreathing,
+          },
+        ]
+      : [
+          {
+            label: "Paced breathing",
+            icon: Wind,
+            onClick: onStartBreathing,
+          },
+          {
+            label: "5-4-3-2-1 grounding",
+            icon: null,
+            onClick: onStartGrounding,
+          },
+        ];
 
   useEffect(() => {
     if (!showVoiceControls) return undefined;
@@ -150,14 +182,13 @@ export function SosWizard({
             You can slow your breathing or ground through your senses. Pick the
             option that feels easiest to start.
           </p>
-          <div className="sos-branch-actions">
-            <button type="button" onClick={onStartBreathing}>
-              <Wind size={20} aria-hidden="true" />
-              Paced breathing
-            </button>
-            <button type="button" onClick={onStartGrounding}>
-              5-4-3-2-1 grounding
-            </button>
+          <div className="sos-branch-actions" aria-label="Next support options">
+            {branchOptions.map(({ icon: Icon, label, onClick }) => (
+              <button key={label} type="button" onClick={onClick}>
+                {Icon ? <Icon size={20} aria-hidden="true" /> : null}
+                {label}
+              </button>
+            ))}
           </div>
         </div>
       )}

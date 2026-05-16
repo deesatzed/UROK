@@ -15,6 +15,7 @@ type AppShellProps = {
   children: ReactNode;
   currentView: ViewName;
   currentViewLabel: string;
+  focusMode?: boolean;
   lowStimEnabled: boolean;
   onHome: () => void;
   onNavigate: (view: ViewName) => void;
@@ -37,6 +38,7 @@ export function AppShell({
   children,
   currentView,
   currentViewLabel,
+  focusMode = false,
   lowStimEnabled,
   onHome,
   onNavigate,
@@ -55,7 +57,15 @@ export function AppShell({
   }, [currentViewLabel]);
 
   return (
-    <div className={lowStimEnabled ? "app-frame low-stim" : "app-frame"}>
+    <div
+      className={[
+        "app-frame",
+        lowStimEnabled ? "low-stim" : "",
+        focusMode ? "focus-mode" : "",
+      ]
+        .filter(Boolean)
+        .join(" ")}
+    >
       <a className="skip-link" href="#main-content">
         Skip to main content
       </a>
@@ -77,14 +87,16 @@ export function AppShell({
         </button>
 
         <div className="top-bar-actions">
-          <button
-            className="icon-button"
-            type="button"
-            onClick={() => onNavigate("settings")}
-            aria-label="Open settings"
-          >
-            <Settings size={20} aria-hidden="true" />
-          </button>
+          {!focusMode ? (
+            <button
+              className="icon-button"
+              type="button"
+              onClick={() => onNavigate("settings")}
+              aria-label="Open settings"
+            >
+              <Settings size={20} aria-hidden="true" />
+            </button>
+          ) : null}
           <button
             className="icon-text-button"
             type="button"
@@ -102,34 +114,36 @@ export function AppShell({
       </header>
 
       <div className="app-layout">
-        <aside className="side-nav" aria-label="Primary navigation">
-          <div className="side-nav-heading">
-            <h2>Your Space</h2>
-            <p>Stay grounded</p>
-          </div>
-          <nav className="side-nav-list">
-            {navItems.map(({ icon: Icon, label, view }) => (
-              <button
-                key={view}
-                className={currentView === view ? "active" : ""}
-                type="button"
-                onClick={() => onNavigate(view)}
-                aria-current={currentView === view ? "page" : undefined}
-                aria-label={`Open ${label.toLowerCase()}`}
-              >
-                <Icon size={20} aria-hidden="true" />
-                <span>{label}</span>
-              </button>
-            ))}
-          </nav>
-          <div className="offline-badge">
-            <ShieldCheck size={20} aria-hidden="true" />
-            <span>
-              <strong>Private by default</strong>
-              <small>Offline storage active</small>
-            </span>
-          </div>
-        </aside>
+        {!focusMode ? (
+          <aside className="side-nav" aria-label="Primary navigation">
+            <div className="side-nav-heading">
+              <h2>Your Space</h2>
+              <p>Stay grounded</p>
+            </div>
+            <nav className="side-nav-list">
+              {navItems.map(({ icon: Icon, label, view }) => (
+                <button
+                  key={view}
+                  className={currentView === view ? "active" : ""}
+                  type="button"
+                  onClick={() => onNavigate(view)}
+                  aria-current={currentView === view ? "page" : undefined}
+                  aria-label={`Open ${label.toLowerCase()}`}
+                >
+                  <Icon size={20} aria-hidden="true" />
+                  <span>{label}</span>
+                </button>
+              ))}
+            </nav>
+            <div className="offline-badge">
+              <ShieldCheck size={20} aria-hidden="true" />
+              <span>
+                <strong>Private by default</strong>
+                <small>Offline storage active</small>
+              </span>
+            </div>
+          </aside>
+        ) : null}
 
         <main
           ref={mainRef}
@@ -142,21 +156,23 @@ export function AppShell({
         </main>
       </div>
 
-      <nav className="bottom-nav" aria-label="Mobile navigation">
-        {navItems.map(({ icon: Icon, label, view }) => (
-          <button
-            key={view}
-            className={currentView === view ? "active" : ""}
-            type="button"
-            onClick={() => onNavigate(view)}
-            aria-current={currentView === view ? "page" : undefined}
-            aria-label={`Open ${label.toLowerCase()}`}
-          >
-            <Icon size={20} aria-hidden="true" />
-            <span>{label}</span>
-          </button>
-        ))}
-      </nav>
+      {!focusMode ? (
+        <nav className="bottom-nav" aria-label="Mobile navigation">
+          {navItems.map(({ icon: Icon, label, view }) => (
+            <button
+              key={view}
+              className={currentView === view ? "active" : ""}
+              type="button"
+              onClick={() => onNavigate(view)}
+              aria-current={currentView === view ? "page" : undefined}
+              aria-label={`Open ${label.toLowerCase()}`}
+            >
+              <Icon size={20} aria-hidden="true" />
+              <span>{label}</span>
+            </button>
+          ))}
+        </nav>
+      ) : null}
     </div>
   );
 }

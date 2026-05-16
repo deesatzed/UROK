@@ -33,8 +33,9 @@
 | TQ-018 | 9 | Initialize GitHub repo and create landing page | High | Done | User request |
 | TQ-019 | 9 | Fix GitHub Pages checkout failure | High | Done | TQ-018 |
 | TQ-020 | 10 | Implement `redesign.md` visual refresh | High | Done | User request |
+| TQ-021 | 11 | Implement UX theory mitigations | High | Done | User `/goal` |
 
-The MVP queue, first mitigation voice-guide pass, GitHub Pages mitigation, and `redesign.md` visual refresh are complete. The next unblocked task remains TQ-017.
+The MVP queue, first mitigation voice-guide pass, GitHub Pages mitigation, `redesign.md` visual refresh, and UX theory mitigation pass are complete. The next unblocked task remains TQ-017.
 
 ## Task Details
 
@@ -362,6 +363,26 @@ The MVP queue, first mitigation voice-guide pass, GitHub Pages mitigation, and `
   - `curl -sS -I http://127.0.0.1:5173/`: HTTP 200.
 - Rollback:
   - Revert the redesign component/CSS/test changes and keep `redesign.md` as a reference input.
+
+### TQ-021: Implement UX Theory Mitigations
+
+- Goal: Reduce ClearSpace UX risks around active-panic choice overload, repeated-use staleness, shallow personalization, breathing backfire, safety-behavior reinforcement, unproven effectiveness, and crisis ambiguity.
+- Likely files: `clearspace/UX_MITIGATION_AUDIT.md`, `clearspace/src/App.tsx`, `clearspace/src/types.ts`, `clearspace/src/components/*`, `clearspace/src/data/focusProfiles.ts`, `clearspace/src/services/guardrails.ts`, tests, styles, project-control docs.
+- Status: Done.
+- Outcome: Added SOS focus mode, breathing-to-grounding escape, local focus profiles/tool ordering, optional post-tool check-ins saved to local storage, deterministic journal red-flag routing, and audit notes.
+- Acceptance criteria:
+  - SOS mode hides shell navigation shortcuts during active support.
+  - Breathing can switch to grounding if it feels uncomfortable.
+  - Optional check-ins are stored locally and are not required.
+  - Focus profile context changes tool suggestions without hiding SOS.
+  - Red-flag free text routes to deterministic urgent support guidance instead of ordinary journaling.
+- Verification:
+  - `cd clearspace && npm test`: passed, 6 test files and 36 tests.
+  - `cd clearspace && npm run build`: passed.
+  - Desktop Chrome smoke: side navigation and home layout visible without obvious overlap.
+  - Mobile-width Chrome smoke: primary SOS and secondary actions clear of bottom navigation; SOS focus mode hides shell navigation.
+- Rollback:
+  - Revert the TQ-021 component/data/service/test/style changes; local `support-check-ins`, `focus-profile`, and `sos-session-count` keys can remain harmlessly unused.
 
 ## Backlog
 

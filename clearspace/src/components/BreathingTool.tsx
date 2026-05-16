@@ -8,6 +8,7 @@ import {
 type BreathingToolProps = {
   speechGuide?: SpeechGuideControls;
   onDone: () => void;
+  onSwitchGrounding?: () => void;
 };
 
 type BreathPhase = "inhale" | "exhale";
@@ -20,6 +21,7 @@ const phaseDurations: Record<BreathPhase, number> = {
 export function BreathingTool({
   speechGuide = inactiveSpeechGuide,
   onDone,
+  onSwitchGrounding,
 }: BreathingToolProps) {
   const [phase, setPhase] = useState<BreathPhase>("inhale");
   const [timeLeft, setTimeLeft] = useState(phaseDurations.inhale);
@@ -94,6 +96,11 @@ export function BreathingTool({
     onDone();
   };
 
+  const switchGrounding = () => {
+    stopVoice();
+    onSwitchGrounding?.();
+  };
+
   return (
     <section className="tool-view" aria-labelledby="breathing-title">
       <p className="eyebrow">Paced breathing</p>
@@ -128,6 +135,11 @@ export function BreathingTool({
           <RotateCcw size={18} aria-hidden="true" />
           Reset
         </button>
+        {onSwitchGrounding ? (
+          <button type="button" onClick={switchGrounding}>
+            Breathing feels worse
+          </button>
+        ) : null}
         {showVoiceControls ? (
           <button type="button" onClick={toggleVoice}>
             {voiceSpeaking || voicePaused ? (

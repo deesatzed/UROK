@@ -1,9 +1,11 @@
 import { useState } from "react";
 import { Plus, Trash2 } from "lucide-react";
-import type { SupportContact, ToolkitItem } from "../types";
+import { focusProfiles } from "../data/focusProfiles";
+import type { FocusProfileId, SupportContact, ToolkitItem } from "../types";
 import { SafetyNotice } from "./SafetyNotice";
 
 type SettingsViewProps = {
+  focusProfile: FocusProfileId;
   lowStimEnabled: boolean;
   phrases: string[];
   supportContact: SupportContact;
@@ -11,6 +13,7 @@ type SettingsViewProps = {
   voiceGuideEnabled: boolean;
   voiceGuideSupported: boolean;
   onBackHome: () => void;
+  setFocusProfile: (value: FocusProfileId) => void;
   setLowStimEnabled: (value: boolean | ((current: boolean) => boolean)) => void;
   setPhrases: (value: string[] | ((current: string[]) => string[])) => void;
   setSupportContact: (
@@ -23,6 +26,7 @@ type SettingsViewProps = {
 };
 
 export function SettingsView({
+  focusProfile,
   lowStimEnabled,
   phrases,
   supportContact,
@@ -30,6 +34,7 @@ export function SettingsView({
   voiceGuideEnabled,
   voiceGuideSupported,
   onBackHome,
+  setFocusProfile,
   setLowStimEnabled,
   setPhrases,
   setSupportContact,
@@ -188,6 +193,20 @@ export function SettingsView({
 
       <div className="settings-section">
         <h2>Preferences</h2>
+        <p>Choose the first tool ClearSpace suggests when you are not sure.</p>
+        <div className="profile-grid" aria-label="Focus profile">
+          {focusProfiles.map((profile) => (
+            <button
+              key={profile.id}
+              type="button"
+              aria-pressed={focusProfile === profile.id}
+              onClick={() => setFocusProfile(profile.id)}
+            >
+              <span>{profile.label}</span>
+              <small>{profile.description}</small>
+            </button>
+          ))}
+        </div>
         <div className="toggle-grid">
           <button
             type="button"
