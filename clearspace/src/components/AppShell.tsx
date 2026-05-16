@@ -1,19 +1,45 @@
 import { useEffect, useRef, type ReactNode } from "react";
-import { Moon, Sun, Wind } from "lucide-react";
+import {
+  BookOpen,
+  Grid3X3,
+  Home,
+  Moon,
+  Settings,
+  ShieldCheck,
+  Sun,
+  Wind,
+} from "lucide-react";
+import type { ViewName } from "../types";
 
 type AppShellProps = {
   children: ReactNode;
+  currentView: ViewName;
   currentViewLabel: string;
   lowStimEnabled: boolean;
   onHome: () => void;
+  onNavigate: (view: ViewName) => void;
   onToggleLowStim: () => void;
 };
 
+const navItems: Array<{
+  icon: typeof Home;
+  label: string;
+  view: ViewName;
+}> = [
+  { icon: Home, label: "Home", view: "home" },
+  { icon: Wind, label: "Breathe", view: "breathe" },
+  { icon: ShieldCheck, label: "Ground", view: "ground" },
+  { icon: Grid3X3, label: "Toolkit", view: "settings" },
+  { icon: BookOpen, label: "Journal", view: "journal" },
+];
+
 export function AppShell({
   children,
+  currentView,
   currentViewLabel,
   lowStimEnabled,
   onHome,
+  onNavigate,
   onToggleLowStim,
 }: AppShellProps) {
   const mainRef = useRef<HTMLElement>(null);
@@ -50,30 +76,87 @@ export function AppShell({
           </span>
         </button>
 
-        <button
-          className="icon-text-button"
-          type="button"
-          onClick={onToggleLowStim}
-          aria-pressed={lowStimEnabled}
-        >
-          {lowStimEnabled ? (
-            <Sun size={18} aria-hidden="true" />
-          ) : (
-            <Moon size={18} aria-hidden="true" />
-          )}
-          <span>{lowStimEnabled ? "Standard" : "Low Stim"}</span>
-        </button>
+        <div className="top-bar-actions">
+          <button
+            className="icon-button"
+            type="button"
+            onClick={() => onNavigate("settings")}
+            aria-label="Open settings"
+          >
+            <Settings size={20} aria-hidden="true" />
+          </button>
+          <button
+            className="icon-text-button"
+            type="button"
+            onClick={onToggleLowStim}
+            aria-pressed={lowStimEnabled}
+          >
+            {lowStimEnabled ? (
+              <Sun size={18} aria-hidden="true" />
+            ) : (
+              <Moon size={18} aria-hidden="true" />
+            )}
+            <span>{lowStimEnabled ? "Standard" : "Low Stim"}</span>
+          </button>
+        </div>
       </header>
 
-      <main
-        ref={mainRef}
-        className="app-shell"
-        id="main-content"
-        tabIndex={-1}
-        aria-label={`${currentViewLabel} content`}
-      >
-        {children}
-      </main>
+      <div className="app-layout">
+        <aside className="side-nav" aria-label="Primary navigation">
+          <div className="side-nav-heading">
+            <h2>Your Space</h2>
+            <p>Stay grounded</p>
+          </div>
+          <nav className="side-nav-list">
+            {navItems.map(({ icon: Icon, label, view }) => (
+              <button
+                key={view}
+                className={currentView === view ? "active" : ""}
+                type="button"
+                onClick={() => onNavigate(view)}
+                aria-current={currentView === view ? "page" : undefined}
+                aria-label={`Open ${label.toLowerCase()}`}
+              >
+                <Icon size={20} aria-hidden="true" />
+                <span>{label}</span>
+              </button>
+            ))}
+          </nav>
+          <div className="offline-badge">
+            <ShieldCheck size={20} aria-hidden="true" />
+            <span>
+              <strong>Private by default</strong>
+              <small>Offline storage active</small>
+            </span>
+          </div>
+        </aside>
+
+        <main
+          ref={mainRef}
+          className="app-shell"
+          id="main-content"
+          tabIndex={-1}
+          aria-label={`${currentViewLabel} content`}
+        >
+          {children}
+        </main>
+      </div>
+
+      <nav className="bottom-nav" aria-label="Mobile navigation">
+        {navItems.map(({ icon: Icon, label, view }) => (
+          <button
+            key={view}
+            className={currentView === view ? "active" : ""}
+            type="button"
+            onClick={() => onNavigate(view)}
+            aria-current={currentView === view ? "page" : undefined}
+            aria-label={`Open ${label.toLowerCase()}`}
+          >
+            <Icon size={20} aria-hidden="true" />
+            <span>{label}</span>
+          </button>
+        ))}
+      </nav>
     </div>
   );
 }

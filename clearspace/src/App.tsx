@@ -89,13 +89,17 @@ function App() {
 
   return (
     <AppShell
+      currentView={currentView}
       currentViewLabel={viewLabels[currentView]}
       lowStimEnabled={lowStimEnabled}
       onHome={() => setCurrentView("home")}
+      onNavigate={setCurrentView}
       onToggleLowStim={() => setLowStimEnabled((value) => !value)}
     >
       {currentView === "home" ? (
         <HomeView
+          onOpenBreathing={() => setCurrentView("breathe")}
+          onOpenGrounding={() => setCurrentView("ground")}
           onOpenJoy={() => setCurrentView("joy")}
           onOpenPractice={() => setCurrentView("practice")}
           onOpenSettings={() => setCurrentView("settings")}

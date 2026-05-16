@@ -110,6 +110,18 @@ export function GroundingTool({
       </h1>
       <p>{activeStep.hint}</p>
 
+      <div className="grounding-progress" aria-label="Grounding progress">
+        {groundingSteps.map((step, index) => (
+          <span
+            key={step.sense}
+            className={index <= activeStepIndex ? "active" : ""}
+            aria-current={index === activeStepIndex ? "step" : undefined}
+          >
+            {step.count}
+          </span>
+        ))}
+      </div>
+
       <div className="grounding-list" aria-label={`${activeStep.count} items`}>
         {Array.from({ length: activeStep.count }, (_, index) => {
           const checked = checkedItems.includes(index);

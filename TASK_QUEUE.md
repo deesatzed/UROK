@@ -32,8 +32,9 @@
 | TQ-017 | 8 | Add storage schema validation and migrations | High | Ready | TQ-016 |
 | TQ-018 | 9 | Initialize GitHub repo and create landing page | High | Done | User request |
 | TQ-019 | 9 | Fix GitHub Pages checkout failure | High | Done | TQ-018 |
+| TQ-020 | 10 | Implement `redesign.md` visual refresh | High | Done | User request |
 
-The MVP queue and first mitigation voice-guide pass are complete. The next unblocked task is TQ-017.
+The MVP queue, first mitigation voice-guide pass, GitHub Pages mitigation, and `redesign.md` visual refresh are complete. The next unblocked task remains TQ-017.
 
 ## Task Details
 
@@ -343,6 +344,24 @@ The MVP queue and first mitigation voice-guide pass are complete. The next unblo
   - `git push`
 - Rollback:
   - Re-add submodules only if their URLs are public/access-controlled correctly and Pages checkout can clone them.
+
+### TQ-020: Implement `redesign.md` Visual Refresh
+
+- Goal: Translate the supplied ClearSpace redesign mockups into the existing local-first React app without adding runtime CDN, external font, Material Symbols, or remote image dependencies.
+- Likely files: `redesign.md`, `clearspace/src/App.tsx`, `clearspace/src/components/AppShell.tsx`, `clearspace/src/components/HomeView.tsx`, `clearspace/src/components/GroundingTool.tsx`, `clearspace/src/styles.css`, tests, project-control docs.
+- Status: Done.
+- Outcome: Added desktop side navigation, mobile bottom navigation, redesigned home hero/bento cards, red SOS treatment, calm visual, grounding progress rail, local design tokens, and updated tests for the new home headline.
+- Acceptance criteria:
+  - Existing panic-support flows still work.
+  - No new network/CDN/runtime service dependency is added.
+  - Existing safety, local storage, and voice guide behavior remains intact.
+  - Build and tests pass.
+- Verification:
+  - `cd clearspace && npm test`: passed, 6 test files and 31 tests.
+  - `cd clearspace && npm run build`: passed.
+  - `curl -sS -I http://127.0.0.1:5173/`: HTTP 200.
+- Rollback:
+  - Revert the redesign component/CSS/test changes and keep `redesign.md` as a reference input.
 
 ## Backlog
 

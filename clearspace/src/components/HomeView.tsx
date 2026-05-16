@@ -1,6 +1,15 @@
-import { HeartPulse, Settings, Sparkles, Wind } from "lucide-react";
+import {
+  BookOpen,
+  HeartPulse,
+  Settings,
+  ShieldCheck,
+  Sparkles,
+  Wind,
+} from "lucide-react";
 
 type HomeViewProps = {
+  onOpenBreathing: () => void;
+  onOpenGrounding: () => void;
   onOpenJoy: () => void;
   onOpenPractice: () => void;
   onOpenSettings: () => void;
@@ -15,6 +24,8 @@ const practiceItems = [
 ];
 
 export function HomeView({
+  onOpenBreathing,
+  onOpenGrounding,
   onOpenJoy,
   onOpenPractice,
   onOpenSettings,
@@ -24,12 +35,21 @@ export function HomeView({
     <>
       <section className="hero-panel" aria-labelledby="app-title">
         <div className="hero-copy">
-          <p className="eyebrow">Local-first panic support</p>
-          <h1 id="app-title">Start with one steady step.</h1>
+          <p className="eyebrow">Your Space / Stay grounded</p>
+          <h1 id="app-title">One steady step at a time.</h1>
           <p>
-            Open the guided support flow, practice a calming tool, or choose a
-            small offline prompt before panic gets louder.
+            A calm, private place to land before panic gets louder. Start the
+            guided support flow, practice a tool, or choose a small offline
+            shift.
           </p>
+        </div>
+
+        <div className="calm-visual" aria-hidden="true">
+          <div className="calm-visual-ring outer" />
+          <div className="calm-visual-ring middle" />
+          <div className="calm-visual-core">
+            <Wind size={42} />
+          </div>
         </div>
 
         <div className="home-actions" aria-label="Primary actions">
@@ -37,13 +57,13 @@ export function HomeView({
             <HeartPulse size={34} aria-hidden="true" />
             <span>
               <strong>Start Calming Support</strong>
-              <small>Four simple steps, then breathing or grounding</small>
+              <small>I need support now</small>
             </span>
           </button>
 
-          <div className="secondary-actions">
+          <div className="secondary-actions" aria-label="Quick routes">
             <button type="button" onClick={onOpenPractice}>
-              <Wind size={18} aria-hidden="true" />
+              <BookOpen size={18} aria-hidden="true" />
               <span>Practice</span>
             </button>
             <button type="button" onClick={onOpenJoy}>
@@ -58,33 +78,43 @@ export function HomeView({
         </div>
       </section>
 
-      <section className="status-grid" aria-label="Planned app areas">
-        <article>
+      <section className="status-grid" aria-label="Support areas">
+        <button className="bento-card primary-card" type="button" onClick={onOpenBreathing}>
           <Wind size={22} aria-hidden="true" />
-          <h2>Practice Tools</h2>
+          <span className="card-kicker">Breathe</span>
+          <h2>Paced breathing</h2>
+          <p>Use a simple inhale/exhale timer with optional local voice cues.</p>
+        </button>
+
+        <button className="bento-card" type="button" onClick={onOpenGrounding}>
+          <ShieldCheck size={22} aria-hidden="true" />
+          <span className="card-kicker">Ground</span>
+          <h2>5-4-3-2-1 senses</h2>
+          <p>
+            Move attention from racing thoughts into what you can see, touch,
+            hear, smell, and taste.
+          </p>
+        </button>
+
+        <button className="bento-card" type="button" onClick={onOpenSettings}>
+          <Settings size={22} aria-hidden="true" />
+          <span className="card-kicker">Toolkit</span>
+          <h2>Personal setup</h2>
+          <p>
+            Keep reassurance phrases, support contact, and sensory tools on
+            this device.
+          </p>
+        </button>
+
+        <article className="bento-card quiet-card">
+          <Sparkles size={22} aria-hidden="true" />
+          <span className="card-kicker">Offline help</span>
+          <h2>What is ready</h2>
           <ul>
             {practiceItems.map((item) => (
               <li key={item}>{item}</li>
             ))}
           </ul>
-        </article>
-
-        <article>
-          <Sparkles size={22} aria-hidden="true" />
-          <h2>Fun, Offline Help</h2>
-          <p>
-            Gentle pre-panic prompts and comfort content will stay available
-            without network access.
-          </p>
-        </article>
-
-        <article>
-          <Settings size={22} aria-hidden="true" />
-          <h2>Private By Default</h2>
-          <p>
-            Preferences and journal notes will use local device storage, with
-            support-contact setup kept out of any cloud flow.
-          </p>
         </article>
       </section>
     </>

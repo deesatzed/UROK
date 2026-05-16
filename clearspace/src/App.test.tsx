@@ -26,7 +26,7 @@ describe("App shell", () => {
       screen.getByRole("main", { name: /home content/i }),
     ).toBeInTheDocument();
     expect(
-      screen.getByRole("heading", { name: /start with one steady step/i }),
+      screen.getByRole("heading", { name: /one steady step at a time/i }),
     ).toBeInTheDocument();
     expect(
       screen.getByRole("button", { name: /start calming support/i }),
@@ -50,7 +50,7 @@ describe("App shell", () => {
 
     await user.click(screen.getByRole("button", { name: /back to home/i }));
     expect(
-      screen.getByRole("heading", { name: /start with one steady step/i }),
+      screen.getByRole("heading", { name: /one steady step at a time/i }),
     ).toBeInTheDocument();
   });
 

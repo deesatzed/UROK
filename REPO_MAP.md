@@ -8,6 +8,7 @@ The current project contains:
 
 - `clearspace/`: the first-party MVP app.
 - `prefile.md`: primary original build/prototype source.
+- `redesign.md`: current visual redesign source used for the ClearSpace shell/home/tool styling pass.
 - project-control docs: `GOAL.md`, `STANDARDS.md`, `IMPLEMENT.md`, `DECISIONS.md`, `PROGRESS.md`, `TASK_QUEUE.md`, `REPO_MAP.md`.
 - supporting reference codebases: local-only `lumina/` and `virtual-puppet-theater/`.
 - landing surface: `README.md` and `docs/index.html`.
@@ -25,6 +26,7 @@ The current project contains:
 - plain CSS
 - browser local storage via namespaced `clearspace:` keys
 - browser Web Speech `speechSynthesis` for optional scripted local TTS
+- redesigned bundled CSS shell and navigation based on `redesign.md`
 - no required server, account, AI API, camera, microphone, analytics, telemetry, or runtime CDN dependency for MVP
 
 ## Package Manager
@@ -70,6 +72,7 @@ Public landing:
 Primary build-direction entry point:
 
 - `prefile.md`
+- `redesign.md` for visual direction; do not copy its runtime CDN/Tailwind/Google Fonts/Material Symbols/external-image dependencies into production.
 
 Agent/workflow entry point:
 
@@ -90,8 +93,8 @@ Reference app entry points:
 | --- | --- |
 | `clearspace/src/App.tsx` | View router and app-level state coordinator. |
 | `clearspace/src/types.ts` | Shared app types for views, storage-backed data, support contact, toolkit, and journal entries. |
-| `clearspace/src/components/AppShell.tsx` | Shared frame, brand/home control, and low-stimulation toggle. |
-| `clearspace/src/components/HomeView.tsx` | First screen with dominant SOS action and secondary Practice/Spark Joy/Settings paths. |
+| `clearspace/src/components/AppShell.tsx` | Shared frame, brand/home control, low-stimulation toggle, desktop side navigation, and mobile bottom navigation. |
+| `clearspace/src/components/HomeView.tsx` | First screen with dominant SOS action, calm visual, bento support cards, and secondary Practice/Spark Joy/Settings paths. |
 | `clearspace/src/components/SosWizard.tsx` | Active guided SOS flow and branch to breathing or grounding. |
 | `clearspace/src/components/BreathingTool.tsx` | Paced breathing timer. |
 | `clearspace/src/components/GroundingTool.tsx` | 5-4-3-2-1 grounding checklist. |
@@ -156,6 +159,7 @@ Current main app verification:
 
 - `cd clearspace && npm run build`: passed.
 - `cd clearspace && npm test`: passed, 6 test files and 31 tests.
+- Redesign pass verification: `cd clearspace && npm run build` passed, `cd clearspace && npm test` passed with 6 test files and 31 tests, and `curl -sS -I http://127.0.0.1:5173/` returned HTTP 200.
 - Guest Chrome desktop smoke: passed for home, SOS branching, and breathing timer.
 - Guest Chrome narrow-window smoke: passed without visible overlap.
 - Accessibility smoke: skip link and named main landmark present in Chrome accessibility tree.

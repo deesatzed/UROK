@@ -10,6 +10,8 @@ GitHub repository setup and landing page pass complete as of 2026-05-16.
 
 GitHub Pages checkout mitigation complete as of 2026-05-16.
 
+`redesign.md` implementation pass complete as of 2026-05-16.
+
 `clearspace/` now contains a working local-first React/TypeScript panic-support app with:
 
 - guided SOS flow,
@@ -22,6 +24,7 @@ GitHub Pages checkout mitigation complete as of 2026-05-16.
 - journal export/delete controls,
 - deterministic local browser TTS voice guide for scripted SOS, breathing, and grounding cues,
 - baseline accessibility improvements,
+- redesigned local CSS shell with desktop side navigation, mobile bottom navigation, bento home cards, and calmer breathing/grounding surfaces from `redesign.md`,
 - automated tests for the core flows.
 
 The root `/Volumes/WS4TB/UROK` is now initialized as the main Git repository for `https://github.com/deesatzed/UROK.git`.
@@ -36,6 +39,7 @@ The root `/Volumes/WS4TB/UROK` is now initialized as the main Git repository for
 - Browser TTS may use local Web Speech `speechSynthesis`; cloud TTS remains out of scope.
 - Any future AI, voice, character, export, PWA, or deployment feature requires explicit privacy/safety review.
 - `lumina/` and `virtual-puppet-theater/` remain local-only support references. They are ignored by the root Git repo because the `lumina` submodule URL was not publicly cloneable by GitHub Pages.
+- `redesign.md` is treated as visual direction only; its runtime Tailwind CDN, Google Fonts, Material Symbols, and external image references are not production dependencies.
 
 ## Task Tracker
 
@@ -62,6 +66,7 @@ The root `/Volumes/WS4TB/UROK` is now initialized as the main Git repository for
 | TQ-016: Scripted browser TTS voice guide | Done | Codex | Resolved dormant voice preference with local `speechSynthesis` service/hook, deterministic read/stop controls in SOS/breathing/grounding, unsupported-browser fallback, and tests. |
 | TQ-018: GitHub repo setup and landing page | Done | Codex | Added root Git config, README landing surface, `docs/index.html` GitHub Pages landing page, and submodule metadata for support references. |
 | TQ-019: Fix GitHub Pages checkout failure | Done | Codex | Removed support folders from root Git tracking, ignored them locally, and added `docs/.nojekyll` so Pages can deploy from `docs/`. |
+| TQ-020: Implement `redesign.md` visual refresh | Done | Codex | Added redesigned shell/navigation, home bento layout, red SOS action, calm visual, grounding progress rail, updated CSS tokens, and kept existing safety/privacy behavior. |
 
 Claude Code was not invoked in this pass because the implementation tasks were small, sequential, and directly verified locally.
 
@@ -69,6 +74,7 @@ Claude Code was not invoked in this pass because the implementation tasks were s
 
 - `cd clearspace && npm run build`: passed.
 - `cd clearspace && npm test`: passed, 6 test files and 31 tests.
+- Redesign verification on 2026-05-16: `cd clearspace && npm test` passed, 6 test files and 31 tests; `cd clearspace && npm run build` passed; `curl -sS -I http://127.0.0.1:5173/` returned HTTP 200.
 - Test note: Node prints nonfatal `ExperimentalWarning: localStorage is not available because --localstorage-file was not provided`; tests use a controlled memory storage fallback and still pass.
 - Voice guide checks: automated tests cover enabled, disabled, unsupported, stop, cleanup, pause/resume service controls, and deterministic scripted SOS, breathing, and grounding reading.
 - Live smoke check from the MVP pass: guest Chrome confirmed corrected home copy, dominant SOS action, SOS branch to breathing, breathing timer start/pause, and narrow-window responsive layout without visible overlap.
@@ -94,10 +100,11 @@ Claude Code was not invoked in this pass because the implementation tasks were s
 - D-017: use local browser Web Speech `speechSynthesis` for scripted TTS; no cloud TTS or AI-spoken health guidance.
 - D-018: root Git repository uses the requested UROK remote and tracks support folders as submodules.
 - D-019: support folders are local-only references, not root Git submodules, so GitHub Pages can check out the repo.
+- D-020: `redesign.md` is implemented as local bundled React/CSS/lucide visual direction, not as runtime CDN dependencies.
 
 ## Current Milestone
 
-M3: First mitigation gate complete with local scripted browser TTS.
+M4: `redesign.md` visual refresh complete.
 
 ## Next Actions
 
