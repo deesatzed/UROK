@@ -44,7 +44,7 @@ describe("App shell", () => {
       ).toHaveFocus(),
     );
     expect(
-      screen.getByRole("heading", { name: /understand panic support/i }),
+      screen.getByRole("heading", { name: /understand stress support/i }),
     ).toBeInTheDocument();
     expect(screen.getByText(/support, not diagnosis/i)).toBeInTheDocument();
 
@@ -241,6 +241,9 @@ describe("App shell", () => {
     expect(
       screen.getByRole("button", { name: /voice guide on/i }),
     ).toHaveAttribute("aria-pressed", "true");
+    expect(
+      screen.getByText(/does not use ai, speech-to-text, or microphone input/i),
+    ).toBeInTheDocument();
 
     await user.click(screen.getByRole("button", { name: /back to home/i }));
     await user.click(

@@ -12,7 +12,7 @@ This covers:
 
 ## Actual User Goal
 
-Proceed with the mitigation plan toward a full-function panic-support app while preserving the safe local-first panic path.
+Proceed with the mitigation plan toward a full-function stress-support app while preserving the safe local-first stress path.
 
 ## Files Expected To Change
 
@@ -87,7 +87,7 @@ Remove the new speech service/hook and revert component props/UI to the previous
 
 | Risk | Mitigation |
 |---|---|
-| Voice becomes intrusive in panic flow | Voice remains off by default and has visible stop controls. |
+| Voice becomes intrusive in stress flow | Voice remains off by default and has visible stop controls. |
 | Browser TTS unsupported | Disable/label the preference and hide active controls when unsupported. |
 | Speech continues after navigation | Hook cleanup and component unmount cleanup call `cancel()`. |
 | Tests become dependent on browser APIs | Use deterministic test mocks. |

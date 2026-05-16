@@ -1,6 +1,6 @@
 # UROK / ClearSpace
 
-ClearSpace is a local-first panic-support app for pre-panic and active-panic moments. It keeps the critical support path fast, deterministic, and private: one-tap SOS guidance, paced breathing, 5-4-3-2-1 grounding, local personalization, optional scripted browser voice guidance, and local-only journaling.
+ClearSpace is a local-first stress-support app for early-stress and active-stress moments. It keeps the critical support path fast, deterministic, and private: one-tap SOS guidance, paced breathing, 5-4-3-2-1 grounding, local personalization, optional scripted browser voice guidance, and local-only journaling.
 
 This repository also keeps the planning and control documents used to guide autonomous implementation.
 
@@ -11,6 +11,12 @@ This repository also keeps the planning and control documents used to guide auto
 - Persistence: browser local storage under `clearspace:` keys
 - Voice guide: optional browser Web Speech `speechSynthesis`, scripted only
 - AI/STT: intentionally not connected until guardrails, privacy controls, storage validation, and fallbacks are implemented
+
+## Capability Boundary
+
+- AI enabled: no. ClearSpace makes no model/API calls and generates no health guidance.
+- TTS enabled: yes, optional browser Web Speech `speechSynthesis` for fixed ClearSpace scripts in SOS, breathing, and grounding.
+- STT enabled: no. ClearSpace does not request microphone access, record audio, or transcribe speech.
 
 ## Try It Locally
 

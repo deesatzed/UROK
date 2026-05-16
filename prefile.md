@@ -20,7 +20,7 @@ import {
 
 // --- Default Data Based on User Prompt ---
 const defaultPhrases = [
-  "This is a panic attack. It feels intense, but it will pass.",
+  "This is a stress wave. It feels intense, but it will pass.",
   "My body's alarm system is misfiring. I am not in danger.",
   "This has happened before, and I got through it.",
   "I am safe right here, right now.",
@@ -30,7 +30,7 @@ const defaultPhrases = [
 const educationData = [
   {
     title: "What Is Happening",
-    content: "A panic attack is your body's built-in alarm system — the 'fight-or-flight' response — firing when there is no real danger. Stress hormones like adrenaline flood your body, causing a racing heart, fast breathing, sweating, and other intense sensations. These symptoms feel frightening, but they are not harmful. A panic attack usually peaks within a few minutes and then fades on its own."
+    content: "A stress wave is your body's built-in alarm system — the 'fight-or-flight' response — firing when there is no real danger. Stress hormones like adrenaline flood your body, causing a racing heart, fast breathing, sweating, and other intense sensations. These symptoms feel frightening, but they are not harmful. A stress wave usually peaks within a few minutes and then fades on its own."
   },
   {
     title: "What Not to Do",
@@ -38,11 +38,11 @@ const educationData = [
       "Do not fight the feeling or tell yourself you must stop it immediately — resistance often makes it worse.",
       "Do not take rapid, deep breaths — this can cause hyperventilation and more lightheadedness.",
       "Do not use alcohol or other substances to try to calm down — these can worsen anxiety over time.",
-      "Do not avoid places or activities because of fear of another attack — avoidance makes panic disorder harder to treat over time."
+      "Do not avoid places or activities because of fear of another wave — avoidance can make high anxiety harder to work through over time."
     ]
   },
   {
-    title: "Build a Panic Toolkit",
+    title: "Build a Stress Toolkit",
     content: "Keep a small kit in your bag, car, or desk with items that help you:",
     items: [
       "Very sour candy",
@@ -558,7 +558,7 @@ function EducationView({ setView }) {
 
       <div className="p-6 space-y-8">
         <div className="mb-2">
-          <h2 className="text-2xl font-bold text-slate-800">Understanding Panic</h2>
+          <h2 className="text-2xl font-bold text-slate-800">Understanding Stress</h2>
           <p className="text-slate-500 mt-2">Knowledge is a powerful tool against fear.</p>
         </div>
 
@@ -583,7 +583,7 @@ function EducationView({ setView }) {
         <div className="bg-blue-50 p-6 rounded-3xl border border-blue-100 mt-8">
            <h3 className="text-lg font-semibold text-blue-900 mb-2">When to Reach Out</h3>
            <p className="text-blue-800 leading-relaxed">
-             You have already been evaluated, and your doctor has confirmed that your symptoms are consistent with panic attacks. That is reassuring — it means your body is healthy, even when it does not feel that way.
+             You have already been evaluated, and your doctor has confirmed that your symptoms are consistent with stress waves. That is reassuring — it means your body is healthy, even when it does not feel that way.
            </p>
         </div>
       </div>
@@ -652,7 +652,7 @@ function SettingsView({ setView, phrases, setPhrases, toolkit, setToolkit, voice
             </button>
             <button onClick={() => setView('learn')} className="bg-white border border-slate-200 p-4 rounded-2xl flex flex-col items-center gap-2 shadow-sm hover:bg-slate-50 text-slate-700 col-span-2 transition-colors">
               <Info className="w-6 h-6 text-amber-500" />
-              <span className="font-medium text-sm">Understand Panic</span>
+              <span className="font-medium text-sm">Understand Stress</span>
             </button>
           </div>
         </section>

@@ -2,7 +2,7 @@
 
 ## Purpose
 
-This plan mitigates the gaps found in `REVIEW.md` before turning ClearSpace from a local MVP into a full-function panic-support app with voice, richer personalization, optional STT, and optional AI.
+This plan mitigates the gaps found in `REVIEW.md` before turning ClearSpace from a local MVP into a full-function stress-support app with voice, richer personalization, optional STT, and optional AI.
 
 The central rule: do not make the active SOS path dependent on network, AI, microphone, account, telemetry, or cloud sync. Full-function features must layer around the deterministic local support flow, not replace it.
 
@@ -19,7 +19,7 @@ The current app is safe because it is local, deterministic, and limited. The hig
 - No AI-generated diagnosis, medication advice, emergency triage, or medical reassurance.
 - No microphone access unless the user starts it directly from a clearly labeled control.
 - No always-listening behavior.
-- No journal entries, support contacts, or panic logs sent to third parties by default.
+- No journal entries, support contacts, or stress logs sent to third parties by default.
 - SOS, breathing, grounding, support contact, and local reassurance must continue to work offline.
 - AI/STT failure must degrade to deterministic local tools.
 - Emergency/self-harm/severe-symptom routing must be deterministic, not model-dependent.
@@ -97,7 +97,7 @@ Do not:
 
 Objective:
 
-Make TTS useful for panic without increasing risk.
+Make TTS useful for stress without increasing risk.
 
 Status:
 
@@ -124,7 +124,7 @@ Make the app adapt to the person and context while staying local.
 Required outcome:
 
 - Local profile/focus plan model.
-- Context modes such as pre-panic, active panic, post-panic, nighttime, public place, sensory overload.
+- Context modes such as early-stress, active stress, post-stress, nighttime, public place, sensory overload.
 - Preferred tool order, "do not say" phrases, sensory profile, support scripts, emergency region, modality preference.
 - Profile data can be exported/deleted.
 

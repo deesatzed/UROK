@@ -2,7 +2,7 @@
 
 ## Project Type
 
-`/Volumes/WS4TB/UROK` is the root Git repository and planning/build workspace for a personal panic-support web app. The implemented main app lives in `clearspace/`.
+`/Volumes/WS4TB/UROK` is the root Git repository and planning/build workspace for a personal stress-support web app. The implemented main app lives in `clearspace/`.
 
 The current project contains:
 
@@ -101,14 +101,14 @@ Reference app entry points:
 | `clearspace/src/components/BreathingTool.tsx` | Paced breathing timer. |
 | `clearspace/src/components/GroundingTool.tsx` | 5-4-3-2-1 grounding checklist. |
 | `clearspace/src/components/CheckInView.tsx` | Optional post-tool local check-in for what changed and what helped. |
-| `clearspace/src/components/EducationView.tsx` | Panic-support education copy. |
+| `clearspace/src/components/EducationView.tsx` | Stress-support education copy. |
 | `clearspace/src/components/SafetyNotice.tsx` | Reusable bounded safety guidance. |
 | `clearspace/src/components/SafetyAlert.tsx` | Deterministic urgent-support alert for red-flag free text. |
 | `clearspace/src/components/SettingsView.tsx` | Local personalization settings. |
 | `clearspace/src/components/JournalView.tsx` | Optional local journal save/skip and history display. |
 | `clearspace/ACCESSIBILITY_AUDIT.md` | Current accessibility audit notes, fixes, and remaining gaps. |
 | `clearspace/UX_MITIGATION_AUDIT.md` | UX theory risk findings and mitigations implemented in TQ-021. |
-| `clearspace/src/components/SparkJoyView.tsx` | Offline fun/pre-panic prompts. |
+| `clearspace/src/components/SparkJoyView.tsx` | Offline fun/early-stress prompts. |
 | `clearspace/src/data/*.ts` | Default copy/content for education, grounding, joy, reassurance, and toolkit. |
 | `clearspace/src/data/focusProfiles.ts` | Local focus profiles and tool-order preferences. |
 | `clearspace/src/hooks/useLocalStorage.ts` | Typed namespaced local storage hook. |
@@ -153,7 +153,7 @@ The support folders are local-only references and ignored by the root Git repo b
 
 - Read project-control docs before coding.
 - Keep support directories read-only unless a task explicitly modifies them.
-- Keep the panic path local, deterministic, and offline-capable.
+- Keep the stress path local, deterministic, and offline-capable.
 - Keep health copy bounded and non-diagnostic.
 - Keep fun features optional and outside the critical SOS path.
 - Prefer componentized React/TypeScript over the single-file prototype.
@@ -188,7 +188,7 @@ The main app is a standalone Vite React TypeScript SPA using:
 
 - `App` as a small view router/state coordinator,
 - `AppShell` for layout, low-stimulation mode, and navigation,
-- feature components for SOS, breathing, grounding, education, settings, journal, and fun/pre-panic tools,
+- feature components for SOS, breathing, grounding, education, settings, journal, and fun/early-stress tools,
 - typed data modules for default copy and offline content,
 - typed local storage for preferences and journal entries,
 - optional local browser TTS composed through a speech service/hook and deterministic scripts,

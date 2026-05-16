@@ -28,7 +28,7 @@ export const focusProfiles: FocusProfile[] = [
   },
   {
     id: "night",
-    label: "Nighttime panic",
+    label: "Nighttime stress",
     description: "Keep guidance quiet and predictable for waking from sleep.",
     toolOrder: ["breathe", "ground"],
   },

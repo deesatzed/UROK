@@ -252,7 +252,7 @@ View all files
 
 # UROK / ClearSpace
 
-ClearSpace is a local-first panic-support app for pre-panic and active-panic moments. It keeps the critical support path fast, deterministic, and private: one-tap SOS guidance, paced breathing, 5-4-3-2-1 grounding, local personalization, optional scripted browser voice guidance, and local-only journaling.
+ClearSpace is a local-first stress-support app for early-stress and active-stress moments. It keeps the critical support path fast, deterministic, and private: one-tap SOS guidance, paced breathing, 5-4-3-2-1 grounding, local personalization, optional scripted browser voice guidance, and local-only journaling.
 
 This repository also keeps the planning and control documents used to guide autonomous implementation.
 

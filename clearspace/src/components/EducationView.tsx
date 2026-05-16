@@ -10,9 +10,9 @@ export function EducationView({ onDone }: EducationViewProps) {
     <section className="education-view" aria-labelledby="education-title">
       <div>
         <p className="eyebrow">Practice and learn</p>
-        <h1 id="education-title">Understand panic support.</h1>
+        <h1 id="education-title">Understand stress support.</h1>
         <p>
-          Read this when you are not in the peak of panic. During active panic,
+          Read this when you are not in the peak of stress. During active stress,
           use the calming support button first.
         </p>
       </div>

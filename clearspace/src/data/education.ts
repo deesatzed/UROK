@@ -4,7 +4,7 @@ export const educationSections = [
     body: "ClearSpace can help you slow down, ground through your senses, and remember coping steps you chose ahead of time. It is support, not diagnosis or medical care.",
   },
   {
-    title: "During a panic wave",
+    title: "During a stress wave",
     body: "Try to make the next step small: sit if you can, soften one muscle group, reduce stimulation, and use a breathing or grounding tool. If a step feels wrong, skip it and choose another.",
   },
   {

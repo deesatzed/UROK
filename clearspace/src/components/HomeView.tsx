@@ -74,7 +74,7 @@ export function HomeView({
           <p className="eyebrow">Your Space / Stay grounded</p>
           <h1 id="app-title">One steady step at a time.</h1>
           <p>
-            A calm, private place to land before panic gets louder. Start the
+            A calm, private place to land before stress gets louder. Start the
             guided support flow, practice a tool, or choose a small offline
             shift.
           </p>

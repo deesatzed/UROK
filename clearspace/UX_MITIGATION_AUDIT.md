@@ -4,13 +4,13 @@ Date: 2026-05-16
 
 ## Scope
 
-This audit records the UX theory risks addressed in the current mitigation pass. It is not clinical validation and does not claim that ClearSpace treats, diagnoses, cures, or prevents panic disorder.
+This audit records the UX theory risks addressed in the current mitigation pass. It is not clinical validation and does not claim that ClearSpace treats, diagnoses, cures, or prevents high anxiety.
 
 ## Findings And Mitigations
 
 | Concern | Risk | Mitigation Implemented |
 | --- | --- | --- |
-| Choice overload during active panic | Persistent navigation can invite wandering when the user needs one clear flow. | SOS now runs in focus mode without shell side/bottom navigation or settings shortcut. |
+| Choice overload during active stress | Persistent navigation can invite wandering when the user needs one clear flow. | SOS now runs in focus mode without shell side/bottom navigation or settings shortcut. |
 | Breathing can backfire | Some users become more alarmed when attention stays on breath. | Breathing includes a "Breathing feels worse" escape to grounding. |
 | Repeated reassurance can become stale | The same script every time may lose salience and feel mechanical. | SOS reassurance rotates deterministically across sessions while staying local and scripted. |
 | Weak personalization | A single default order ignores breath-sensitive, sensory-overload, and nighttime contexts. | Settings now includes local focus profiles that reorder suggested tools without hiding SOS. |

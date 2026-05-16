@@ -4,7 +4,7 @@
 
 - Use React + TypeScript with strict typing for the main app.
 - Prefer small, named components and pure helper functions over a single large `App.tsx`.
-- Keep the active panic path fast, deterministic, and offline-capable.
+- Keep the active stress path fast, deterministic, and offline-capable.
 - Do not add a runtime server unless a task explicitly requires it.
 - Do not copy broad code from `lumina` or `virtual-puppet-theater`; extract patterns deliberately.
 - Avoid runtime CDNs for the production app. Dependencies should be installed and bundled by the app build.
@@ -22,7 +22,7 @@
 
 - Default to local-only storage. Do not add accounts, telemetry, cloud sync, or external analytics.
 - Do not commit API keys, credentials, PHI, secrets, or `.env` files containing secrets.
-- Do not send journal entries, support contacts, or panic logs to third-party APIs by default.
+- Do not send journal entries, support contacts, or stress logs to third-party APIs by default.
 - If future AI features are added, require explicit opt-in and redact unnecessary personal data.
 - Camera and microphone access must be optional, user-initiated, clearly labeled, and nonessential.
 - Keep support contact data on-device unless the user explicitly requests sync/export.
@@ -34,7 +34,7 @@
 - Include clear escalation guidance for new, severe, unusual, or life-threatening symptoms.
 - For self-harm language, chest pain, fainting, severe breathing trouble, stroke-like symptoms, or medical uncertainty, direct the user toward emergency or trusted human support.
 - Do not recommend medications, substances, or clinical interventions.
-- Do not shame avoidance, panic, relapse, or incomplete exercises.
+- Do not shame avoidance, stress, relapse, or incomplete exercises.
 
 ## Testing
 
@@ -49,7 +49,7 @@
 
 - Optimize first for a user in distress: low reading load, large targets, calm pacing, and obvious exits.
 - The first screen should have one dominant action for immediate help and a secondary path for practice/settings.
-- Keep settings and learning content away from the active panic path.
+- Keep settings and learning content away from the active stress path.
 - Support reduced motion, low stimulation, and accessible contrast.
 - Use familiar icons from the existing icon library when helpful.
 - Text must fit within buttons/cards on mobile and desktop.

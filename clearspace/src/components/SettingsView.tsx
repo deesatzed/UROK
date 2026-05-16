@@ -230,6 +230,11 @@ export function SettingsView({
               : "Voice guide unavailable"}
           </button>
         </div>
+        <p className="capability-note">
+          Voice uses your browser's local speech output for fixed ClearSpace
+          scripts. ClearSpace does not use AI, speech-to-text, or microphone
+          input.
+        </p>
       </div>
 
       <SafetyNotice compact />

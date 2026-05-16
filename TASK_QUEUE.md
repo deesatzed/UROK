@@ -22,7 +22,7 @@
 | TQ-007 | 2 | Implement settings and personalization | High | Done | TQ-006 |
 | TQ-008 | 3 | Rewrite and verify safety/education copy | High | Done | TQ-004 |
 | TQ-009 | 2 | Implement journal history | Medium | Done | TQ-006 |
-| TQ-010 | 4 | Add offline fun/pre-panic tools | Medium | Done | TQ-006 |
+| TQ-010 | 4 | Add offline fun/early-stress tools | Medium | Done | TQ-006 |
 | TQ-011 | 5 | Add automated tests for core flows | High | Done | TQ-004, TQ-005, TQ-006 |
 | TQ-012 | 5 | Run build, tests, and responsive manual checks | High | Done | TQ-011 |
 | TQ-013 | 6 | Accessibility audit and baseline fixes | High | Done | TQ-012 |
@@ -34,8 +34,9 @@
 | TQ-019 | 9 | Fix GitHub Pages checkout failure | High | Done | TQ-018 |
 | TQ-020 | 10 | Implement `redesign.md` visual refresh | High | Done | User request |
 | TQ-021 | 11 | Implement UX theory mitigations | High | Done | User `/goal` |
+| TQ-022 | 12 | Replace user-facing stronger symptom labels with stress language and clarify AI/TTS/STT status | High | Done | User request |
 
-The MVP queue, first mitigation voice-guide pass, GitHub Pages mitigation, `redesign.md` visual refresh, and UX theory mitigation pass are complete. The next unblocked task remains TQ-017.
+The MVP queue, first mitigation voice-guide pass, GitHub Pages mitigation, `redesign.md` visual refresh, UX theory mitigation pass, and stress-language UX correction are complete. The next unblocked task remains TQ-017.
 
 ## Task Details
 
@@ -99,7 +100,7 @@ The MVP queue, first mitigation voice-guide pass, GitHub Pages mitigation, `rede
 
 ### TQ-004: Implement Active SOS Wizard
 
-- Goal: Implement the guided panic support flow from `prefile.md`.
+- Goal: Implement the guided stress support flow from `prefile.md`.
 - Likely files: `components/SosWizard.tsx`, `data/reassurance.ts`, tests.
 - Status: Done.
 - Outcome: Added `SosWizard`, default reassurance data, branch wiring, exit controls, and tests for progression/support-contact behavior.
@@ -154,14 +155,14 @@ The MVP queue, first mitigation voice-guide pass, GitHub Pages mitigation, `rede
 
 ### TQ-008: Rewrite And Verify Safety/Education Copy
 
-- Goal: Make panic education helpful, safe, bounded, and non-diagnostic.
+- Goal: Make stress education helpful, safe, bounded, and non-diagnostic.
 - Likely files: `data/education.ts`, `components/EducationView.tsx`, `components/SafetyNotice.tsx`.
 - Status: Done.
 - Outcome: Added bounded education content, `EducationView`, and reusable `SafetyNotice`, with tests asserting urgent-help and non-diagnostic copy.
 - Acceptance criteria:
   - Copy avoids diagnosis and absolute medical reassurance.
   - Severe/new/unusual symptoms point to emergency or trusted human support.
-  - Disclaimers are visible but not panic-path blockers.
+  - Disclaimers are visible but not stress-path blockers.
 - Verification:
   - Reviewer pass against `STANDARDS.md`.
 
@@ -178,7 +179,7 @@ The MVP queue, first mitigation voice-guide pass, GitHub Pages mitigation, `rede
 - Verification:
   - Component and persistence tests.
 
-### TQ-010: Add Offline Fun/Pre-Panic Tools
+### TQ-010: Add Offline Fun/Pre-Stress Tools
 
 - Goal: Add gentle playful support inspired by Lumina's Spark Joy and Virtual Puppet Theater's embodied fun, without heavy dependencies.
 - Likely files: `data/joy.ts`, `components/SparkJoyView.tsx`, `components/PracticeView.tsx`.
@@ -353,7 +354,7 @@ The MVP queue, first mitigation voice-guide pass, GitHub Pages mitigation, `rede
 - Status: Done.
 - Outcome: Added desktop side navigation, mobile bottom navigation, redesigned home hero/bento cards, red SOS treatment, calm visual, grounding progress rail, local design tokens, and updated tests for the new home headline.
 - Acceptance criteria:
-  - Existing panic-support flows still work.
+  - Existing stress-support flows still work.
   - No new network/CDN/runtime service dependency is added.
   - Existing safety, local storage, and voice guide behavior remains intact.
   - Build and tests pass.
@@ -366,7 +367,7 @@ The MVP queue, first mitigation voice-guide pass, GitHub Pages mitigation, `rede
 
 ### TQ-021: Implement UX Theory Mitigations
 
-- Goal: Reduce ClearSpace UX risks around active-panic choice overload, repeated-use staleness, shallow personalization, breathing backfire, safety-behavior reinforcement, unproven effectiveness, and crisis ambiguity.
+- Goal: Reduce ClearSpace UX risks around active-stress choice overload, repeated-use staleness, shallow personalization, breathing backfire, safety-behavior reinforcement, unproven effectiveness, and crisis ambiguity.
 - Likely files: `clearspace/UX_MITIGATION_AUDIT.md`, `clearspace/src/App.tsx`, `clearspace/src/types.ts`, `clearspace/src/components/*`, `clearspace/src/data/focusProfiles.ts`, `clearspace/src/services/guardrails.ts`, tests, styles, project-control docs.
 - Status: Done.
 - Outcome: Added SOS focus mode, breathing-to-grounding escape, local focus profiles/tool ordering, optional post-tool check-ins saved to local storage, deterministic journal red-flag routing, and audit notes.
@@ -383,6 +384,25 @@ The MVP queue, first mitigation voice-guide pass, GitHub Pages mitigation, `rede
   - Mobile-width Chrome smoke: primary SOS and secondary actions clear of bottom navigation; SOS focus mode hides shell navigation.
 - Rollback:
   - Revert the TQ-021 component/data/service/test/style changes; local `support-check-ins`, `focus-profile`, and `sos-session-count` keys can remain harmlessly unused.
+
+### TQ-022: Replace User-Facing Symptom Labels With Stress Language
+
+- Goal: Make ClearSpace calmer for high-anxiety users by using stress-support language in product UX and public docs, while clearly stating what AI, TTS, and STT capabilities are actually present.
+- Likely files: `clearspace/src/**`, `README.md`, `docs/index.html`, project-control docs.
+- Status: Done.
+- Outcome: User-facing app copy, public docs, and active project-control docs now use stress-support language; Settings, README, and the landing page state that AI/STT are not connected and that the only voice feature is optional scripted local browser `speechSynthesis`.
+- Acceptance criteria:
+  - App UI does not use stronger symptom-label product copy.
+  - AI status is explicit: no live model/API connection.
+  - TTS status is explicit: optional local scripted browser speech output.
+  - STT status is explicit: no microphone access or speech transcription.
+  - Existing SOS, breathing, grounding, settings, safety, and test behavior remain intact.
+- Verification:
+  - Run `cd clearspace && npm test`.
+  - Run `cd clearspace && npm run build`.
+  - Search app and public docs for the removed product wording.
+- Rollback:
+  - Revert copy-only changes if a future clinical/legal review requires different wording.
 
 ## Backlog
 

@@ -78,7 +78,7 @@ Acceptance criteria:
 
 Acceptance criteria:
 
-- The active panic flow works end to end.
+- The active stress flow works end to end.
 - Back/exit paths are clear.
 - Components are small enough to test and maintain.
 
@@ -87,7 +87,7 @@ Acceptance criteria:
 - Add a typed `useLocalStorage` hook modeled after Lumina's pattern.
 - Persist reassurance phrases, toolkit checklist, support contact, low-stimulation setting, voice preference, and journal entries.
 - Add malformed-storage fallback handling.
-- Add offline Spark Joy content inspired by Lumina's offline fallback, rewritten for panic support.
+- Add offline Spark Joy content inspired by Lumina's offline fallback, rewritten for stress support.
 
 Acceptance criteria:
 
@@ -110,7 +110,7 @@ Acceptance criteria:
 
 ### Phase 4: Fun Helpful Layer
 
-- Add nonblocking "Spark Joy" or "Shift My Attention" cards for pre-panic and post-panic use.
+- Add nonblocking "Spark Joy" or "Shift My Attention" cards for early-stress and post-stress use.
 - Include short offline options: silly prompt, sensory scavenger hunt, micro-story, color hunt, gratitude/noticing prompt, comforting animation.
 - Add completion feedback that feels warm without being infantilizing.
 
@@ -166,7 +166,7 @@ Each future task should include:
 | Risk | Mitigation |
 | --- | --- |
 | Health advice becomes too absolute. | Keep copy bounded, crisis-aware, and reviewed against `STANDARDS.md`. |
-| Fun layer distracts from panic support. | Keep SOS first and fun features optional. |
+| Fun layer distracts from stress support. | Keep SOS first and fun features optional. |
 | Prototype stays as one large file. | Split components in Phase 1 before adding new features. |
 | Local storage leaks sensitive details on shared devices. | Minimize stored fields, avoid cloud sync, consider export/delete controls in backlog. |
 | Voice/camera features create privacy risk. | Exclude them from MVP; require explicit future decision. |

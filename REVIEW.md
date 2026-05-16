@@ -18,14 +18,14 @@ Primary files reviewed:
 
 Needs Fixes before it can be called a full-function app.
 
-The current app is a good local-first MVP. It is intentionally conservative and useful without accounts, network, AI, microphone, or server dependencies. That was the correct early choice for a panic-support tool. It is not yet a full-function assistant because voice features are only represented as a dormant setting, AI is intentionally not integrated, personalization is global rather than profile-aware, and guardrails are static copy rather than enforceable runtime policy.
+The current app is a good local-first MVP. It is intentionally conservative and useful without accounts, network, AI, microphone, or server dependencies. That was the correct early choice for a stress-support tool. It is not yet a full-function assistant because voice features are only represented as a dormant setting, AI is intentionally not integrated, personalization is global rather than profile-aware, and guardrails are static copy rather than enforceable runtime policy.
 
 ## Why No AI Is Connected
 
 AI is absent by design, not by accident.
 
 - `DECISIONS.md` D-008 explicitly excludes AI-generated health guidance from the MVP.
-- `GOAL.md` and `STANDARDS.md` prioritize local-first, no-account, offline panic support.
+- `GOAL.md` and `STANDARDS.md` prioritize local-first, no-account, offline stress support.
 - AI would require API keys, network dependency, provider choice, request redaction, rate limiting, model behavior tests, opt-in UX, crisis escalation handling, and a policy boundary that prevents diagnosis or medical advice.
 - In this domain, a weak AI integration would make the app less safe, not more complete.
 
@@ -35,16 +35,16 @@ AI should be added only after an AI readiness layer exists: explicit opt-in, no 
 
 | Severity | Category | Finding | Why It Matters | Required Fix |
 |---|---|---|---|---|
-| High | UX / Correctness | The `Voice guide` preference exists but does not drive any TTS behavior. See `SettingsView.tsx` lines 11 and 197-203, and `App.tsx` lines 46-49 where the preference is stored but never consumed by breathing, grounding, SOS, or education. | A user can turn on a feature that does nothing. In a panic app, false affordances reduce trust. | Either implement browser TTS for selected scripts or hide/rename the setting until implemented. |
+| High | UX / Correctness | The `Voice guide` preference exists but does not drive any TTS behavior. See `SettingsView.tsx` lines 11 and 197-203, and `App.tsx` lines 46-49 where the preference is stored but never consumed by breathing, grounding, SOS, or education. | A user can turn on a feature that does nothing. In a stress app, false affordances reduce trust. | Either implement browser TTS for selected scripts or hide/rename the setting until implemented. |
 | High | Product Scope / Safety | No AI boundary or guardrail architecture exists. | Adding AI directly inside this app would risk unsafe health guidance, privacy leaks, API-key exposure, and non-deterministic crisis behavior. | Build an AI readiness layer first: opt-in, server/proxy boundary if using paid APIs, redaction, response allowlist/refusal rules, crisis routing, audit logging policy, and tests. |
-| High | Voice / Privacy | STT is absent, and there is no microphone permission UX, transcript control, or fallback. | Speech input can help during panic, but microphone access is privacy-sensitive and browser support/reliability varies. | Add STT only as optional, user-initiated input outside default SOS. Include permission copy, transcript preview, delete controls, and no-network fallback behavior. |
-| High | Personalization | Personalization is device-global, not per-user or per-context. See `App.tsx` lines 41-64 where all preferences are one local state set. | A shared device can expose support contacts and journal notes. A single global profile cannot adapt to different panic triggers, sensory preferences, or user needs. | Add local profiles or a private mode, plus focus plans for pre-panic, active panic, post-panic, nighttime, public-place, and sensory-overload contexts. |
+| High | Voice / Privacy | STT is absent, and there is no microphone permission UX, transcript control, or fallback. | Speech input can help during stress, but microphone access is privacy-sensitive and browser support/reliability varies. | Add STT only as optional, user-initiated input outside default SOS. Include permission copy, transcript preview, delete controls, and no-network fallback behavior. |
+| High | Personalization | Personalization is device-global, not per-user or per-context. See `App.tsx` lines 41-64 where all preferences are one local state set. | A shared device can expose support contacts and journal notes. A single global profile cannot adapt to different stress triggers, sensory preferences, or user needs. | Add local profiles or a private mode, plus focus plans for early-stress, active stress, post-stress, nighttime, public-place, and sensory-overload contexts. |
 | High | Safety Guardrails | Guardrails are currently static education copy. `education.ts` lines 1-14 is good baseline copy, but there is no runtime classifier or routing for self-harm, chest pain, fainting, severe breathing trouble, or unsafe AI/STT content. | Static copy is not enough once AI, STT, or free-text assistance enters the app. | Create a deterministic guardrail module before AI/STT: red-flag phrase detection, emergency/support routing, refusal templates, and tests. |
 | Medium | Privacy / Data Integrity | Local storage reads cast arbitrary JSON as trusted typed data. See `useLocalStorage.ts` lines 12-16. | Malformed but parseable data can produce bad UI states. Sensitive fields persist indefinitely on shared devices. | Add schema validation/migration, storage versioning, storage write error handling, and optional local data expiration/private mode. |
 | Medium | Data Deletion | Per-entry delete happens immediately, while delete-all has a confirmation step. See `JournalView.tsx` per-entry delete flow. | Immediate single-note deletion is probably acceptable, but accidental taps on mobile are plausible. | Consider undo snackbar or confirm for individual journal deletion. |
 | Medium | Release Readiness | No PWA/offline cache exists. | The app is local-first in data model, but not reliably available when offline unless it has already loaded and remains cached by the browser. | Add PWA/service worker/offline cache after deciding release target. |
-| Medium | Accessibility | Baseline accessibility work is present, but no automated a11y tool, screen-reader pass, or real-device pass has run. | Panic use often overlaps with impaired attention, tremor, low vision, or voice/keyboard reliance. | Add axe/pa11y or equivalent, run real-device mobile and screen-reader QA, and record results. |
-| Medium | Preferences | Preferences are too shallow for a full app: low-stim and dormant voice only. | Users need the app to adapt before panic escalates. | Add focus modes, sensory profile, preferred tool order, support scripts, "do not say" phrases, emergency region, and preferred modality. |
+| Medium | Accessibility | Baseline accessibility work is present, but no automated a11y tool, screen-reader pass, or real-device pass has run. | Stress use often overlaps with impaired attention, tremor, low vision, or voice/keyboard reliance. | Add axe/pa11y or equivalent, run real-device mobile and screen-reader QA, and record results. |
+| Medium | Preferences | Preferences are too shallow for a full app: low-stim and dormant voice only. | Users need the app to adapt before stress escalates. | Add focus modes, sensory profile, preferred tool order, support scripts, "do not say" phrases, emergency region, and preferred modality. |
 | Medium | AI / Privacy | Journal entries and support contact data are local-only today, but there is no policy preventing future AI calls from sending them. | Future implementation could accidentally leak sensitive local content. | Add an explicit AI data-sharing policy object and tests: default no journal/support-contact upload, user must choose what to include. |
 | Low | Correctness | Toolkit item IDs still use `Date.now()` in `SettingsView.tsx` lines 47-53. | Collision risk is low but unnecessary now that journal IDs use stronger generation. | Reuse the stronger ID helper pattern for toolkit items. |
 
@@ -107,7 +107,7 @@ The app remains lightweight. TTS using browser speech synthesis can stay light. 
 
 ## UI/UX Impact
 
-For active panic, the current app is intentionally simple. That is good. A "full function" version should not turn the home screen into a dashboard.
+For active stress, the current app is intentionally simple. That is good. A "full function" version should not turn the home screen into a dashboard.
 
 Recommended UX model:
 
@@ -121,7 +121,7 @@ Recommended UX model:
 
 Highest regression risks:
 
-- AI or STT makes the panic path slower.
+- AI or STT makes the stress path slower.
 - Voice output becomes intrusive or hard to stop.
 - Network failures break support flows.
 - Local sensitive data leaks through AI calls.
@@ -162,7 +162,7 @@ Required before connecting AI:
 
 ## Optional Improvements
 
-- Local "panic plan" builder with preferred phrase, grounding method, support contact, and environment tips.
+- Local "stress plan" builder with preferred phrase, grounding method, support contact, and environment tips.
 - Local session recap: what helped, not just journal text.
 - Support-contact message templates that the user can copy manually.
 - Gentle companion visual using CSS/SVG only.
