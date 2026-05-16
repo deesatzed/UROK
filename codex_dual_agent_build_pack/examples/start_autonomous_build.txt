@@ -1,0 +1,6 @@
+Use the autonomous_orchestrator skill.
+
+Build as much as possible without human interruption.
+Use Claude Code as a bounded parallel worker or reviewer when it can safely help.
+Stop only if the build is finished, unsafe, or truly blocked.
+Update PROGRESS.md, DECISIONS.md, and TASK_QUEUE.md after meaningful work.

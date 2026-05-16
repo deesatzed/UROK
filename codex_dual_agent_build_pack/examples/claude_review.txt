@@ -1,0 +1,5 @@
+Use the claude_parallel_worker skill to ask Claude Code for a skeptical review of the current diff.
+
+Codex must evaluate Claude's findings before accepting any changes.
+Classify each finding as Accepted, Rejected, or Needs Investigation.
+Update PROGRESS.md and DECISIONS.md if needed.

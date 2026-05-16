@@ -1,0 +1,245 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="ClearSpace is a local-first panic-support app with SOS guidance, breathing, grounding, local personalization, and gentle offline prompts."
+    />
+    <title>ClearSpace | Local-first panic support</title>
+    <style>
+      :root {
+        color: #102a43;
+        background: #eef7f5;
+        font-family:
+          Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+          "Segoe UI", sans-serif;
+        font-synthesis: none;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        min-width: 320px;
+        margin: 0;
+      }
+
+      a {
+        color: inherit;
+      }
+
+      .page {
+        min-height: 100vh;
+        display: grid;
+        background:
+          linear-gradient(135deg, rgba(216, 243, 239, 0.9), rgba(254, 243, 199, 0.45)),
+          #eef7f5;
+      }
+
+      .hero {
+        width: min(100%, 1120px);
+        min-height: 100vh;
+        margin: 0 auto;
+        padding: 32px clamp(20px, 5vw, 56px);
+        display: grid;
+        align-content: center;
+        gap: 28px;
+      }
+
+      .nav {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+      }
+
+      .brand {
+        display: inline-flex;
+        align-items: center;
+        gap: 12px;
+        font-weight: 800;
+      }
+
+      .mark {
+        width: 42px;
+        height: 42px;
+        display: inline-grid;
+        place-items: center;
+        border-radius: 50%;
+        color: #0f766e;
+        background: #d8f3ef;
+      }
+
+      .nav a,
+      .cta {
+        min-height: 44px;
+        padding: 10px 14px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid rgba(15, 118, 110, 0.2);
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.78);
+        font-weight: 800;
+        text-decoration: none;
+      }
+
+      .content {
+        display: grid;
+        gap: 28px;
+      }
+
+      .eyebrow {
+        margin: 0 0 12px;
+        color: #0f766e;
+        font-size: 0.78rem;
+        font-weight: 900;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+      }
+
+      h1 {
+        max-width: 840px;
+        margin: 0;
+        font-size: clamp(3rem, 10vw, 6.8rem);
+        line-height: 0.94;
+        letter-spacing: 0;
+      }
+
+      .lead {
+        max-width: 700px;
+        margin: 0;
+        color: #52616b;
+        font-size: clamp(1.05rem, 2vw, 1.28rem);
+        line-height: 1.65;
+      }
+
+      .actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+      }
+
+      .cta.primary {
+        color: #ffffff;
+        border-color: #0f766e;
+        background: #0f766e;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 14px;
+      }
+
+      .card {
+        min-height: 150px;
+        padding: 20px;
+        border: 1px solid rgba(15, 118, 110, 0.16);
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.82);
+      }
+
+      .card h2 {
+        margin: 0 0 10px;
+        font-size: 1.05rem;
+      }
+
+      .card p {
+        margin: 0;
+        color: #52616b;
+        line-height: 1.55;
+      }
+
+      .note {
+        max-width: 780px;
+        margin: 0;
+        color: #52616b;
+        font-size: 0.95rem;
+        line-height: 1.55;
+      }
+
+      @media (max-width: 760px) {
+        .hero {
+          align-content: start;
+          padding-top: 22px;
+        }
+
+        .nav {
+          align-items: flex-start;
+          flex-direction: column;
+        }
+
+        .grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="page">
+      <section class="hero" aria-labelledby="title">
+        <nav class="nav" aria-label="Project links">
+          <div class="brand">
+            <span class="mark" aria-hidden="true">♥</span>
+            <span>ClearSpace</span>
+          </div>
+          <a href="https://github.com/deesatzed/UROK">GitHub</a>
+        </nav>
+
+        <div class="content">
+          <div>
+            <p class="eyebrow">Local-first panic support</p>
+            <h1 id="title">One steady step when panic gets loud.</h1>
+          </div>
+          <p class="lead">
+            ClearSpace offers a calm SOS flow, paced breathing, grounding,
+            local personalization, optional scripted voice guidance, and gentle
+            offline prompts without accounts, telemetry, cloud sync, or AI in
+            the critical support path.
+          </p>
+          <div class="actions" aria-label="Primary actions">
+            <a
+              class="cta primary"
+              href="https://github.com/deesatzed/UROK/tree/main/clearspace"
+              >Open app source</a
+            >
+            <a class="cta" href="https://github.com/deesatzed/UROK#readme"
+              >Read project notes</a
+            >
+          </div>
+          <div class="grid" aria-label="Highlights">
+            <article class="card">
+              <h2>Fast SOS</h2>
+              <p>
+                A dominant first action leads to scripted grounding and a choice
+                of breathing or 5-4-3-2-1 support.
+              </p>
+            </article>
+            <article class="card">
+              <h2>Private by default</h2>
+              <p>
+                Preferences, support contact, toolkit items, and journal notes
+                stay in browser local storage.
+              </p>
+            </article>
+            <article class="card">
+              <h2>Careful expansion</h2>
+              <p>
+                AI and speech input remain gated behind deterministic
+                guardrails, privacy controls, validation, and fallbacks.
+              </p>
+            </article>
+          </div>
+          <p class="note">
+            ClearSpace is a support tool, not a medical device. It does not
+            diagnose symptoms, prescribe treatment, or replace emergency care.
+          </p>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>

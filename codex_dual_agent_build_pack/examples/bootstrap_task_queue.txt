@@ -1,0 +1,5 @@
+Use the autonomous_orchestrator skill.
+
+Read GOAL.md, STANDARDS.md, IMPLEMENT.md, DECISIONS.md, and PROGRESS.md.
+Create TASK_QUEUE.md from the implementation plan if it does not already exist.
+Do not code yet.

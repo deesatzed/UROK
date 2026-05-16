@@ -1,0 +1,6 @@
+Use the project_initializer skill.
+
+Create the project-control files for this project.
+
+User instruction:
+[PASTE YOUR APP OR REPO IDEA HERE]

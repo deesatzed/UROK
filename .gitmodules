@@ -1,0 +1,7 @@
+[submodule "lumina"]
+	path = lumina
+	url = https://github.com/deesatzed/lumina.git
+
+[submodule "virtual-puppet-theater"]
+	path = virtual-puppet-theater
+	url = https://github.com/rhmoller/virtual-puppet-theater.git

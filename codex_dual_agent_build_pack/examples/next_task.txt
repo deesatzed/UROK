@@ -1,0 +1,7 @@
+Read AGENTS.md, GOAL.md, STANDARDS.md, IMPLEMENT.md, DECISIONS.md, PROGRESS.md, and TASK_QUEUE.md.
+
+Work only on the next Ready or unblocked task.
+Make the smallest useful change.
+Use Claude Code as reviewer or helper only if safe.
+Run or document verification.
+Update PROGRESS.md, DECISIONS.md, and TASK_QUEUE.md before finishing.
