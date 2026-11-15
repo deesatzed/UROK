@@ -13,6 +13,8 @@ The current project contains:
 - supporting reference codebases: local-only `lumina/` and `virtual-puppet-theater/`.
 - landing surface: `README.md` and `docs/index.html`.
 
+The current guide uses `src/data/guideCues.json` for on-screen and recorded scripts, `public/voices/` for stock clips, and `src/services/voicePack.ts` plus `public/voice-studio/` for optional setup-time synthesis. Vite emits the production cache worker from `scripts/offline-worker.js`.
+
 ## Current Main App Stack
 
 `clearspace/` uses:

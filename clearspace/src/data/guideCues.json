@@ -1,0 +1,54 @@
+{
+  "surface": {
+    "title": "Feel one steady surface.",
+    "body": "Rest a hand on your chair, your clothing, or the floor. Notice the texture."
+  },
+  "look": {
+    "title": "Find one color nearby.",
+    "body": "Let your eyes rest on one object. Notice a shade or an edge."
+  },
+  "ease": {
+    "title": "Give your hands a rest.",
+    "body": "If it feels comfortable, let your fingers loosen a little."
+  },
+  "choice": {
+    "title": "What would help next?",
+    "body": "Choose a different exercise or finish here."
+  },
+  "breathIn": {
+    "title": "Breathe in gently.",
+    "body": ""
+  },
+  "breathOut": {
+    "title": "Let the breath out.",
+    "body": ""
+  },
+  "see": {
+    "title": "Name 5 things you can see.",
+    "body": "Look for colors, shapes, or shadows."
+  },
+  "touch": {
+    "title": "Name 4 things you can touch.",
+    "body": "Notice the texture of clothing or a nearby surface."
+  },
+  "hear": {
+    "title": "Name 3 things you can hear.",
+    "body": "A quiet sound nearby counts."
+  },
+  "smell": {
+    "title": "Name 2 things you can smell.",
+    "body": "If nothing comes to mind, move on whenever you like."
+  },
+  "taste": {
+    "title": "Name 1 thing you can taste.",
+    "body": "You can also remember a familiar flavor."
+  },
+  "finished": {
+    "title": "You can finish here.",
+    "body": "Take a moment to decide what you want to do next."
+  },
+  "ownPace": {
+    "title": "Breathe at your own pace.",
+    "body": "Let the breath come and go comfortably. Follow the optional count only if it feels easy."
+  }
+}

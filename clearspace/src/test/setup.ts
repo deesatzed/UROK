@@ -49,6 +49,9 @@ class MockSpeechSynthesisUtterance {
 }
 
 const speechSynthesisMock = {
+  getVoices: vi.fn(() => [
+    { lang: "en-US", localService: true, name: "Local English" },
+  ]),
   cancel: vi.fn(() => {
     speechSynthesisMock.speaking = false;
     speechSynthesisMock.paused = false;
@@ -78,3 +81,24 @@ Object.defineProperty(window, "speechSynthesis", {
   value: speechSynthesisMock,
   configurable: true,
 });
+
+Object.defineProperty(window, "scrollTo", {
+  value: vi.fn(),
+  configurable: true,
+});
+Object.defineProperty(HTMLMediaElement.prototype, "play", {
+  value: vi.fn().mockResolvedValue(undefined),
+  configurable: true,
+});
+Object.defineProperty(HTMLMediaElement.prototype, "pause", {
+  value: vi.fn(),
+  configurable: true,
+});
+if (!HTMLDialogElement.prototype.showModal) {
+  HTMLDialogElement.prototype.showModal = function () {
+    this.setAttribute("open", "");
+  };
+  HTMLDialogElement.prototype.close = function () {
+    this.removeAttribute("open");
+  };
+}

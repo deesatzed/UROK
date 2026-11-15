@@ -1,4 +1,7 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { UrgentHelp } from "./components/UrgentHelp";
+import { loadPack, type PreparedPack } from "./services/voicePack";
+import type { OpeningCue } from "./data/guide";
 import { AppShell } from "./components/AppShell";
 import { BreathingTool } from "./components/BreathingTool";
 import { CheckInView } from "./components/CheckInView";
@@ -14,10 +17,7 @@ import { defaultReassurancePhrases } from "./data/reassurance";
 import { defaultToolkitItems } from "./data/toolkit";
 import { useLocalStorage } from "./hooks/useLocalStorage";
 import { useSpeechGuide } from "./hooks/useSpeechGuide";
-import {
-  migrateToolkitItems,
-  storageValidators,
-} from "./storage/appStorage";
+import { migrateToolkitItems, storageValidators } from "./storage/appStorage";
 import type {
   FocusProfileId,
   JournalEntry,
@@ -93,17 +93,57 @@ function App() {
     [],
     { validate: storageValidators.journalEntries },
   );
-  const [supportCheckIns, setSupportCheckIns] = useLocalStorage<SupportCheckIn[]>(
-    "support-check-ins",
-    [],
-    { validate: storageValidators.supportCheckIns },
-  );
+  const [supportCheckIns, setSupportCheckIns] = useLocalStorage<
+    SupportCheckIn[]
+  >("support-check-ins", [], { validate: storageValidators.supportCheckIns });
   const [sosSessionCount, setSosSessionCount] = useLocalStorage(
     "sos-session-count",
     0,
     { validate: storageValidators.nonNegativeInteger },
   );
-  const speechGuide = useSpeechGuide(voiceGuideEnabled);
+  const [opening, setOpening] = useLocalStorage<OpeningCue>(
+    "opening-cue",
+    "surface",
+    { validate: (v): v is OpeningCue => v === "surface" || v === "look" },
+  );
+  const [favorite, setFavorite] = useLocalStorage("favorite-reminder", "", {
+    validate: (v): v is string => typeof v === "string",
+  });
+  const savedPhrase = reassurancePhrases.includes(favorite) ? favorite : "";
+  const [pack, setPack] = useState<PreparedPack | null>(null);
+  const [voiceOverride, setVoiceOverride] = useState<boolean | null>(null);
+  const [helpOpen, setHelpOpen] = useState(false);
+  useEffect(() => {
+    let current = true;
+    loadPack()
+      .then((p) => {
+        if (current && p) setPack(p);
+      })
+      .catch(() => {});
+    return () => {
+      current = false;
+    };
+  }, []);
+  const speechGuide = useSpeechGuide(
+    !helpOpen && (voiceOverride ?? voiceGuideEnabled),
+    pack,
+    setVoiceOverride,
+  );
+  const inGuide =
+    currentView === "sos" ||
+    currentView === "breathe" ||
+    currentView === "ground";
+  const navigate = (view: ViewName) => {
+    speechGuide.stop();
+    if (view !== "sos" && view !== "breathe" && view !== "ground")
+      setVoiceOverride(null);
+    setCurrentView(view);
+  };
+  const openHelp = () => {
+    speechGuide.stop();
+    if (inGuide) setVoiceOverride(false);
+    setHelpOpen(true);
+  };
 
   const addJournalEntry = (entry: Omit<JournalEntry, "id" | "createdAt">) => {
     setJournalEntries((current) => [
@@ -128,12 +168,12 @@ function App() {
 
   const startSos = () => {
     setSosSessionCount((current) => current + 1);
-    setCurrentView("sos");
+    navigate("sos");
   };
 
   const finishTool = (source: SupportCheckIn["source"]) => {
     setCheckInSource(source);
-    setCurrentView("checkin");
+    navigate("checkin");
   };
 
   const addSupportCheckIn = (
@@ -147,50 +187,60 @@ function App() {
       },
       ...current,
     ]);
-    setCurrentView("home");
+    navigate("home");
   };
 
   return (
     <AppShell
       currentView={currentView}
       currentViewLabel={viewLabels[currentView]}
-      focusMode={currentView === "sos"}
+      focusMode={inGuide}
+      onHelp={openHelp}
       lowStimEnabled={lowStimEnabled}
-      onHome={() => setCurrentView("home")}
-      onNavigate={setCurrentView}
+      onHome={() => navigate("home")}
+      onNavigate={navigate}
       onToggleLowStim={() => setLowStimEnabled((value) => !value)}
     >
+      {helpOpen && (
+        <UrgentHelp
+          contact={supportContact}
+          onClose={() => setHelpOpen(false)}
+        />
+      )}
       {currentView === "home" ? (
         <HomeView
           focusProfile={focusProfile}
           lastCheckIn={supportCheckIns[0]}
-          onOpenBreathing={() => setCurrentView("breathe")}
-          onOpenGrounding={() => setCurrentView("ground")}
-          onOpenJoy={() => setCurrentView("joy")}
-          onOpenPractice={() => setCurrentView("practice")}
-          onOpenSettings={() => setCurrentView("settings")}
+          onOpenBreathing={() => navigate("breathe")}
+          onOpenGrounding={() => navigate("ground")}
+          onOpenJoy={() => navigate("joy")}
+          onOpenSettings={() => navigate("settings")}
           onStartSos={startSos}
         />
       ) : currentView === "sos" ? (
         <SosWizard
+          opening={opening}
+          selectedPhrase={savedPhrase}
           focusProfile={focusProfile}
           phraseOffset={Math.max(sosSessionCount - 1, 0)}
           phrases={reassurancePhrases}
           speechGuide={speechGuide}
           supportContact={supportContact}
-          onExitHome={() => setCurrentView("home")}
-          onExitJournal={() => setCurrentView("journal")}
-          onStartBreathing={() => setCurrentView("breathe")}
-          onStartGrounding={() => setCurrentView("ground")}
+          onExitHome={() => navigate("home")}
+          onExitJournal={() => navigate("journal")}
+          onStartBreathing={() => navigate("breathe")}
+          onStartGrounding={() => navigate("ground")}
         />
       ) : currentView === "breathe" ? (
         <BreathingTool
+          suspended={helpOpen}
           speechGuide={speechGuide}
           onDone={() => finishTool("breathing")}
-          onSwitchGrounding={() => setCurrentView("ground")}
+          onSwitchGrounding={() => navigate("ground")}
         />
       ) : currentView === "ground" ? (
         <GroundingTool
+          onSwitchBreathing={() => navigate("breathe")}
           speechGuide={speechGuide}
           onDone={() => finishTool("grounding")}
         />
@@ -198,22 +248,33 @@ function App() {
         <CheckInView
           source={checkInSource}
           onSave={addSupportCheckIn}
-          onSkip={() => setCurrentView("home")}
+          onSkip={() => navigate("home")}
         />
       ) : currentView === "practice" ? (
-        <EducationView onDone={() => setCurrentView("home")} />
+        <EducationView
+          onBreathe={() => navigate("breathe")}
+          onGround={() => navigate("ground")}
+          onPlan={() => navigate("settings")}
+          onDone={() => navigate("home")}
+        />
       ) : currentView === "journal" ? (
         <JournalView
           entries={journalEntries}
-          onBackHome={() => setCurrentView("home")}
+          onBackHome={() => navigate("home")}
           onClearEntries={clearJournalEntries}
           onDeleteEntry={deleteJournalEntry}
           onSaveEntry={addJournalEntry}
         />
       ) : currentView === "joy" ? (
-        <SparkJoyView onDone={() => setCurrentView("home")} />
+        <SparkJoyView onDone={() => navigate("home")} />
       ) : currentView === "settings" ? (
         <SettingsView
+          opening={opening}
+          setOpening={setOpening}
+          favorite={savedPhrase}
+          setFavorite={setFavorite}
+          pack={pack}
+          onPack={setPack}
           focusProfile={focusProfile}
           lowStimEnabled={lowStimEnabled}
           phrases={reassurancePhrases}
@@ -221,7 +282,7 @@ function App() {
           toolkitItems={toolkitItems}
           voiceGuideEnabled={voiceGuideEnabled}
           voiceGuideSupported={speechGuide.supported}
-          onBackHome={() => setCurrentView("home")}
+          onBackHome={() => navigate("home")}
           setFocusProfile={setFocusProfile}
           setLowStimEnabled={setLowStimEnabled}
           setPhrases={setReassurancePhrases}
@@ -240,7 +301,7 @@ function App() {
           <button
             className="secondary-button"
             type="button"
-            onClick={() => setCurrentView("home")}
+            onClick={() => navigate("home")}
           >
             Back to home
           </button>

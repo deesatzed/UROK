@@ -49,7 +49,7 @@ export type SupportCheckIn = {
   createdAt: string;
   source: "breathing" | "grounding";
   shift: CheckInShift;
-  helped: CheckInHelped;
+  helped?: CheckInHelped;
 };
 
 export type AppPreferences = {

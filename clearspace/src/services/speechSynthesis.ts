@@ -46,7 +46,15 @@ export function speakText(text: string, options: SpeakOptions = {}) {
     return false;
   }
 
+  // Some system voices send text to a remote service. Personal reminders stay on-device.
+  const voices = api.synthesis.getVoices?.() ?? [];
+  const voice =
+    voices.find(
+      (v) => v.localService && v.lang.toLowerCase().startsWith("en"),
+    ) ?? voices.find((v) => v.localService);
+  if (!voice) return false;
   const utterance = new api.Utterance(trimmedText);
+  utterance.voice = voice;
   utterance.pitch = options.pitch ?? 1;
   utterance.rate = options.rate ?? 0.92;
   utterance.volume = options.volume ?? 1;

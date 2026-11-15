@@ -12,7 +12,7 @@ export function createStorageKey(key: string) {
 }
 
 function writeLocalStorageValue<T>(key: string, value: T) {
-  if (typeof window === "undefined" || !window.localStorage) return;
+  if (typeof window === "undefined") return;
 
   try {
     window.localStorage.setItem(createStorageKey(key), JSON.stringify(value));
@@ -26,7 +26,7 @@ export function readLocalStorageValue<T>(
   fallback: T,
   options: LocalStorageOptions<T> = {},
 ): T {
-  if (typeof window === "undefined" || !window.localStorage) return fallback;
+  if (typeof window === "undefined") return fallback;
 
   try {
     const stored = window.localStorage.getItem(createStorageKey(key));
@@ -66,8 +66,7 @@ export function useLocalStorage<T>(
   const setValue = useCallback(
     (value: T | ((current: T) => T)) => {
       setStoredValue((current) => {
-        const nextValue =
-          value instanceof Function ? value(current) : value;
+        const nextValue = value instanceof Function ? value(current) : value;
 
         writeLocalStorageValue(key, nextValue);
 

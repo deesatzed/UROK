@@ -54,13 +54,23 @@ describe("speechSynthesis service", () => {
 
     expect(speech.cancel).toHaveBeenCalled();
     expect(speech.speak).toHaveBeenCalledTimes(1);
-    const utterance = speech.speak.mock.calls[0]?.[0] as SpeechSynthesisUtterance;
+    const utterance = speech.speak.mock
+      .calls[0]?.[0] as SpeechSynthesisUtterance;
     expect(utterance.text).toBe("Breathe in.");
     expect(utterance.rate).toBe(0.92);
     expect(onStart).toHaveBeenCalled();
 
     utterance.onend?.(new Event("end") as SpeechSynthesisEvent);
     expect(onEnd).toHaveBeenCalled();
+  });
+
+  it("keeps a personal reminder off remote synthesis services", () => {
+    const getVoices = vi.mocked(window.speechSynthesis.getVoices);
+    getVoices.mockReturnValueOnce([
+      { lang: "en-US", localService: false } as SpeechSynthesisVoice,
+    ]);
+    expect(speakText("A private reminder.")).toBe(false);
+    expect(speech.speak).not.toHaveBeenCalled();
   });
 
   it("does not speak blank text", () => {

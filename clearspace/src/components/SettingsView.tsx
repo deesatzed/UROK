@@ -2,9 +2,18 @@ import { useState } from "react";
 import { Plus, Trash2 } from "lucide-react";
 import { focusProfiles } from "../data/focusProfiles";
 import type { FocusProfileId, SupportContact, ToolkitItem } from "../types";
+import { VoiceStudio } from "./VoiceStudio";
+import { cues, type OpeningCue } from "../data/guide";
+import type { PreparedPack } from "../services/voicePack";
 import { SafetyNotice } from "./SafetyNotice";
 
 type SettingsViewProps = {
+  opening: OpeningCue;
+  setOpening: (v: OpeningCue) => void;
+  favorite: string;
+  setFavorite: (v: string) => void;
+  pack: PreparedPack | null;
+  onPack: (v: PreparedPack | null) => void;
   focusProfile: FocusProfileId;
   lowStimEnabled: boolean;
   phrases: string[];
@@ -22,10 +31,18 @@ type SettingsViewProps = {
   setToolkitItems: (
     value: ToolkitItem[] | ((current: ToolkitItem[]) => ToolkitItem[]),
   ) => void;
-  setVoiceGuideEnabled: (value: boolean | ((current: boolean) => boolean)) => void;
+  setVoiceGuideEnabled: (
+    value: boolean | ((current: boolean) => boolean),
+  ) => void;
 };
 
 export function SettingsView({
+  opening,
+  setOpening,
+  favorite,
+  setFavorite,
+  pack,
+  onPack,
   focusProfile,
   lowStimEnabled,
   phrases,
@@ -64,16 +81,61 @@ export function SettingsView({
   return (
     <section className="settings-view" aria-labelledby="settings-title">
       <div>
-        <p className="eyebrow">Personalization</p>
-        <h1 id="settings-title">Settings</h1>
+        <h1 id="settings-title">My support plan</h1>
         <p>
-          Keep the app personal without accounts or cloud sync. These settings
-          stay in local device storage.
+          Choose your first cue and how it sounds. Your choices stay on this
+          device.
         </p>
       </div>
 
       <div className="settings-section">
-        <h2>Reassurance phrases</h2>
+        <h2>When I start my guide</h2>
+        <label>
+          First cue
+          <select
+            value={opening}
+            onChange={(e) => setOpening(e.target.value as OpeningCue)}
+          >
+            <option value="surface">{cues.surface.title}</option>
+            <option value="look">{cues.look.title}</option>
+          </select>
+        </label>
+        <label>
+          Personal reminder
+          <select
+            value={favorite}
+            onChange={(e) => setFavorite(e.target.value)}
+          >
+            <option value="">Rotate my reminders</option>
+            {[...new Set(phrases.filter(Boolean))].map((p) => (
+              <option key={p} value={p}>
+                {p}
+              </option>
+            ))}
+          </select>
+        </label>
+        <div className="toggle-grid">
+          <button
+            type="button"
+            aria-pressed={voiceGuideEnabled}
+            disabled={!voiceGuideSupported}
+            onClick={() => setVoiceGuideEnabled((v) => !v)}
+          >
+            {voiceGuideSupported
+              ? "Voice guide " + (voiceGuideEnabled ? "on" : "off")
+              : "Voice guide unavailable"}
+          </button>
+        </div>
+        <VoiceStudio
+          opening={opening}
+          phrase={favorite}
+          pack={pack}
+          onPack={onPack}
+        />
+      </div>
+
+      <details className="settings-section">
+        <summary>My reminders</summary>
         <div className="settings-list">
           {phrases.map((phrase, index) => (
             <div className="settings-row" key={`${phrase}-${index}`}>
@@ -106,10 +168,10 @@ export function SettingsView({
             Add
           </button>
         </div>
-      </div>
+      </details>
 
-      <div className="settings-section">
-        <h2>Physical toolkit</h2>
+      <details className="settings-section">
+        <summary>My physical toolkit</summary>
         <div className="settings-list">
           {toolkitItems.map((item) => (
             <div className="settings-row" key={item.id}>
@@ -157,7 +219,7 @@ export function SettingsView({
             Add
           </button>
         </div>
-      </div>
+      </details>
 
       <div className="settings-section">
         <h2>Support contact</h2>
@@ -215,26 +277,7 @@ export function SettingsView({
           >
             Low stimulation {lowStimEnabled ? "on" : "off"}
           </button>
-          <button
-            type="button"
-            aria-pressed={voiceGuideSupported ? voiceGuideEnabled : false}
-            disabled={!voiceGuideSupported}
-            onClick={() => {
-              if (voiceGuideSupported) {
-                setVoiceGuideEnabled((current) => !current);
-              }
-            }}
-          >
-            {voiceGuideSupported
-              ? `Voice guide ${voiceGuideEnabled ? "on" : "off"}`
-              : "Voice guide unavailable"}
-          </button>
         </div>
-        <p className="capability-note">
-          Voice uses your browser's local speech output for fixed ClearSpace
-          scripts. ClearSpace does not use AI, speech-to-text, or microphone
-          input.
-        </p>
       </div>
 
       <SafetyNotice compact />

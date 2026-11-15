@@ -1,22 +1,17 @@
-type SafetyNoticeProps = {
-  compact?: boolean;
-};
-
-export function SafetyNotice({ compact = false }: SafetyNoticeProps) {
+export function SafetyNotice({ compact = false }: { compact?: boolean }) {
   return (
-    <aside className={compact ? "safety-notice compact" : "safety-notice"}>
-      <h2>Support tool, not medical care</h2>
+    <aside className="safety-notice">
+      <h2>When you need medical help</h2>
       <p>
-        ClearSpace does not diagnose symptoms or replace a clinician, therapist,
-        crisis line, emergency service, or trusted support person.
+        New, severe, or unusual symptoms deserve medical attention. ClearSpace
+        cannot tell what is causing them.
       </p>
-      {!compact ? (
+      {!compact && (
         <p>
-          If symptoms are new, severe, unusual, or you are unsure what is
-          happening, seek urgent human help. In the United States, call 911 for
-          immediate danger.
+          For immediate danger, call 911 in the U.S. or your local emergency
+          number.
         </p>
-      ) : null}
+      )}
     </aside>
   );
 }

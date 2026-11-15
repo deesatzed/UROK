@@ -24,13 +24,15 @@ This file records durable project decisions. Future agents should add rows rathe
 | D-014 | 2026-05-13 | Provide journal export through a local JSON data download and deletion through in-app local-storage controls. | Active | This gives users agency over sensitive journal data without adding accounts, sync, clipboard permissions, external APIs, or backend retention. |
 | D-015 | 2026-05-13 | Use baseline SPA accessibility affordances: skip link, named main landmark, visible focus outlines, and focus-to-main on view changes. | Active | The app is a single-page flow used during distress; predictable keyboard and assistive-technology navigation should be part of the baseline before release. |
 | D-016 | 2026-05-13 | Treat full-function expansion as a gated mitigation program; no live AI or STT may ship before deterministic guardrails, privacy controls, storage validation, and fallback paths exist. | Active | Stress-support AI/STT can create safety and privacy regressions if added directly. Gating preserves the reliable local SOS path while allowing TTS, profiles, STT, and AI to be added deliberately. |
-| D-017 | 2026-05-15 | Use local browser Web Speech `speechSynthesis` for scripted voice guidance; do not use cloud TTS or AI-generated spoken health guidance. | Active | This resolves the dormant voice preference without API keys, accounts, network dependency, microphone access, or generated medical content. The spoken content stays app-authored, deterministic, optional, and stoppable. |
 | D-018 | 2026-05-16 | Initialize `/Volumes/WS4TB/UROK` as the `main` Git repository with remote `https://github.com/deesatzed/UROK.git`; keep `lumina` and `virtual-puppet-theater` as submodules. | Active | The user requested commit/push to the UROK GitHub repo. The support directories already have their own Git histories and remotes, so submodules preserve those boundaries instead of flattening or rewriting them. |
 | D-019 | 2026-05-16 | Remove `lumina` and `virtual-puppet-theater` from root Git tracking and keep them as local-only support references. | Active | GitHub Pages failed because the `lumina` submodule URL was not publicly cloneable. Keeping support references local-only lets Pages check out and deploy the UROK landing page without changing the main app. |
 | D-020 | 2026-05-16 | Treat `redesign.md` as the current visual direction, but implement it with bundled React/CSS/lucide patterns instead of runtime Tailwind CDN, Google Fonts, Material Symbols, or external mockup images. | Active | The mockups define a useful ClearSpace layout and palette, but production standards require offline-capable bundled assets and no runtime CDN dependency in the stress-support path. |
 | D-021 | 2026-05-16 | Mitigate stress-support UX risks with deterministic local UX logic before adding AI/STT: SOS focus mode, breathing-to-grounding escape, focus profiles, optional local check-ins, and red-flag routing. | Active | These mitigations reduce choice overload, repeated-use staleness, breathing backfire risk, shallow personalization, false effectiveness claims, and crisis ambiguity without adding cloud, AI, telemetry, accounts, or microphone access. |
 | D-022 | 2026-05-16 | Use stress-support language in user-facing UX and docs; do not use the stronger symptom label as product copy. | Active | The target users may be more distressed by clinical alarm language. The app should keep urgent medical routing, but default UI copy should stay calmer and lower-load. |
 | D-023 | 2026-05-16 | Validate local-storage data at read time with per-key schemas and targeted migrations instead of trusting parsed JSON. | Active | Malformed but parseable local data can break UI state. Validators preserve valid existing data, migrate known legacy shapes, and fall back safely without adding accounts, sync, telemetry, or dependencies. |
+| D-024 | 2026-11-15 | Offer a sensory opening, immediate exercise switch and always-visible urgent help. Make pacing, listening and self-report optional. | Active | Someone under stress can act or leave with minimal reading. Practice holds source notes and guidance for recurring symptoms. |
+| D-025 | 2026-11-15 | Precache the core and included audio. Allow explicit, setup-only ZONOS rendering of fixed or user-authored words, saved atomically on-device. | Active | SOS can run offline after cache preparation, including where WebGPU and local device voices are unavailable. |
+
 
 ## Initial Default Decisions
 
@@ -44,6 +46,7 @@ This file records durable project decisions. Future agents should add rows rathe
 
 | ID | Superseded Date | Replacement | Notes |
 | --- | --- | --- | --- |
+| D-017 | 2026-11-15 | D-025 | The original Web Speech guide is now a local fallback for custom text. |
 | None | N/A | N/A | No decisions have been superseded yet. |
 
 ## Decision Rules For Future Agents

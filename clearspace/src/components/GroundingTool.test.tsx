@@ -23,7 +23,7 @@ function createSpeechGuide(
 }
 
 describe("GroundingTool", () => {
-  it("advances only after the current grounding step is complete", async () => {
+  it("advances when the optional tally reaches the current number", async () => {
     const user = userEvent.setup();
     render(<GroundingTool onDone={vi.fn()} />);
 
@@ -31,6 +31,7 @@ describe("GroundingTool", () => {
       screen.getByRole("heading", { name: /name 5 things you can see/i }),
     ).toBeInTheDocument();
 
+    await user.click(screen.getByText("Count with taps"));
     await user.click(screen.getByRole("button", { name: /item 1/i }));
     expect(
       screen.getByRole("heading", { name: /name 5 things you can see/i }),
@@ -57,6 +58,7 @@ describe("GroundingTool", () => {
       expect.stringMatching(/Name 5 things you can see/i),
     );
 
+    await user.click(screen.getByText("Count with taps"));
     await user.click(screen.getByRole("button", { name: /item 1/i }));
     await user.click(screen.getByRole("button", { name: /item 2/i }));
     await user.click(screen.getByRole("button", { name: /item 3/i }));

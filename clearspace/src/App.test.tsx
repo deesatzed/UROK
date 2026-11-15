@@ -16,7 +16,7 @@ afterEach(() => {
 });
 
 describe("App shell", () => {
-  it("renders the provisional ClearSpace home screen", () => {
+  it("renders the working ClearSpace home screen", () => {
     render(<App />);
 
     expect(
@@ -44,9 +44,11 @@ describe("App shell", () => {
       ).toHaveFocus(),
     );
     expect(
-      screen.getByRole("heading", { name: /understand stress support/i }),
+      screen.getByRole("heading", { name: /practice when you feel ready/i }),
     ).toBeInTheDocument();
-    expect(screen.getByText(/support, not diagnosis/i)).toBeInTheDocument();
+    expect(
+      screen.getByText(/cognitive behavioral therapy/i),
+    ).toBeInTheDocument();
 
     await user.click(screen.getByRole("button", { name: /back to home/i }));
     expect(
@@ -58,14 +60,15 @@ describe("App shell", () => {
     const user = userEvent.setup();
     render(<App />);
 
-    const toggle = screen.getByRole("button", { name: /low stim/i });
+    const toggle = screen.getByRole("button", { name: /dim screen/i });
     expect(toggle).toHaveAttribute("aria-pressed", "false");
 
     await user.click(toggle);
 
-    expect(
-      screen.getByRole("button", { name: /standard/i }),
-    ).toHaveAttribute("aria-pressed", "true");
+    expect(screen.getByRole("button", { name: /dim screen/i })).toHaveAttribute(
+      "aria-pressed",
+      "true",
+    );
   });
 
   it("walks through the SOS wizard and branches to breathing", async () => {
@@ -77,18 +80,17 @@ describe("App shell", () => {
     );
 
     expect(
-      screen.getByRole("heading", { name: /plant your feet/i }),
+      screen.getByRole("heading", { name: /feel one steady surface/i }),
     ).toBeInTheDocument();
 
-    await user.click(screen.getByRole("button", { name: /i am here/i }));
+    await user.click(screen.getByRole("button", { name: /next step/i }));
     expect(
-      screen.getByRole("heading", { name: /read this slowly/i }),
+      screen.getByRole("heading", { name: /your reminder/i }),
     ).toBeInTheDocument();
     expect(screen.getByText(/this feeling is intense/i)).toBeInTheDocument();
 
-    await user.click(screen.getByRole("button", { name: /i read it/i }));
-    await user.click(screen.getByRole("button", { name: /^next$/i }));
-    await user.click(screen.getByRole("button", { name: /^next$/i }));
+    await user.click(screen.getByRole("button", { name: /next step/i }));
+    await user.click(screen.getByRole("button", { name: /next step/i }));
 
     expect(
       screen.getByRole("heading", { name: /what would help next/i }),
@@ -96,7 +98,7 @@ describe("App shell", () => {
 
     await user.click(screen.getByRole("button", { name: /paced breathing/i }));
     expect(
-      screen.getByRole("heading", { name: /breathe in gently/i }),
+      screen.getByRole("heading", { name: /breathe at your own pace/i }),
     ).toBeInTheDocument();
   });
 
@@ -105,7 +107,7 @@ describe("App shell", () => {
     render(<App />);
 
     expect(
-      screen.getByRole("navigation", { name: /mobile navigation/i }),
+      screen.getByRole("navigation", { name: /main navigation/i }),
     ).toBeInTheDocument();
 
     await user.click(
@@ -113,7 +115,7 @@ describe("App shell", () => {
     );
 
     expect(
-      screen.queryByRole("navigation", { name: /mobile navigation/i }),
+      screen.queryByRole("navigation", { name: /main navigation/i }),
     ).not.toBeInTheDocument();
     expect(
       screen.queryByRole("complementary", { name: /primary navigation/i }),
@@ -129,11 +131,11 @@ describe("App shell", () => {
 
     await user.click(screen.getByRole("button", { name: /paced breathing/i }));
     expect(
-      screen.getByRole("heading", { name: /breathe in gently/i }),
+      screen.getByRole("heading", { name: /breathe at your own pace/i }),
     ).toBeInTheDocument();
 
     await user.click(
-      screen.getByRole("button", { name: /breathing feels worse/i }),
+      screen.getByRole("button", { name: /try grounding instead/i }),
     );
 
     expect(
@@ -152,6 +154,12 @@ describe("App shell", () => {
       screen.getByRole("heading", { name: /what changed/i }),
     ).toBeInTheDocument();
 
+    expect(
+      screen.getByRole("button", { name: /save check-in/i }),
+    ).toBeDisabled();
+    expect(
+      screen.getByRole("button", { name: /a little calmer/i }),
+    ).toHaveAttribute("aria-pressed", "false");
     await user.click(screen.getByRole("button", { name: /a little calmer/i }));
     await user.click(screen.getByRole("button", { name: /grounding helped/i }));
     await user.click(screen.getByRole("button", { name: /save check-in/i }));
@@ -187,10 +195,9 @@ describe("App shell", () => {
     await user.click(
       screen.getByRole("button", { name: /start calming support/i }),
     );
-    await user.click(screen.getByRole("button", { name: /i am here/i }));
-    await user.click(screen.getByRole("button", { name: /i read it/i }));
-    await user.click(screen.getByRole("button", { name: /^next$/i }));
-    await user.click(screen.getByRole("button", { name: /^next$/i }));
+    await user.click(
+      screen.getByRole("button", { name: /try a different exercise/i }),
+    );
 
     const branchActions = screen.getByLabelText(/next support options/i);
     const branchButtons = within(branchActions).getAllByRole("button");
@@ -201,9 +208,6 @@ describe("App shell", () => {
     const user = userEvent.setup();
     render(<App />);
 
-    await user.click(
-      screen.getByRole("button", { name: /start calming support/i }),
-    );
     await user.click(screen.getByRole("button", { name: /^journal$/i }));
     await user.type(
       screen.getByLabelText(/what may have triggered this/i),
@@ -226,10 +230,14 @@ describe("App shell", () => {
 
     await user.click(screen.getByRole("button", { name: /^settings$/i }));
 
+    await user.click(screen.getByText("My reminders"));
     await user.type(screen.getByLabelText(/add phrase/i), "I can pause.");
     await user.click(screen.getAllByRole("button", { name: /^add$/i })[0]!);
-    expect(screen.getByText("I can pause.")).toBeInTheDocument();
+    expect(
+      screen.getByRole("option", { name: "I can pause." }),
+    ).toBeInTheDocument();
 
+    await user.click(screen.getByText("My physical toolkit"));
     await user.click(screen.getByRole("button", { name: /need: sour candy/i }));
     expect(
       screen.getByRole("button", { name: /ready: sour candy/i }),
@@ -241,9 +249,7 @@ describe("App shell", () => {
     expect(
       screen.getByRole("button", { name: /voice guide on/i }),
     ).toHaveAttribute("aria-pressed", "true");
-    expect(
-      screen.getByText(/does not use ai, speech-to-text, or microphone input/i),
-    ).toBeInTheDocument();
+    expect(document.querySelector("iframe")).toBeNull();
 
     await user.click(screen.getByRole("button", { name: /back to home/i }));
     await user.click(
@@ -269,14 +275,18 @@ describe("App shell", () => {
       screen.getByRole("button", { name: /start calming support/i }),
     );
 
-    await waitFor(() => expect(speech.speak).toHaveBeenCalled());
-    const utterance = speech.speak.mock.calls[0]?.[0] as SpeechSynthesisUtterance;
-    expect(utterance.text).toMatch(/Plant your feet/i);
-    expect(utterance.text).toMatch(/Press both feet/i);
-
-    const cancelCount = speech.cancel.mock.calls.length;
-    await user.click(screen.getByRole("button", { name: /stop voice/i }));
-    expect(speech.cancel.mock.calls.length).toBeGreaterThan(cancelCount);
+    await waitFor(() =>
+      expect(HTMLMediaElement.prototype.play).toHaveBeenCalled(),
+    );
+    const players = vi.mocked(HTMLMediaElement.prototype.play).mock.contexts;
+    const clip = players[players.length - 1] as HTMLAudioElement;
+    expect(clip.src).toMatch(/voices\/surface\.mp3$/);
+    const pauses = vi.mocked(HTMLMediaElement.prototype.pause).mock.calls
+      .length;
+    await user.click(screen.getByRole("button", { name: /mute guide/i }));
+    expect(
+      vi.mocked(HTMLMediaElement.prototype.pause).mock.calls.length,
+    ).toBeGreaterThan(pauses);
   });
 
   it("does not read SOS guidance when voice guide is disabled", async () => {
@@ -289,12 +299,13 @@ describe("App shell", () => {
     );
 
     expect(speech.speak).not.toHaveBeenCalled();
+    expect(HTMLMediaElement.prototype.play).not.toHaveBeenCalled();
     expect(
-      screen.queryByRole("button", { name: /stop voice/i }),
+      screen.queryByRole("button", { name: /mute guide/i }),
     ).not.toBeInTheDocument();
   });
 
-  it("disables the voice guide preference when speech synthesis is unavailable", async () => {
+  it("plays included clips even when browser speech synthesis is unavailable", async () => {
     const user = userEvent.setup();
     const originalSpeechSynthesis = window.speechSynthesis;
 
@@ -307,9 +318,13 @@ describe("App shell", () => {
       render(<App />);
       await user.click(screen.getByRole("button", { name: /^settings$/i }));
 
-      expect(
-        screen.getByRole("button", { name: /voice guide unavailable/i }),
-      ).toBeDisabled();
+      await user.click(screen.getByRole("button", { name: /back to home/i }));
+      await user.click(
+        screen.getByRole("button", { name: /start calming support/i }),
+      );
+      await user.click(screen.getByRole("button", { name: /listen/i }));
+      expect(HTMLMediaElement.prototype.play).toHaveBeenCalled();
+      expect(document.querySelector("iframe")).toBeNull();
     } finally {
       Object.defineProperty(window, "speechSynthesis", {
         value: originalSpeechSynthesis,
@@ -331,11 +346,16 @@ describe("App shell", () => {
       screen.getByRole("button", { name: /start calming support/i }),
     );
 
-    await waitFor(() => expect(speech.speak).toHaveBeenCalled());
-    const cancelCount = speech.cancel.mock.calls.length;
+    await waitFor(() =>
+      expect(HTMLMediaElement.prototype.play).toHaveBeenCalled(),
+    );
+    const cancelCount = vi.mocked(HTMLMediaElement.prototype.pause).mock.calls
+      .length;
 
-    await user.click(screen.getByRole("button", { name: /^home$/i }));
-    expect(speech.cancel.mock.calls.length).toBeGreaterThan(cancelCount);
+    await user.click(screen.getByRole("button", { name: /exit guide/i }));
+    expect(
+      vi.mocked(HTMLMediaElement.prototype.pause).mock.calls.length,
+    ).toBeGreaterThan(cancelCount);
   });
 
   it("persists support contact settings across remounts", async () => {
@@ -363,21 +383,22 @@ describe("App shell", () => {
     render(<App />);
 
     await user.click(screen.getByRole("button", { name: /^practice$/i }));
-    expect(screen.getAllByText(/new, severe, unusual/i).length).toBeGreaterThan(0);
-    expect(screen.getByText(/call 911 for immediate danger/i)).toBeInTheDocument();
+    expect(
+      screen.getAllByText(/new, severe, or unusual/i).length,
+    ).toBeGreaterThan(0);
+    expect(screen.getByText(/for immediate danger/i)).toBeInTheDocument();
 
     await user.click(screen.getByRole("button", { name: /back to home/i }));
     await user.click(screen.getByRole("button", { name: /^settings$/i }));
-    expect(screen.getByText(/does not diagnose symptoms/i)).toBeInTheDocument();
+    expect(
+      screen.getByText(/cannot tell what is causing them/i),
+    ).toBeInTheDocument();
   });
 
   it("saves an optional journal note locally", async () => {
     const user = userEvent.setup();
     render(<App />);
 
-    await user.click(
-      screen.getByRole("button", { name: /start calming support/i }),
-    );
     await user.click(screen.getByRole("button", { name: /^journal$/i }));
 
     expect(screen.getByText(/no notes yet/i)).toBeInTheDocument();
@@ -389,22 +410,16 @@ describe("App shell", () => {
     await user.type(screen.getByLabelText(/what helped/i), "Grounding");
     await user.click(screen.getByRole("button", { name: /save note/i }));
 
-    await user.click(
-      screen.getByRole("button", { name: /start calming support/i }),
-    );
     await user.click(screen.getByRole("button", { name: /^journal$/i }));
 
     expect(screen.getByText(/crowded train/i)).toBeInTheDocument();
-    expect(screen.getByText(/grounding/i)).toBeInTheDocument();
+    expect(screen.getAllByText(/grounding/i).length).toBeGreaterThan(0);
   });
 
   it("exports and deletes journal notes locally", async () => {
     const user = userEvent.setup();
     render(<App />);
 
-    await user.click(
-      screen.getByRole("button", { name: /start calming support/i }),
-    );
     await user.click(screen.getByRole("button", { name: /^journal$/i }));
     await user.type(
       screen.getByLabelText(/what may have triggered this/i),
@@ -413,18 +428,15 @@ describe("App shell", () => {
     await user.type(screen.getByLabelText(/what helped/i), "Grounding");
     await user.click(screen.getByRole("button", { name: /save note/i }));
 
-    await user.click(
-      screen.getByRole("button", { name: /start calming support/i }),
-    );
     await user.click(screen.getByRole("button", { name: /^journal$/i }));
 
     const exportLink = screen.getByRole("link", {
       name: /download journal json/i,
     });
     expect(exportLink).toHaveAttribute("download", "clearspace-journal.json");
-    expect(
-      decodeURIComponent(exportLink.getAttribute("href") ?? ""),
-    ).toContain("Crowded train");
+    expect(decodeURIComponent(exportLink.getAttribute("href") ?? "")).toContain(
+      "Crowded train",
+    );
 
     await user.click(screen.getByRole("button", { name: /delete note/i }));
     expect(screen.getByText(/no notes yet/i)).toBeInTheDocument();
@@ -437,22 +449,18 @@ describe("App shell", () => {
     const user = userEvent.setup();
     render(<App />);
 
-    await user.click(
-      screen.getByRole("button", { name: /start calming support/i }),
-    );
     await user.click(screen.getByRole("button", { name: /^journal$/i }));
     await user.type(screen.getByLabelText(/what helped/i), "Breathing");
     await user.click(screen.getByRole("button", { name: /save note/i }));
 
-    await user.click(
-      screen.getByRole("button", { name: /start calming support/i }),
-    );
     await user.click(screen.getByRole("button", { name: /^journal$/i }));
 
     await user.click(screen.getByRole("button", { name: /delete all notes/i }));
     expect(screen.getByText(/breathing/i)).toBeInTheDocument();
 
-    await user.click(screen.getByRole("button", { name: /confirm delete all/i }));
+    await user.click(
+      screen.getByRole("button", { name: /confirm delete all/i }),
+    );
     expect(screen.getByText(/no notes yet/i)).toBeInTheDocument();
   });
 
@@ -460,15 +468,9 @@ describe("App shell", () => {
     const user = userEvent.setup();
     render(<App />);
 
-    await user.click(
-      screen.getByRole("button", { name: /start calming support/i }),
-    );
     await user.click(screen.getByRole("button", { name: /^journal$/i }));
     await user.click(screen.getByRole("button", { name: /^skip$/i }));
 
-    await user.click(
-      screen.getByRole("button", { name: /start calming support/i }),
-    );
     await user.click(screen.getByRole("button", { name: /^journal$/i }));
 
     expect(screen.getByText(/no notes yet/i)).toBeInTheDocument();
@@ -480,14 +482,89 @@ describe("App shell", () => {
 
     await user.click(screen.getByRole("button", { name: /spark joy/i }));
 
-    expect(screen.getByRole("heading", { name: /color hunt/i })).toBeInTheDocument();
+    expect(
+      screen.getByRole("heading", { name: /color hunt/i }),
+    ).toBeInTheDocument();
 
     await user.click(screen.getByRole("button", { name: /another/i }));
-    expect(screen.getByRole("heading", { name: /tiny reset/i })).toBeInTheDocument();
+    expect(
+      screen.getByRole("heading", { name: /tiny reset/i }),
+    ).toBeInTheDocument();
 
     await user.click(screen.getByRole("button", { name: /^done$/i }));
     expect(
       screen.getByRole("button", { name: /start calming support/i }),
     ).toBeInTheDocument();
+  });
+});
+
+describe("Choices during support", () => {
+  const click = (name: RegExp) =>
+    userEvent.click(screen.getByRole("button", { name }));
+  it("opens urgent help from the first cue, returns focus, and keeps the cue in place", async () => {
+    render(<App />);
+    await click(/start calming support/i);
+    const opener = screen.getByRole("button", { name: /urgent help/i });
+    await userEvent.click(opener);
+    const help = screen.getByRole("dialog", { name: /get urgent help/i });
+    expect(within(help).getByRole("heading")).toHaveFocus();
+    expect(
+      within(help).getByRole("link", { name: /call 911 in the U.S./i }),
+    ).toHaveAttribute("href", "tel:911");
+    await click(/go back/i);
+    expect(opener).toHaveFocus();
+    expect(
+      screen.getByRole("heading", { name: /feel one steady surface/i }),
+    ).toBeVisible();
+  });
+
+  it("allows an accessible opening and selected personal reminder to survive a reload", async () => {
+    const view = render(<App />);
+    await click(/set up my guide/i);
+    await userEvent.selectOptions(screen.getByLabelText("First cue"), "look");
+    await userEvent.selectOptions(
+      screen.getByLabelText("Personal reminder"),
+      "I can take the next small step.",
+    );
+    view.unmount();
+    render(<App />);
+    await click(/start calming support/i);
+    expect(
+      screen.getByRole("heading", { name: /find one color nearby/i }),
+    ).toBeVisible();
+    await click(/next step/i);
+    expect(screen.getByText("I can take the next small step.")).toBeVisible();
+  });
+
+  it("allows grounding to finish without tallying, and saves worsening without attributing benefit", async () => {
+    render(<App />);
+    await click(/start calming support/i);
+    await click(/try a different exercise/i);
+    await click(/5-4-3-2-1 grounding/i);
+    await click(/next sense/i);
+    expect(
+      screen.getByRole("heading", { name: /name 4 things/i }),
+    ).toHaveFocus();
+    await click(/done for now/i);
+    await click(/more intense/i);
+    await click(/save check-in/i);
+    const [entry] = JSON.parse(
+      localStorage.getItem("clearspace:support-check-ins")!,
+    );
+    expect(entry.shift).toBe("more-intense");
+    expect(entry).not.toHaveProperty("helped");
+  });
+
+  it("keeps a session mute across tools after urgent help interrupts audio", async () => {
+    render(<App />);
+    await click(/start calming support/i);
+    await click(/listen/i);
+    await click(/urgent help/i);
+    await click(/go back/i);
+    vi.clearAllMocks();
+    await click(/try a different exercise/i);
+    await click(/5-4-3-2-1 grounding/i);
+    expect(HTMLMediaElement.prototype.play).not.toHaveBeenCalled();
+    expect(screen.getByRole("button", { name: /listen/i })).toBeVisible();
   });
 });

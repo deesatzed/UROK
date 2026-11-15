@@ -1,156 +1,131 @@
 import { useEffect, useState } from "react";
-import { Pause, Play, RotateCcw, Volume2, VolumeX } from "lucide-react";
+import { ArrowRight, Pause, Play, RotateCcw } from "lucide-react";
+import { VoiceControl } from "./VoiceControl";
+import { cues, spokenCue } from "../data/guide";
 import {
   inactiveSpeechGuide,
   type SpeechGuideControls,
 } from "../hooks/useSpeechGuide";
 
-type BreathingToolProps = {
+type Props = {
   speechGuide?: SpeechGuideControls;
   onDone: () => void;
   onSwitchGrounding?: () => void;
+  suspended?: boolean;
 };
-
-type BreathPhase = "inhale" | "exhale";
-
-const phaseDurations: Record<BreathPhase, number> = {
-  inhale: 4,
-  exhale: 6,
-};
+const phaseSeconds = 4;
 
 export function BreathingTool({
   speechGuide = inactiveSpeechGuide,
   onDone,
   onSwitchGrounding,
-}: BreathingToolProps) {
-  const [phase, setPhase] = useState<BreathPhase>("inhale");
-  const [timeLeft, setTimeLeft] = useState(phaseDurations.inhale);
-  const [isActive, setIsActive] = useState(false);
-  const {
-    enabled: voiceEnabled,
-    isPaused: voicePaused,
-    isSpeaking: voiceSpeaking,
-    read: readVoice,
-    stop: stopVoice,
-    supported: voiceSupported,
-  } = speechGuide;
-  const speechText =
-    phase === "inhale"
-      ? "Breathe in gently for four."
-      : "Breathe out slowly for six.";
-  const showVoiceControls = voiceEnabled && voiceSupported;
-
+  suspended = false,
+}: Props) {
+  const [elapsed, setElapsed] = useState(0);
+  const [running, setRunning] = useState(false);
+  const [hasStarted, setHasStarted] = useState(false);
+  const phase =
+    elapsed % (phaseSeconds * 2) < phaseSeconds ? "breathIn" : "breathOut";
+  const remaining = phaseSeconds - (elapsed % phaseSeconds);
+  const { enabled, supported, read, stop } = speechGuide;
   useEffect(() => {
-    if (!isActive) return undefined;
-
-    const timer = window.setInterval(() => {
-      setTimeLeft((current) => {
-        if (current > 1) return current - 1;
-
-        const nextPhase = phase === "inhale" ? "exhale" : "inhale";
-        setPhase(nextPhase);
-        return phaseDurations[nextPhase];
-      });
-    }, 1000);
-
-    return () => window.clearInterval(timer);
-  }, [isActive, phase]);
-
-  const reset = () => {
-    setIsActive(false);
-    stopVoice();
-    setPhase("inhale");
-    setTimeLeft(phaseDurations.inhale);
-  };
-
+    if (suspended) setRunning(false);
+    if (!running || suspended) return;
+    const id = window.setInterval(() => setElapsed((n) => n + 1), 1000);
+    const pauseWhenHidden = () => {
+      if (document.hidden) setRunning(false);
+    };
+    document.addEventListener("visibilitychange", pauseWhenHidden);
+    return () => {
+      clearInterval(id);
+      document.removeEventListener("visibilitychange", pauseWhenHidden);
+    };
+  }, [running, suspended]);
   useEffect(() => {
-    if (!isActive || !showVoiceControls) return;
-
-    readVoice(speechText);
-  }, [isActive, readVoice, showVoiceControls, speechText]);
-
-  useEffect(() => {
-    if (!isActive) {
-      stopVoice();
-    }
-  }, [isActive, stopVoice]);
-
+    if (suspended || !enabled || !supported || (!running && hasStarted)) return;
+    read(spokenCue(running ? phase : "ownPace"));
+    return () => {
+      stop();
+    };
+  }, [running, hasStarted, suspended, enabled, supported, phase, read, stop]);
   useEffect(
     () => () => {
-      stopVoice();
+      stop();
     },
-    [stopVoice],
+    [stop],
   );
-
-  const toggleVoice = () => {
-    if (voiceSpeaking || voicePaused) {
-      stopVoice();
-      return;
-    }
-
-    readVoice(speechText);
-  };
-
-  const finish = () => {
-    stopVoice();
-    onDone();
-  };
-
-  const switchGrounding = () => {
-    stopVoice();
-    onSwitchGrounding?.();
-  };
-
+  function reset() {
+    setRunning(false);
+    setElapsed(0);
+    stop();
+  }
   return (
-    <section className="tool-view" aria-labelledby="breathing-title">
-      <p className="eyebrow">Paced breathing</p>
-      <h1 id="breathing-title">
-        {phase === "inhale" ? "Breathe in gently." : "Breathe out slowly."}
-      </h1>
-      <p>
-        Use a longer exhale than inhale. Pause whenever you need to; there is no
-        score to keep.
-      </p>
-
-      <button
-        className={isActive ? "breath-orb active" : "breath-orb"}
-        type="button"
-        onClick={() => setIsActive((value) => !value)}
-        aria-label={isActive ? "Pause breathing timer" : "Start breathing timer"}
-      >
-        <span>{phase === "inhale" ? "In" : "Out"}</span>
-        <strong>{timeLeft}</strong>
-      </button>
-
-      <div className="tool-actions">
-        <button type="button" onClick={() => setIsActive((value) => !value)}>
-          {isActive ? (
-            <Pause size={18} aria-hidden="true" />
-          ) : (
-            <Play size={18} aria-hidden="true" />
+    <section
+      className="guide-card breath-guide"
+      aria-labelledby="breathing-title"
+    >
+      <div className="guide-meta">
+        <span>Paced breathing</span>
+        <VoiceControl
+          guide={speechGuide}
+          text={spokenCue(running ? phase : "ownPace")}
+        />
+      </div>
+      <div className="guide-body">
+        <h1 id="breathing-title" aria-live="polite">
+          {running ? cues[phase].title : cues.ownPace.title}
+        </h1>
+        <p>{cues.ownPace.body}</p>
+      </div>
+      <div className="pace-controls">
+        <button
+          className="action-primary"
+          aria-label={
+            running
+              ? "Pause breathing timer"
+              : elapsed
+                ? "Resume pacing, resume breathing timer"
+                : "Try a gentle count, start breathing timer"
+          }
+          onClick={() => {
+            setHasStarted(true);
+            setRunning((v) => !v);
+          }}
+        >
+          {running ? <Pause size={18} /> : <Play size={18} />}
+          {running ? "Pause" : elapsed ? "Resume pacing" : "Try a gentle count"}
+          {running && (
+            <span className="pace-beat" aria-hidden="true">
+              {remaining}
+            </span>
           )}
-          {isActive ? "Pause" : "Start"}
         </button>
-        <button type="button" onClick={reset}>
-          <RotateCcw size={18} aria-hidden="true" />
-          Reset
-        </button>
-        {onSwitchGrounding ? (
-          <button type="button" onClick={switchGrounding}>
-            Breathing feels worse
+        {(running || elapsed > 0) && (
+          <button className="text-action" onClick={reset}>
+            <RotateCcw size={16} />
+            Reset
           </button>
-        ) : null}
-        {showVoiceControls ? (
-          <button type="button" onClick={toggleVoice}>
-            {voiceSpeaking || voicePaused ? (
-              <VolumeX size={18} aria-hidden="true" />
-            ) : (
-              <Volume2 size={18} aria-hidden="true" />
-            )}
-            {voiceSpeaking || voicePaused ? "Stop voice" : "Read cue"}
+        )}
+      </div>
+      <div className="guide-links">
+        {onSwitchGrounding && (
+          <button
+            className="text-action"
+            onClick={() => {
+              stop();
+              onSwitchGrounding();
+            }}
+          >
+            Try grounding instead <ArrowRight size={16} />
           </button>
-        ) : null}
-        <button type="button" onClick={finish}>
+        )}
+        <button
+          className="text-action"
+          onClick={() => {
+            stop();
+            onDone();
+          }}
+        >
           Done
         </button>
       </div>

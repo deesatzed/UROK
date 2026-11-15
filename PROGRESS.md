@@ -1,6 +1,12 @@
 # PROGRESS.md
 
-## Status Overview
+## Current support flow
+
+The November 15 revision implements TQ-024. Home leads to one sensory cue. Switching, leaving and urgent help are reachable immediately. Practice carries the medical sources. Counting, listening and personal outcomes are user-controlled. A production service worker caches the core and included audio. Optional ZONOS3-Mini runs only during voice preparation. See the [current README](README.md), [voice implementation](clearspace/VOICE_ASSETS.md) and [usability evaluation](clearspace/UX_MITIGATION_AUDIT.md#support-flow-evaluation).
+
+Verification on the November update: 53 unit and component tests, three production-build Chromium runs (320, 390 and 1280 px), offline reload and audio decode at a deployment subpath, and automated WCAG A/AA scanning of the first SOS cue in standard and dim modes. The voice-pack integration was exercised with a replacement engine and a real IndexedDB store; physical-device ZONOS inference and usability observation with people remain open.
+
+## Status Overview as of May 2026
 
 Queued MVP build pass complete as of 2026-05-13.
 
@@ -43,7 +49,7 @@ Storage schema validation pass complete as of 2026-05-16.
 
 The root `/Volumes/WS4TB/UROK` is now initialized as the main Git repository for `https://github.com/deesatzed/UROK.git`.
 
-## Current Assumptions
+## May 2026 assumptions
 
 - Repo root is `/Volumes/WS4TB/UROK`.
 - Main app directory is `clearspace/`.

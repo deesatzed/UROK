@@ -1,13 +1,14 @@
 import { useEffect, useRef, type ReactNode } from "react";
 import {
   BookOpen,
-  Grid3X3,
-  Home,
+  House,
+  LifeBuoy,
   Moon,
+  NotebookPen,
   Settings,
-  ShieldCheck,
   Sun,
   Wind,
+  X,
 } from "lucide-react";
 import type { ViewName } from "../types";
 
@@ -15,164 +16,109 @@ type AppShellProps = {
   children: ReactNode;
   currentView: ViewName;
   currentViewLabel: string;
-  focusMode?: boolean;
+  focusMode: boolean;
   lowStimEnabled: boolean;
   onHome: () => void;
   onNavigate: (view: ViewName) => void;
   onToggleLowStim: () => void;
+  onHelp: () => void;
 };
 
-const navItems: Array<{
-  icon: typeof Home;
-  label: string;
-  view: ViewName;
-}> = [
-  { icon: Home, label: "Home", view: "home" },
-  { icon: Wind, label: "Breathe", view: "breathe" },
-  { icon: ShieldCheck, label: "Ground", view: "ground" },
-  { icon: Grid3X3, label: "Toolkit", view: "settings" },
-  { icon: BookOpen, label: "Journal", view: "journal" },
-];
+const items = [
+  { Icon: House, view: "home", label: "Home" },
+  { Icon: BookOpen, view: "practice", label: "Practice" },
+  { Icon: NotebookPen, view: "journal", label: "Journal" },
+  { Icon: Settings, view: "settings", label: "Settings" },
+] as const;
 
 export function AppShell({
   children,
   currentView,
   currentViewLabel,
-  focusMode = false,
+  focusMode,
   lowStimEnabled,
   onHome,
   onNavigate,
   onToggleLowStim,
+  onHelp,
 }: AppShellProps) {
-  const mainRef = useRef<HTMLElement>(null);
-  const hasMountedRef = useRef(false);
-
+  const main = useRef<HTMLElement>(null);
+  const last = useRef(currentView);
   useEffect(() => {
-    if (!hasMountedRef.current) {
-      hasMountedRef.current = true;
-      return;
+    if (last.current !== currentView) {
+      main.current?.focus({ preventScroll: true });
+      window.scrollTo(0, 0);
+      last.current = currentView;
     }
-
-    mainRef.current?.focus();
-  }, [currentViewLabel]);
-
+  }, [currentView]);
   return (
     <div
-      className={[
-        "app-frame",
-        lowStimEnabled ? "low-stim" : "",
-        focusMode ? "focus-mode" : "",
-      ]
-        .filter(Boolean)
-        .join(" ")}
+      className={
+        "app-frame" +
+        (lowStimEnabled ? " low-stim" : "") +
+        (focusMode ? " focus-mode" : "")
+      }
     >
       <a className="skip-link" href="#main-content">
         Skip to main content
       </a>
-
-      <header className="top-bar">
+      <header className="site-header">
         <button
-          className="brand-row brand-button"
+          className="wordmark"
           type="button"
-          onClick={onHome}
           aria-label="Go to home"
+          onClick={onHome}
         >
-          <span className="brand-mark" aria-hidden="true">
-            <Wind size={24} />
-          </span>
-          <span>
-            <span className="brand-name">ClearSpace</span>
-            <span className="view-label">{currentViewLabel}</span>
-          </span>
+          <Wind aria-hidden="true" />
+          <span>ClearSpace</span>
         </button>
-
-        <div className="top-bar-actions">
-          {!focusMode ? (
-            <button
-              className="icon-button"
-              type="button"
-              onClick={() => onNavigate("settings")}
-              aria-label="Open settings"
-            >
-              <Settings size={20} aria-hidden="true" />
-            </button>
-          ) : null}
+        {!focusMode && (
+          <nav aria-label="Main navigation" className="site-nav">
+            {items.map(({ Icon, view, label }) => (
+              <button
+                type="button"
+                key={view}
+                onClick={() => onNavigate(view)}
+                aria-current={currentView === view ? "page" : undefined}
+              >
+                <Icon size={18} aria-hidden="true" />
+                {label}
+              </button>
+            ))}
+          </nav>
+        )}
+        <div className="header-tools">
           <button
-            className="icon-text-button"
+            aria-label="Dim screen"
+            title="Dim screen"
+            className="circle-control"
             type="button"
-            onClick={onToggleLowStim}
             aria-pressed={lowStimEnabled}
+            onClick={onToggleLowStim}
           >
-            {lowStimEnabled ? (
-              <Sun size={18} aria-hidden="true" />
-            ) : (
-              <Moon size={18} aria-hidden="true" />
-            )}
-            <span>{lowStimEnabled ? "Standard" : "Low Stim"}</span>
+            {lowStimEnabled ? <Sun size={19} /> : <Moon size={19} />}
+          </button>
+          <button className="help-control" type="button" onClick={onHelp}>
+            <LifeBuoy size={17} aria-hidden="true" />
+            Urgent help
           </button>
         </div>
       </header>
-
-      <div className="app-layout">
-        {!focusMode ? (
-          <aside className="side-nav" aria-label="Primary navigation">
-            <div className="side-nav-heading">
-              <h2>Your Space</h2>
-              <p>Stay grounded</p>
-            </div>
-            <nav className="side-nav-list">
-              {navItems.map(({ icon: Icon, label, view }) => (
-                <button
-                  key={view}
-                  className={currentView === view ? "active" : ""}
-                  type="button"
-                  onClick={() => onNavigate(view)}
-                  aria-current={currentView === view ? "page" : undefined}
-                  aria-label={`Open ${label.toLowerCase()}`}
-                >
-                  <Icon size={20} aria-hidden="true" />
-                  <span>{label}</span>
-                </button>
-              ))}
-            </nav>
-            <div className="offline-badge">
-              <ShieldCheck size={20} aria-hidden="true" />
-              <span>
-                <strong>Private by default</strong>
-                <small>Offline storage active</small>
-              </span>
-            </div>
-          </aside>
-        ) : null}
-
-        <main
-          ref={mainRef}
-          className="app-shell"
-          id="main-content"
-          tabIndex={-1}
-          aria-label={`${currentViewLabel} content`}
-        >
-          {children}
-        </main>
-      </div>
-
-      {!focusMode ? (
-        <nav className="bottom-nav" aria-label="Mobile navigation">
-          {navItems.map(({ icon: Icon, label, view }) => (
-            <button
-              key={view}
-              className={currentView === view ? "active" : ""}
-              type="button"
-              onClick={() => onNavigate(view)}
-              aria-current={currentView === view ? "page" : undefined}
-              aria-label={`Open ${label.toLowerCase()}`}
-            >
-              <Icon size={20} aria-hidden="true" />
-              <span>{label}</span>
-            </button>
-          ))}
-        </nav>
-      ) : null}
+      <main
+        ref={main}
+        tabIndex={-1}
+        className="app-shell"
+        id="main-content"
+        aria-label={currentViewLabel + " content"}
+      >
+        {focusMode && (
+          <button type="button" className="exit-guide" onClick={onHome}>
+            <X size={16} aria-hidden="true" />
+            Exit guide
+          </button>
+        )}
+        {children}
+      </main>
     </div>
   );
 }

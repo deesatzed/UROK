@@ -29,7 +29,9 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 }
 
 function isStringArray(value: unknown): value is string[] {
-  return Array.isArray(value) && value.every((item) => typeof item === "string");
+  return (
+    Array.isArray(value) && value.every((item) => typeof item === "string")
+  );
 }
 
 function isBoolean(value: unknown): value is boolean {
@@ -90,8 +92,8 @@ function isSupportCheckIn(value: unknown): value is SupportCheckIn {
     (value.source === "breathing" || value.source === "grounding") &&
     typeof value.shift === "string" &&
     checkInShifts.includes(value.shift as CheckInShift) &&
-    typeof value.helped === "string" &&
-    checkInHelpedValues.includes(value.helped as CheckInHelped)
+    (value.helped === undefined ||
+      checkInHelpedValues.includes(value.helped as CheckInHelped))
   );
 }
 

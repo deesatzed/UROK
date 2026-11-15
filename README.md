@@ -1,53 +1,29 @@
 # UROK / ClearSpace
 
-ClearSpace is a local-first stress-support app for early-stress and active-stress moments. It keeps the critical support path fast, deterministic, and private: one-tap SOS guidance, paced breathing, 5-4-3-2-1 grounding, local personalization, optional scripted browser voice guidance, and local-only journaling.
+ClearSpace offers one concrete step when stress feels overwhelming. Open **Start calming support**, read or listen to a single cue, and move on when ready. Urgent help, a change of exercise, and a way to leave are available from the first cue.
 
-This repository also keeps the planning and control documents used to guide autonomous implementation.
-
-## Current Status
-
-- Main app: `clearspace/`
-- Stack: Vite, React, TypeScript, Vitest, React Testing Library, plain CSS
-- Persistence: browser local storage under `clearspace:` keys
-- Voice guide: optional browser Web Speech `speechSynthesis`, scripted only
-- AI/STT: intentionally not connected until guardrails, privacy controls, storage validation, and fallbacks are implemented
-
-## Capability Boundary
-
-- AI enabled: no. ClearSpace makes no model/API calls and generates no health guidance.
-- TTS enabled: yes, optional browser Web Speech `speechSynthesis` for fixed ClearSpace scripts in SOS, breathing, and grounding.
-- STT enabled: no. ClearSpace does not request microphone access, record audio, or transcribe speech.
-
-## Try It Locally
+## Try the app
 
 ```sh
 cd clearspace
-npm install
+npm ci
 npm test
-npm run build
-npm run dev -- --host 127.0.0.1
+npm run dev
 ```
 
-Then open `http://127.0.0.1:5173/`.
+Open the local address printed by Vite. For the production build and offline behavior run `npm run build` followed by `npm run preview`. Serve the built `dist/` directory over HTTPS or localhost. After the first online visit completes caching, the core app and its included audio can reopen offline. Browser storage eviction or clearing site data removes that cache.
 
-## Project Controls
+To repeat the small-screen and offline browser checks, run `npx playwright install chromium` and `npm run test:browser` in `clearspace/`.
 
-Before implementation work, read:
+## Design and evidence
 
-- `GOAL.md`
-- `STANDARDS.md`
-- `IMPLEMENT.md`
-- `DECISIONS.md`
-- `PROGRESS.md`
-- `TASK_QUEUE.md`
-- `REPO_MAP.md`
+- **During support** the user can ground through touch or sight, switch exercises immediately, call a saved person, or exit. Sound starts only on request or through an explicitly saved preference. Breathing begins at the person's own pace. Counting is optional for both breathing and the senses sequence.
+- **Between episodes** Practice explains the exercises and links to NHS, NHS inform, NIMH, and NICE guidance. Settings lets the person choose a first cue, pin a reminder and prepare optional audio. The optional check-in asks how things changed, including whether they were more intense. No answer or cause of improvement is assumed.
+- **Voice** uses bundled recordings for the fixed cues and default reminders. On supported devices an optional WebGPU ZONOS3-Mini studio renders a different voice in advance. During support the app plays saved audio. A local browser voice can read a custom reminder without a prepared clip. [Voice assets and provenance](clearspace/VOICE_ASSETS.md)
+- **Local data** includes preferences, contact, optional journal, and check-ins in browser local storage, plus explicitly prepared clips in IndexedDB. Users can delete notes and remove prepared clips. The app has no account, analytics, cloud transcription, microphone input or generated medical advice.
 
-The next queued engineering task is `TQ-017`: add storage schema validation and migrations.
+The exercise guidance draws on self-help resources. ClearSpace has no patient outcome validation. [Clinical sources and usability evaluation](clearspace/UX_MITIGATION_AUDIT.md#support-flow-evaluation)
 
-## Safety Boundary
+## Repository
 
-ClearSpace is a support tool, not a medical device. It does not diagnose, prescribe, replace emergency services, or replace professional care. Future AI or speech-input features must remain optional, opt-in, guarded, and nonessential to the SOS path.
-
-## Landing Page
-
-A static GitHub Pages-friendly landing page is available at `docs/index.html`.
+The React, TypeScript and Vite app lives in `clearspace/`. The project landing page is in `docs/index.html`. Engineering records are in `DECISIONS.md`, `PROGRESS.md`, `TASK_QUEUE.md` and `REPO_MAP.md`.
