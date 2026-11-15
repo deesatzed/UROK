@@ -133,3 +133,49 @@ test("a saved small step and reflection stay available offline after an interrup
   });
   expect(clipSeconds).toBeGreaterThan(1);
 });
+
+test("browser Back and Forward stay inside support and interrupted reflection drafts survive", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("./");
+  await page.getByRole("button", { name: /i want to practice/i }).click();
+  await page.getByRole("button", { name: /understand my pattern/i }).click();
+  await page.goBack();
+  await expect(
+    page.getByRole("heading", { name: "Practice when you feel ready." }),
+  ).toBeVisible();
+  await page.goForward();
+  await expect(
+    page.getByRole("heading", { name: "What did you notice?" }),
+  ).toBeVisible();
+  await page.getByRole("button", { name: "Go to home", exact: true }).click();
+
+  await page.getByRole("button", { name: /afraid it might happen/i }).click();
+  await page.getByRole("button", { name: /make a small plan/i }).click();
+  await page.getByRole("button", { name: "Go to a shop", exact: true }).click();
+  await page.getByRole("button", { name: /choose my step/i }).click();
+  await page.getByRole("button", { name: /see my plan/i }).click();
+  await page.getByRole("button", { name: /keep this plan/i }).click();
+  await page.getByRole("button", { name: /look back on it/i }).click();
+  await page
+    .getByLabel(/what happened/i)
+    .fill("I went inside and asked for a minute.");
+  await page.getByRole("button", { name: /i’d like support now/i }).click();
+  await page.goBack();
+  await expect(
+    page.getByRole("heading", { name: "Go to a shop", exact: true }),
+  ).toBeVisible();
+  await page.getByRole("button", { name: /look back on it/i }).click();
+  await expect(page.getByLabel(/what happened/i)).toHaveValue(
+    "I went inside and asked for a minute.",
+  );
+  await page.reload();
+  await page
+    .getByRole("button", { name: /my saved step.*go to a shop/i })
+    .click();
+  await page.getByRole("button", { name: /look back on it/i }).click();
+  await expect(page.getByLabel(/what happened/i)).toHaveValue(
+    "I went inside and asked for a minute.",
+  );
+});

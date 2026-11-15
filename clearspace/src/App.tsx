@@ -4,6 +4,7 @@ import { StepsView } from "./components/StepsView";
 import { WorryView } from "./components/WorryView";
 import { PanicPattern } from "./components/PanicPattern";
 import { SupportCard, defaultSupportMessage } from "./components/SupportCard";
+import { StorageNotice } from "./components/StorageNotice";
 import { UrgentHelp } from "./components/UrgentHelp";
 import { loadPack, type PreparedPack } from "./services/voicePack";
 import type { OpeningCue } from "./data/guide";
@@ -20,6 +21,7 @@ import { SparkJoyView } from "./components/SparkJoyView";
 import { defaultFocusProfile } from "./data/focusProfiles";
 import { defaultReassurancePhrases } from "./data/reassurance";
 import { defaultToolkitItems } from "./data/toolkit";
+import { useAppNavigation, viewLabels } from "./hooks/useAppNavigation";
 import { useLocalStorage } from "./hooks/useLocalStorage";
 import { useSpeechGuide } from "./hooks/useSpeechGuide";
 import {
@@ -37,23 +39,6 @@ import type {
   StepDraft,
   StepAttempt,
 } from "./types";
-
-const viewLabels: Record<ViewName, string> = {
-  home: "Home",
-  sos: "Calming Support",
-  practice: "Practice",
-  settings: "Settings",
-  breathe: "Paced Breathing",
-  ground: "Grounding",
-  journal: "Journal",
-  joy: "Spark Joy",
-  checkin: "Check In",
-  before: "Before an activity",
-  after: "Aftercare",
-  steps: "My steps",
-  worry: "Working with worry",
-  pattern: "My panic pattern",
-};
 
 const emptySupportContact: SupportContact = {
   name: "",
@@ -83,6 +68,12 @@ function App() {
     },
   );
   const [selectedStepId, setSelectedStepId] = useState<string>();
+  const [stepsVisit, setStepsVisit] = useState(0);
+  const [lastStepId, setLastStepId] = useLocalStorage("last-step-id", "", {
+    validate: (value): value is string => typeof value === "string",
+  });
+  const lastStep =
+    smallSteps.find((step) => step.id === lastStepId) ?? smallSteps[0];
   const [cardOpen, setCardOpen] = useState(false);
   const [checkInAvailable, setCheckInAvailable] = useState(false);
   const saveSmallStep = (draft: StepDraft, id?: string) => {
@@ -98,6 +89,7 @@ function App() {
         ? current.map((item) => (item.id === id ? { ...item, ...draft } : item))
         : [plan, ...current],
     );
+    setLastStepId(stepId);
     return stepId;
   };
   const recordStep = (
@@ -117,7 +109,7 @@ function App() {
       ),
     );
   };
-  const [currentView, setCurrentView] = useState<ViewName>("home");
+  const [currentView, setCurrentView] = useAppNavigation();
   const [checkInSource, setCheckInSource] =
     useState<SupportCheckIn["source"]>("breathing");
   const [lowStimEnabled, setLowStimEnabled] = useLocalStorage(
@@ -205,7 +197,9 @@ function App() {
     setCurrentView(view);
   };
   const openSteps = (id?: string) => {
+    setStepsVisit((current) => current + 1);
     setSelectedStepId(id);
+    if (id) setLastStepId(id);
     navigate("steps");
   };
   const openCard = () => {
@@ -279,7 +273,7 @@ function App() {
       onHelp={openHelp}
       lowStimEnabled={lowStimEnabled}
       onHome={() => navigate("home")}
-      onNavigate={navigate}
+      onNavigate={(view) => (view === "steps" ? openSteps() : navigate(view))}
       onToggleLowStim={() => setLowStimEnabled((value) => !value)}
     >
       {helpOpen && (
@@ -290,9 +284,9 @@ function App() {
       )}
       {currentView === "home" ? (
         <HomeView
-          nextStep={smallSteps[0]}
+          nextStep={lastStep}
           onBefore={() => {
-            setSelectedStepId(undefined);
+            setSelectedStepId(lastStep?.id);
             navigate("before");
           }}
           onAfter={() => {
@@ -345,16 +339,17 @@ function App() {
           checkInAvailable={checkInAvailable}
           onSupport={startSos}
           onHome={() => navigate("home")}
-          onSteps={() => openSteps()}
+          onSteps={() => openSteps(lastStep?.id)}
           onJournal={() => navigate("journal")}
           onCheckIn={() => navigate("checkin")}
         />
       ) : currentView === "steps" || currentView === "before" ? (
         <StepsView
-          key={currentView}
+          key={currentView + "-" + stepsVisit}
           plans={smallSteps}
           initialId={selectedStepId}
           anticipatory={currentView === "before"}
+          onSelect={setLastStepId}
           onSave={saveSmallStep}
           onRecord={recordStep}
           onDelete={(id) =>
@@ -432,6 +427,7 @@ function App() {
           </button>
         </div>
       )}
+      {!inGuide && <StorageNotice />}
       {cardOpen && (
         <SupportCard
           message={supportMessage}

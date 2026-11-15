@@ -175,3 +175,25 @@ export function isSmallSteps(
 }
 
 export { isStepDraft };
+
+export function isReflectionDrafts(
+  value: unknown,
+): value is Record<string, import("../types").ReflectionDraft> {
+  return (
+    isRecord(value) &&
+    Object.values(value).every(
+      (draft) =>
+        isRecord(draft) &&
+        typeof draft.happened === "string" &&
+        draft.happened.length <= 600 &&
+        typeof draft.learned === "string" &&
+        draft.learned.length <= 600,
+    )
+  );
+}
+
+export function isPendingStepEdits(
+  value: unknown,
+): value is Record<string, import("../types").StepDraft> {
+  return isRecord(value) && Object.values(value).every(isStepDraft);
+}

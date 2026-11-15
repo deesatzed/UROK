@@ -59,3 +59,16 @@ The home uses the person's situation as the entry point. Immediate help opens di
 Ask people with lived experience to try these flows on their own phones while comfortable. Use fictional details if they prefer. Observe whether they can find a route without explanation, make a plan without typing, recall it after leaving and returning, change a step without shame, and reach someone when they want help. Include someone who uses enlarged text and someone who uses a screen reader.
 
 Measure independent task completion, mistaken taps, time to the intended support, unwanted sound, and whether participants would choose to return to the app. Ask what wording felt judgmental or over-assuring. Ask whether the plan helped them approach something important. Participants can report that the app felt unhelpful. A task test cannot establish reductions in attacks, avoidance or disability. A clinical study and clinician review of the application remain future work.
+
+
+## Interruption review
+
+| Observed gap | Change |
+| --- | --- |
+| A reflection disappeared when someone switched to support | Per-plan drafts survive navigation and reload, with keep and clear actions |
+| Edits to a saved plan disappeared if the editor closed | Separate edit drafts preserve the saved plan until the person chooses to keep changes |
+| The home shortcut could recall a different plan from the one last used | Last-plan recall follows the person's selection |
+| Browser Back could leave the app after changing sections | Each section adds visit-local history with Back and Forward handling |
+| A browser could reject a save while the UI appeared successful | A status message offers retry and keeps pending values in the open tab |
+
+The recovery screenshot uses fictional example text. Participant testing and clinical outcome validation remain open.

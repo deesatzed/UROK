@@ -1,5 +1,5 @@
 import "@testing-library/jest-dom/vitest";
-import { vi } from "vitest";
+import { beforeEach, vi } from "vitest";
 
 class MemoryStorage implements Storage {
   private values = new Map<string, string>();
@@ -102,3 +102,7 @@ if (!HTMLDialogElement.prototype.showModal) {
     this.removeAttribute("open");
   };
 }
+
+beforeEach(() => {
+  history.replaceState(null, "", "/");
+});

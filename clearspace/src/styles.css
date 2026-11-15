@@ -1199,3 +1199,16 @@ html {
   scroll-padding-top: 90px;
   scroll-padding-bottom: 90px;
 }
+
+.storage-notice {
+  max-width: 640px;
+  margin: 24px auto 0;
+  padding: 18px;
+  display: grid;
+  gap: 8px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+}
+.storage-notice .text-action {
+  justify-self: start;
+}

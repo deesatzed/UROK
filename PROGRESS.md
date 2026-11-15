@@ -1,5 +1,17 @@
 # PROGRESS.md
 
+## Delivery status
+
+The repository was unarchived by the user on November 15. The reviewed update is published to the existing private Site and included on `codex/clearspace-support` in the existing pull request. Its initial GitHub push was blocked while the repository was archived.
+
+## Interruption and recovery review
+
+TQ-026 closes gaps found during review of the support journeys. Reflections and edits to existing plans now have per-plan local drafts. Switching to support, closing a view or reloading preserves those drafts. Keeping a reflection clears its draft. Discarding an edit restores the saved plan. Removing a plan also removes its pending edits and reflection draft while retaining drafts for other plans.
+
+The home shortcut and anticipatory route recall the most recently chosen plan. My steps navigation returns to the list. Browser Back and Forward traverse application sections within a visit. A fresh visit still opens Home, and personal text is kept out of browser history. Local save failures display a retry control outside immediate support, with pending values retained in the open tab.
+
+Verification for this review passed with 68 unit/component tests, five production-browser scenarios, a production build and a live browser check of restoring a reflection after requesting support. Regressions cover keeping per-plan edit drafts, remembering the last chosen plan, deleting only a selected plan's drafts, retrying blocked saves and reading unsaved values while storage remains blocked. Patient usability and clinical outcome validation remain open.
+
 ## Current experience
 
 TQ-025 adds four home entry points for immediate support, anticipatory fear, aftercare and practice. A short planner stores user-chosen actions, optional expectations and multiple user-authored reflections. Drafts survive interruptions. A saved plan can be recalled immediately or changed without an outcome score. Aftercare is available independently of using SOS and makes the post-tool check-in optional. Practice includes a personal panic-pattern exercise and a worry exercise. A customizable message card supports people who would prefer to show someone what they need.

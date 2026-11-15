@@ -1,12 +1,20 @@
 import { useEffect, useRef, useState } from "react";
 import { ArrowLeft, ArrowRight, Plus } from "lucide-react";
+import { useLocalStorage } from "../hooks/useLocalStorage";
+import { isReflectionDrafts, isPendingStepEdits } from "../storage/appStorage";
 import { StepBuilder } from "./StepBuilder";
-import type { SmallStep, StepAttempt, StepDraft } from "../types";
+import type {
+  SmallStep,
+  StepAttempt,
+  StepDraft,
+  ReflectionDraft,
+} from "../types";
 
 type Props = {
   plans: SmallStep[];
   initialId?: string;
   anticipatory?: boolean;
+  onSelect: (id: string) => void;
   onSave: (draft: StepDraft, id?: string) => string;
   onRecord: (
     id: string,
@@ -22,6 +30,7 @@ export function StepsView({
   plans,
   initialId,
   anticipatory = false,
+  onSelect,
   onSave,
   onRecord,
   onDelete,
@@ -37,8 +46,29 @@ export function StepsView({
   );
   const [editing, setEditing] = useState(false);
   const [removeAsked, setRemoveAsked] = useState(false);
-  const [happened, setHappened] = useState("");
-  const [learned, setLearned] = useState("");
+  const [reflections, setReflections] = useLocalStorage<
+    Record<string, ReflectionDraft>
+  >("reflection-drafts", {}, { validate: isReflectionDrafts });
+  const [pendingEdits, setPendingEdits] = useLocalStorage<
+    Record<string, StepDraft>
+  >("pending-step-edits", {}, { validate: isPendingStepEdits });
+  const reflection = reflections[id ?? ""] ?? { happened: "", learned: "" };
+  const { happened, learned } = reflection;
+  function updateReflection(patch: Partial<ReflectionDraft>) {
+    if (id)
+      setReflections((current) => ({
+        ...current,
+        [id]: { ...reflection, ...patch },
+      }));
+  }
+  function clearReflection() {
+    if (!id) return;
+    setReflections((current) => {
+      const next = { ...current };
+      delete next[id];
+      return next;
+    });
+  }
   const heading = useRef<HTMLHeadingElement>(null);
   const plan = plans.find((p) => p.id === id);
   useEffect(() => {
@@ -55,14 +85,14 @@ export function StepsView({
     setMode("card");
   }
   function review() {
-    setHappened("");
-    setLearned("");
     setMode("review");
   }
   if (mode === "build")
     return (
       <StepBuilder
         existing={editing ? plan : undefined}
+        pendingEdits={pendingEdits}
+        setPendingEdits={setPendingEdits}
         onSave={save}
         onCancel={() => setMode(plan ? "card" : "list")}
       />
@@ -99,6 +129,7 @@ export function StepsView({
                   key={item.id}
                   onClick={() => {
                     setId(item.id);
+                    onSelect(item.id);
                     setMode("card");
                   }}
                 >
@@ -183,6 +214,12 @@ export function StepsView({
                 <p>Remove this plan and its reflections from this device?</p>
                 <button
                   onClick={() => {
+                    clearReflection();
+                    setPendingEdits((current) => {
+                      const next = { ...current };
+                      delete next[plan.id];
+                      return next;
+                    });
                     onDelete(plan.id);
                     setId(undefined);
                     setMode("list");
@@ -246,6 +283,7 @@ export function StepsView({
                 happened: happened.trim(),
                 learned: learned.trim(),
               });
+              clearReflection();
               setMode("card");
             }}
           >
@@ -254,7 +292,7 @@ export function StepsView({
               <textarea
                 maxLength={600}
                 value={happened}
-                onChange={(e) => setHappened(e.target.value)}
+                onChange={(e) => updateReflection({ happened: e.target.value })}
                 placeholder="Including anything I managed, changed, or found hard"
               />
             </label>
@@ -263,7 +301,7 @@ export function StepsView({
               <textarea
                 maxLength={600}
                 value={learned}
-                onChange={(e) => setLearned(e.target.value)}
+                onChange={(e) => updateReflection({ learned: e.target.value })}
               />
             </label>
             <button
@@ -276,6 +314,15 @@ export function StepsView({
           <button className="text-action" onClick={() => setMode("card")}>
             Skip for now
           </button>
+          {(happened || learned) && (
+            <button className="text-action" onClick={clearReflection}>
+              Clear this draft
+            </button>
+          )}
+          <p className="local-note">
+            Your unfinished reflection stays on this device until you keep or
+            clear it.
+          </p>
         </>
       )}
       {mode !== "away" && (

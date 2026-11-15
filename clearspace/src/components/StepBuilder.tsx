@@ -1,4 +1,10 @@
-import { useEffect, useRef, useState } from "react";
+import {
+  useEffect,
+  useRef,
+  useState,
+  type Dispatch,
+  type SetStateAction,
+} from "react";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { stepIdeas, emptyStep } from "../data/smallSteps";
 import { useLocalStorage } from "../hooks/useLocalStorage";
@@ -7,16 +13,42 @@ import type { SmallStep, StepDraft } from "../types";
 
 type Props = {
   existing?: SmallStep;
+  pendingEdits: Record<string, StepDraft>;
+  setPendingEdits: Dispatch<SetStateAction<Record<string, StepDraft>>>;
   onSave: (draft: StepDraft, id?: string) => void;
   onCancel: () => void;
 };
-export function StepBuilder({ existing, onSave, onCancel }: Props) {
+export function StepBuilder({
+  existing,
+  pendingEdits,
+  setPendingEdits,
+  onSave,
+  onCancel,
+}: Props) {
   const [savedDraft, setSavedDraft] = useLocalStorage<StepDraft>(
     "small-step-draft",
     emptyStep,
     { validate: isStepDraft },
   );
-  const [draft, setDraft] = useState<StepDraft>(existing ?? savedDraft);
+  const [draft, setDraft] = useState<StepDraft>(() => {
+    const initial = existing
+      ? (pendingEdits[existing.id] ?? existing)
+      : savedDraft;
+    return {
+      activity: initial.activity,
+      action: initial.action,
+      prediction: initial.prediction,
+      source: initial.source,
+    };
+  });
+  function clearEdits() {
+    if (!existing) return;
+    setPendingEdits((current) => {
+      const next = { ...current };
+      delete next[existing.id];
+      return next;
+    });
+  }
   const [stage, setStage] = useState(0);
   const title = useRef<HTMLHeadingElement>(null);
   useEffect(() => {
@@ -26,7 +58,9 @@ export function StepBuilder({ existing, onSave, onCancel }: Props) {
   function update(patch: Partial<StepDraft>) {
     const next = { ...draft, ...patch };
     setDraft(next);
-    if (!existing) setSavedDraft(next);
+    if (existing)
+      setPendingEdits((current) => ({ ...current, [existing.id]: next }));
+    else setSavedDraft(next);
   }
   function save() {
     onSave(
@@ -38,7 +72,8 @@ export function StepBuilder({ existing, onSave, onCancel }: Props) {
       },
       existing?.id,
     );
-    if (!existing) setSavedDraft(emptyStep);
+    if (existing) clearEdits();
+    else setSavedDraft(emptyStep);
   }
   return (
     <section className="flow-view" aria-labelledby="step-title">
@@ -180,9 +215,25 @@ export function StepBuilder({ existing, onSave, onCancel }: Props) {
           Clear my draft
         </button>
       )}
+      {existing && pendingEdits[existing.id] && (
+        <button
+          className="text-action"
+          onClick={() => {
+            setDraft({
+              activity: existing.activity,
+              action: existing.action,
+              prediction: existing.prediction,
+              source: existing.source,
+            });
+            clearEdits();
+          }}
+        >
+          Discard these changes
+        </button>
+      )}
       <p className="local-note">
         {existing
-          ? "Changes are saved when you keep this plan."
+          ? "Your edit draft stays on this device. Keep this plan when you’re ready."
           : "Your draft stays on this device."}
       </p>
     </section>

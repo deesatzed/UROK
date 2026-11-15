@@ -17,6 +17,8 @@ The current guide uses `src/data/guideCues.json` for on-screen and recorded scri
 
 The four home routes lead to `SosWizard`, `StepsView`, `AftercareView` and `EducationView`. `StepBuilder` persists interrupted drafts. `PanicPattern` and `WorryView` provide short practice activities. `SupportCard` displays the person's chosen words in a modal. Small-step schemas live alongside existing validators in `src/storage/appStorage.ts`.
 
+`src/hooks/useAppNavigation.ts` manages visit-local browser history. `reflection-drafts` and `pending-step-edits` store drafts by plan ID, and `last-step-id` controls the home shortcut. `StorageNotice` uses the persistence hook's save status and retry mechanism.
+
 ## Current Main App Stack
 
 `clearspace/` uses:

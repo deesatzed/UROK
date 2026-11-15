@@ -1,6 +1,31 @@
-import { useCallback, useState } from "react";
+import { useCallback, useState, useSyncExternalStore } from "react";
 
 const STORAGE_PREFIX = "clearspace:";
+const unsavedValues = new Map<string, unknown>();
+const storageListeners = new Set<() => void>();
+
+function notifyStorageListeners() {
+  // A React state updater may call the writer during render. Notify after it completes.
+  queueMicrotask(() => storageListeners.forEach((listener) => listener()));
+}
+
+export function useStorageAvailable() {
+  return useSyncExternalStore(
+    (listener) => {
+      storageListeners.add(listener);
+      return () => {
+        storageListeners.delete(listener);
+      };
+    },
+    () => unsavedValues.size === 0,
+    () => true,
+  );
+}
+
+export function retryUnsavedValues() {
+  for (const [key, value] of [...unsavedValues])
+    writeLocalStorageValue(key, value);
+}
 
 export type LocalStorageOptions<T> = {
   validate?: (value: unknown) => value is T;
@@ -16,8 +41,11 @@ function writeLocalStorageValue<T>(key: string, value: T) {
 
   try {
     window.localStorage.setItem(createStorageKey(key), JSON.stringify(value));
+    if (unsavedValues.delete(key)) notifyStorageListeners();
   } catch {
-    // Storage can fail in private browsing, quota pressure, or locked-down contexts.
+    const alreadyUnsaved = unsavedValues.has(key);
+    unsavedValues.set(key, value);
+    if (!alreadyUnsaved) notifyStorageListeners();
   }
 }
 
@@ -29,6 +57,12 @@ export function readLocalStorageValue<T>(
   if (typeof window === "undefined") return fallback;
 
   try {
+    if (unsavedValues.has(key)) {
+      const pending = unsavedValues.get(key);
+      return !options.validate || options.validate(pending)
+        ? (pending as T)
+        : fallback;
+    }
     const stored = window.localStorage.getItem(createStorageKey(key));
     if (stored === null) return fallback;
 

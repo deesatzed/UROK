@@ -34,6 +34,9 @@ This file records durable project decisions. Future agents should add rows rathe
 | D-025 | 2026-11-15 | Precache the core and included audio. Allow explicit, setup-only ZONOS rendering of fixed or user-authored words, saved atomically on-device. | Active | SOS can run offline after cache preparation, including where WebGPU and local device voices are unavailable. |
 | D-026 | 2026-11-15 | Center the home on the person's current need. Plans and reflections measure what the person chose to try, without automatic outcome labels. Aftercare opens without a questionnaire. | Active | Fear between episodes and difficulty returning to life need dedicated paths. A completed step can remain meaningful when anxiety is present. |
 | D-027 | 2026-11-15 | Keep small plans, reflections, pattern words and displayable support messages in validated local storage with deletion controls. Offer clinician-agreed practice as user-authored steps. | Active | These activities work offline, support continuity and avoid requiring personal disclosure or symptom induction in the application. |
+| D-028 | 2026-11-15 | Preserve interrupted reflections and edits per plan, remember the last chosen plan, and support Back and Forward between application sections. | Active | Leaving a task to seek support should preserve the person's words and make returning predictable. Fresh visits open Home. |
+| D-029 | 2026-11-15 | Surface failed local writes outside immediate support and offer retry of the latest values while the tab remains open. | Active | Users need accurate feedback when their browser cannot retain changes. |
+
 
 
 

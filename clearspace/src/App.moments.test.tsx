@@ -193,3 +193,236 @@ describe("Support before, during and after", () => {
     expect(screen.getAllByText("Example")).toHaveLength(3);
   });
 });
+
+describe("Returning to an interrupted activity", () => {
+  const plans = [
+    {
+      id: "older",
+      createdAt: "2026-11-10T16:00:00Z",
+      activity: "Go to a shop",
+      action: "Look at one item.",
+      prediction: "",
+      source: "mine",
+      attempts: [],
+    },
+    {
+      id: "newer",
+      createdAt: "2026-11-15T16:00:00Z",
+      activity: "Go to an appointment",
+      action: "Check in.",
+      prediction: "",
+      source: "mine",
+      attempts: [],
+    },
+  ];
+  function savedPlans() {
+    localStorage.setItem(
+      "clearspace:small-steps",
+      JSON.stringify([...plans].reverse()),
+    );
+  }
+
+  it("returns to the last chosen plan and keeps an unfinished reflection across support and a remount", async () => {
+    savedPlans();
+    const view = render(<App />);
+    await click(/^my steps$/i);
+    await click(/go to a shop.*look at one item/i);
+    await click(/look back on it/i);
+    await userEvent.type(screen.getByLabelText(/what happened/i), "I went in.");
+    await click(/i’d like support now/i);
+    await click(/exit guide/i);
+    expect(
+      screen.getByRole("button", { name: /my saved step.*go to a shop/i }),
+    ).toBeVisible();
+    view.unmount();
+    render(<App />);
+    await click(/my saved step.*go to a shop/i);
+    await click(/look back on it/i);
+    expect(screen.getByLabelText(/what happened/i)).toHaveValue("I went in.");
+    await click(/keep this reflection/i);
+    expect(
+      JSON.parse(localStorage.getItem("clearspace:reflection-drafts")!),
+    ).not.toHaveProperty("older");
+  });
+
+  it("keeps an unfinished edit distinct from the saved plan, and supports discarding it", async () => {
+    savedPlans();
+    const view = render(<App />);
+    await click(/^my steps$/i);
+    await click(/go to a shop.*look at one item/i);
+    await click(/make it smaller/i);
+    await click(/choose my step/i);
+    await userEvent.clear(screen.getByLabelText(/my first step/i));
+    await userEvent.type(
+      screen.getByLabelText(/my first step/i),
+      "Look through the doorway.",
+    );
+    view.unmount();
+    render(<App />);
+    await click(/my saved step.*go to a shop/i);
+    expect(screen.getByText("Look at one item.")).toBeVisible();
+    await click(/make it smaller/i);
+    await click(/choose my step/i);
+    expect(screen.getByLabelText(/my first step/i)).toHaveValue(
+      "Look through the doorway.",
+    );
+    await click(/discard these changes/i);
+    expect(screen.getByLabelText(/my first step/i)).toHaveValue(
+      "Look at one item.",
+    );
+    expect(
+      JSON.parse(localStorage.getItem("clearspace:pending-step-edits")!),
+    ).not.toHaveProperty("older");
+  });
+
+  it("reports a blocked save and lets the user retry without losing the current plan", async () => {
+    const original = Storage.prototype.setItem;
+    render(<App />);
+    Storage.prototype.setItem = () => {
+      throw new DOMException("Full", "QuotaExceededError");
+    };
+    try {
+      await makePlan();
+      expect(
+        screen.getByText(/couldn’t save your latest changes/i),
+      ).toBeVisible();
+      expect(
+        screen.getByRole("heading", { name: "Go to a shop" }),
+      ).toBeVisible();
+    } finally {
+      Storage.prototype.setItem = original;
+    }
+    await click(/try saving again/i);
+    expect(
+      screen.queryByText(/couldn’t save your latest changes/i),
+    ).not.toBeInTheDocument();
+    expect(
+      JSON.parse(localStorage.getItem("clearspace:small-steps")!),
+    ).toHaveLength(1);
+  });
+});
+
+it("removes the selected plan's unfinished drafts without deleting another plan's drafts", async () => {
+  const plan = {
+    id: "first",
+    createdAt: "2026-11-15T16:00:00Z",
+    activity: "Visit a shop",
+    action: "Go in.",
+    prediction: "",
+    source: "mine",
+    attempts: [],
+  };
+  localStorage.setItem("clearspace:small-steps", JSON.stringify([plan]));
+  localStorage.setItem(
+    "clearspace:reflection-drafts",
+    JSON.stringify({
+      first: { happened: "Unfinished", learned: "" },
+      other: { happened: "Keep this", learned: "" },
+    }),
+  );
+  localStorage.setItem(
+    "clearspace:pending-step-edits",
+    JSON.stringify({
+      first: {
+        activity: "Visit a shop",
+        action: "Stand at the door.",
+        prediction: "",
+        source: "mine",
+      },
+      other: {
+        activity: "Another plan",
+        action: "Keep this.",
+        prediction: "",
+        source: "mine",
+      },
+    }),
+  );
+  render(<App />);
+  await click(/my saved step.*visit a shop/i);
+  await userEvent.click(screen.getByText("Manage this plan"));
+  await click(/remove this plan/i);
+  await click(/yes, remove plan/i);
+  expect(
+    JSON.parse(localStorage.getItem("clearspace:reflection-drafts")!),
+  ).toEqual({ other: { happened: "Keep this", learned: "" } });
+  expect(
+    JSON.parse(localStorage.getItem("clearspace:pending-step-edits")!),
+  ).not.toHaveProperty("first");
+  expect(
+    JSON.parse(localStorage.getItem("clearspace:pending-step-edits")!),
+  ).toHaveProperty("other");
+});
+
+it("the My steps navigation returns to the list while keeping an unfinished reflection", async () => {
+  const plan = {
+    id: "step",
+    createdAt: "2026-11-15T16:00:00Z",
+    activity: "See a friend",
+    action: "Arrange a short visit.",
+    prediction: "",
+    source: "mine",
+    attempts: [],
+  };
+  localStorage.setItem("clearspace:small-steps", JSON.stringify([plan]));
+  render(<App />);
+  await click(/my saved step.*see a friend/i);
+  await click(/look back on it/i);
+  await userEvent.type(
+    screen.getByLabelText(/what happened/i),
+    "I sent a message.",
+  );
+  await userEvent.click(
+    within(screen.getByRole("navigation")).getByRole("button", {
+      name: "My steps",
+      exact: true,
+    }),
+  );
+  expect(
+    screen.getByRole("heading", { name: "My small steps." }),
+  ).toBeVisible();
+  await click(/see a friend.*arrange a short visit/i);
+  await click(/look back on it/i);
+  expect(screen.getByLabelText(/what happened/i)).toHaveValue(
+    "I sent a message.",
+  );
+});
+
+it("an unsaved reflection remains usable across views while browser storage is blocked", async () => {
+  const plan = {
+    id: "blocked",
+    createdAt: "2026-11-15T16:00:00Z",
+    activity: "Go to a shop",
+    action: "Go in.",
+    prediction: "",
+    source: "mine",
+    attempts: [],
+  };
+  localStorage.setItem("clearspace:small-steps", JSON.stringify([plan]));
+  const original = Storage.prototype.setItem;
+  render(<App />);
+  Storage.prototype.setItem = () => {
+    throw new DOMException("Full", "QuotaExceededError");
+  };
+  try {
+    await click(/my saved step.*go to a shop/i);
+    await click(/look back on it/i);
+    await userEvent.type(
+      screen.getByLabelText(/what happened/i),
+      "Keep my words while I ask for support.",
+    );
+    await click(/i’d like support now/i);
+    await click(/exit guide/i);
+    await click(/my saved step.*go to a shop/i);
+    await click(/look back on it/i);
+    expect(screen.getByLabelText(/what happened/i)).toHaveValue(
+      "Keep my words while I ask for support.",
+    );
+  } finally {
+    Storage.prototype.setItem = original;
+  }
+  await click(/try saving again/i);
+  expect(
+    JSON.parse(localStorage.getItem("clearspace:reflection-drafts")!).blocked
+      .happened,
+  ).toContain("Keep my words");
+});

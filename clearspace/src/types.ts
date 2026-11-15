@@ -28,6 +28,11 @@ export type StepAttempt = {
   learned: string;
 };
 
+export type ReflectionDraft = {
+  happened: string;
+  learned: string;
+};
+
 export type SmallStep = StepDraft & {
   id: string;
   createdAt: string;
