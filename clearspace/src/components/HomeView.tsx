@@ -1,95 +1,88 @@
 import {
   ArrowRight,
-  CircleDot,
-  Hand,
+  ArrowUpRight,
+  BookOpen,
+  CornerDownLeft,
+  Footprints,
   SlidersHorizontal,
-  Sparkles,
-  Wind,
 } from "lucide-react";
-import { getFocusProfile } from "../data/focusProfiles";
-import type { FocusProfileId, SupportCheckIn } from "../types";
+import type { SmallStep } from "../types";
 
 type Props = {
-  focusProfile: FocusProfileId;
-  lastCheckIn?: SupportCheckIn;
-  onOpenBreathing: () => void;
-  onOpenGrounding: () => void;
-  onOpenJoy: () => void;
-  onOpenSettings: () => void;
+  nextStep?: SmallStep;
   onStartSos: () => void;
+  onBefore: () => void;
+  onAfter: () => void;
+  onPractice: () => void;
+  onOpenStep: (id: string) => void;
+  onOpenSettings: () => void;
 };
 
-export function HomeView(props: Props) {
-  const tools = {
-    breathe: {
-      label: "Paced breathing",
-      Icon: Wind,
-      open: props.onOpenBreathing,
-    },
-    ground: {
-      label: "5-4-3-2-1 senses",
-      Icon: Hand,
-      open: props.onOpenGrounding,
-    },
-  };
+export function HomeView({
+  nextStep,
+  onStartSos,
+  onBefore,
+  onAfter,
+  onPractice,
+  onOpenStep,
+  onOpenSettings,
+}: Props) {
   return (
-    <div className="home-view">
-      <section className="welcome" aria-labelledby="app-title">
-        <div className="welcome-copy">
-          <h1 id="app-title">
-            One steady step <br />
-            <em>at a time.</em>
-          </h1>
-          <p>Follow one small cue. Go at your own pace.</p>
-          <button
-            className="action-primary"
-            type="button"
-            onClick={props.onStartSos}
-          >
-            Start calming support <ArrowRight aria-hidden="true" size={21} />
-          </button>
-          <button
-            className="text-action"
-            type="button"
-            onClick={props.onOpenSettings}
-          >
-            <SlidersHorizontal aria-hidden="true" size={17} /> Set up my guide
-          </button>
-        </div>
-        <div className="still-water" aria-hidden="true">
-          <i className="sun-disc" />
-          <i className="ridge distant" />
-          <i className="ridge near" />
-          <i className="water" />
-          <i className="reflection" />
-        </div>
+    <div className="home-view moment-home">
+      <section className="moment-welcome" aria-labelledby="app-title">
+        <h1 id="app-title">
+          One steady step
+          <br /> <em>at a time.</em>
+        </h1>
       </section>
-      <section className="home-tools" aria-label="Support areas">
-        <h2>Practice a skill</h2>
-        <div className="tool-links">
-          {getFocusProfile(props.focusProfile).toolOrder.map((id) => {
-            const { label, Icon, open } = tools[id];
-            return (
-              <button key={id} onClick={open}>
-                <Icon aria-hidden="true" />
-                {label}
-                <ArrowRight aria-hidden="true" />
-              </button>
-            );
-          })}
-          <button onClick={props.onOpenJoy}>
-            <Sparkles aria-hidden="true" />
-            Spark Joy
-            <ArrowRight aria-hidden="true" />
+      <section className="moment-choices" aria-label="Find support">
+        <button className="moment-now" onClick={onStartSos}>
+          <span>
+            <strong>Help me through this</strong>
+            <small>One simple cue. At your pace.</small>
+          </span>
+          <ArrowRight aria-hidden="true" size={24} />
+        </button>
+        <div className="moment-other">
+          <button onClick={onBefore}>
+            <Footprints aria-hidden="true" />
+            <span>
+              <strong>I’m afraid it might happen</strong>
+              <small>Before something I want to do</small>
+            </span>
+            <ArrowUpRight aria-hidden="true" size={18} />
+          </button>
+          <button onClick={onAfter}>
+            <CornerDownLeft aria-hidden="true" />
+            <span>
+              <strong>It just happened</strong>
+              <small>Take a pause, then choose</small>
+            </span>
+            <ArrowUpRight aria-hidden="true" size={18} />
+          </button>
+          <button onClick={onPractice}>
+            <BookOpen aria-hidden="true" />
+            <span>
+              <strong>I want to practice</strong>
+              <small>Try something when I feel ready</small>
+            </span>
+            <ArrowUpRight aria-hidden="true" size={18} />
           </button>
         </div>
       </section>
-      {props.lastCheckIn && (
-        <p className="last-entry">
-          <CircleDot size={15} aria-hidden="true" /> Last check-in saved
-          locally.
-        </p>
+      {nextStep && (
+        <button className="resume-step" onClick={() => onOpenStep(nextStep.id)}>
+          <span>
+            <small>My saved step</small>
+            <strong>{nextStep.activity}</strong>
+          </span>
+          <ArrowRight aria-hidden="true" size={18} />
+        </button>
       )}
+      <button className="text-action home-settings" onClick={onOpenSettings}>
+        <SlidersHorizontal size={16} aria-hidden="true" />
+        Set up my guide
+      </button>
     </div>
   );
 }

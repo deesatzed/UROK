@@ -17,6 +17,7 @@ type Props = {
   phrases: string[];
   speechGuide?: SpeechGuideControls;
   supportContact: SupportContact;
+  onAfter?: () => void;
   onExitHome: () => void;
   onExitJournal: () => void;
   onStartBreathing: () => void;
@@ -31,6 +32,7 @@ export function SosWizard({
   phrases,
   speechGuide = inactiveSpeechGuide,
   supportContact,
+  onAfter,
   onExitHome,
   onExitJournal,
   onStartBreathing,
@@ -116,6 +118,11 @@ export function SosWizard({
             Try a different exercise
           </button>
         </div>
+      )}
+      {onAfter && (
+        <button className="text-action" onClick={onAfter}>
+          I’m ready for what’s next
+        </button>
       )}
       {supportContact.phone.trim() && (
         <a className="person-link" href={"tel:" + supportContact.phone}>

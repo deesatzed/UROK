@@ -29,7 +29,7 @@ describe("App shell", () => {
       screen.getByRole("heading", { name: /one steady step at a time/i }),
     ).toBeInTheDocument();
     expect(
-      screen.getByRole("button", { name: /start calming support/i }),
+      screen.getByRole("button", { name: /help me through this/i }),
     ).toBeInTheDocument();
   });
 
@@ -46,6 +46,7 @@ describe("App shell", () => {
     expect(
       screen.getByRole("heading", { name: /practice when you feel ready/i }),
     ).toBeInTheDocument();
+    await user.click(screen.getByText("How these practices can help"));
     expect(
       screen.getByText(/cognitive behavioral therapy/i),
     ).toBeInTheDocument();
@@ -76,7 +77,7 @@ describe("App shell", () => {
     render(<App />);
 
     await user.click(
-      screen.getByRole("button", { name: /start calming support/i }),
+      screen.getByRole("button", { name: /help me through this/i }),
     );
 
     expect(
@@ -111,7 +112,7 @@ describe("App shell", () => {
     ).toBeInTheDocument();
 
     await user.click(
-      screen.getByRole("button", { name: /start calming support/i }),
+      screen.getByRole("button", { name: /help me through this/i }),
     );
 
     expect(
@@ -129,6 +130,7 @@ describe("App shell", () => {
     const user = userEvent.setup();
     render(<App />);
 
+    await user.click(screen.getByRole("button", { name: /^practice$/i }));
     await user.click(screen.getByRole("button", { name: /paced breathing/i }));
     expect(
       screen.getByRole("heading", { name: /breathe at your own pace/i }),
@@ -147,8 +149,16 @@ describe("App shell", () => {
     const user = userEvent.setup();
     render(<App />);
 
+    await user.click(screen.getByRole("button", { name: /^practice$/i }));
     await user.click(screen.getByRole("button", { name: /paced breathing/i }));
     await user.click(screen.getByRole("button", { name: /^done$/i }));
+    await user.click(
+      screen.getByRole("button", { name: /ready for what’s next/i }),
+    );
+    await user.click(screen.getByText("Keep a note (optional)"));
+    await user.click(
+      screen.getByRole("button", { name: /how do i feel now/i }),
+    );
 
     expect(
       screen.getByRole("heading", { name: /what changed/i }),
@@ -170,7 +180,7 @@ describe("App shell", () => {
     expect(storedCheckIns).toContain("a-little-calmer");
     expect(storedCheckIns).toContain("grounding-helped");
     expect(
-      screen.getByText(/last check-in saved locally/i),
+      screen.getByRole("main", { name: /home content/i }),
     ).toBeInTheDocument();
   });
 
@@ -185,15 +195,17 @@ describe("App shell", () => {
     await user.click(screen.getByRole("button", { name: /back to home/i }));
 
     expect(
-      screen.getByRole("button", { name: /start calming support/i }),
+      screen.getByRole("button", { name: /help me through this/i }),
     ).toBeInTheDocument();
 
+    await user.click(screen.getByRole("button", { name: /^practice$/i }));
     const supportAreas = screen.getByLabelText(/support areas/i);
     const supportButtons = within(supportAreas).getAllByRole("button");
     expect(supportButtons[0]).toHaveTextContent(/5-4-3-2-1 senses/i);
 
+    await user.click(screen.getByRole("button", { name: /back to home/i }));
     await user.click(
-      screen.getByRole("button", { name: /start calming support/i }),
+      screen.getByRole("button", { name: /help me through this/i }),
     );
     await user.click(
       screen.getByRole("button", { name: /try a different exercise/i }),
@@ -208,7 +220,8 @@ describe("App shell", () => {
     const user = userEvent.setup();
     render(<App />);
 
-    await user.click(screen.getByRole("button", { name: /^journal$/i }));
+    await user.click(screen.getByRole("button", { name: /^practice$/i }));
+    await user.click(screen.getByRole("button", { name: /my journal/i }));
     await user.type(
       screen.getByLabelText(/what may have triggered this/i),
       "I have chest pain and might faint",
@@ -253,7 +266,7 @@ describe("App shell", () => {
 
     await user.click(screen.getByRole("button", { name: /back to home/i }));
     await user.click(
-      screen.getByRole("button", { name: /start calming support/i }),
+      screen.getByRole("button", { name: /help me through this/i }),
     );
 
     expect(screen.getByRole("link", { name: /call alex/i })).toHaveAttribute(
@@ -272,7 +285,7 @@ describe("App shell", () => {
 
     await user.click(screen.getByRole("button", { name: /back to home/i }));
     await user.click(
-      screen.getByRole("button", { name: /start calming support/i }),
+      screen.getByRole("button", { name: /help me through this/i }),
     );
 
     await waitFor(() =>
@@ -295,7 +308,7 @@ describe("App shell", () => {
 
     vi.clearAllMocks();
     await user.click(
-      screen.getByRole("button", { name: /start calming support/i }),
+      screen.getByRole("button", { name: /help me through this/i }),
     );
 
     expect(speech.speak).not.toHaveBeenCalled();
@@ -320,7 +333,7 @@ describe("App shell", () => {
 
       await user.click(screen.getByRole("button", { name: /back to home/i }));
       await user.click(
-        screen.getByRole("button", { name: /start calming support/i }),
+        screen.getByRole("button", { name: /help me through this/i }),
       );
       await user.click(screen.getByRole("button", { name: /listen/i }));
       expect(HTMLMediaElement.prototype.play).toHaveBeenCalled();
@@ -343,7 +356,7 @@ describe("App shell", () => {
 
     await user.click(screen.getByRole("button", { name: /back to home/i }));
     await user.click(
-      screen.getByRole("button", { name: /start calming support/i }),
+      screen.getByRole("button", { name: /help me through this/i }),
     );
 
     await waitFor(() =>
@@ -369,7 +382,7 @@ describe("App shell", () => {
 
     render(<App />);
     await user.click(
-      screen.getByRole("button", { name: /start calming support/i }),
+      screen.getByRole("button", { name: /help me through this/i }),
     );
 
     expect(screen.getByRole("link", { name: /call morgan/i })).toHaveAttribute(
@@ -399,7 +412,8 @@ describe("App shell", () => {
     const user = userEvent.setup();
     render(<App />);
 
-    await user.click(screen.getByRole("button", { name: /^journal$/i }));
+    await user.click(screen.getByRole("button", { name: /^practice$/i }));
+    await user.click(screen.getByRole("button", { name: /my journal/i }));
 
     expect(screen.getByText(/no notes yet/i)).toBeInTheDocument();
 
@@ -410,7 +424,8 @@ describe("App shell", () => {
     await user.type(screen.getByLabelText(/what helped/i), "Grounding");
     await user.click(screen.getByRole("button", { name: /save note/i }));
 
-    await user.click(screen.getByRole("button", { name: /^journal$/i }));
+    await user.click(screen.getByRole("button", { name: /^practice$/i }));
+    await user.click(screen.getByRole("button", { name: /my journal/i }));
 
     expect(screen.getByText(/crowded train/i)).toBeInTheDocument();
     expect(screen.getAllByText(/grounding/i).length).toBeGreaterThan(0);
@@ -420,7 +435,8 @@ describe("App shell", () => {
     const user = userEvent.setup();
     render(<App />);
 
-    await user.click(screen.getByRole("button", { name: /^journal$/i }));
+    await user.click(screen.getByRole("button", { name: /^practice$/i }));
+    await user.click(screen.getByRole("button", { name: /my journal/i }));
     await user.type(
       screen.getByLabelText(/what may have triggered this/i),
       "Crowded train",
@@ -428,7 +444,8 @@ describe("App shell", () => {
     await user.type(screen.getByLabelText(/what helped/i), "Grounding");
     await user.click(screen.getByRole("button", { name: /save note/i }));
 
-    await user.click(screen.getByRole("button", { name: /^journal$/i }));
+    await user.click(screen.getByRole("button", { name: /^practice$/i }));
+    await user.click(screen.getByRole("button", { name: /my journal/i }));
 
     const exportLink = screen.getByRole("link", {
       name: /download journal json/i,
@@ -449,11 +466,13 @@ describe("App shell", () => {
     const user = userEvent.setup();
     render(<App />);
 
-    await user.click(screen.getByRole("button", { name: /^journal$/i }));
+    await user.click(screen.getByRole("button", { name: /^practice$/i }));
+    await user.click(screen.getByRole("button", { name: /my journal/i }));
     await user.type(screen.getByLabelText(/what helped/i), "Breathing");
     await user.click(screen.getByRole("button", { name: /save note/i }));
 
-    await user.click(screen.getByRole("button", { name: /^journal$/i }));
+    await user.click(screen.getByRole("button", { name: /^practice$/i }));
+    await user.click(screen.getByRole("button", { name: /my journal/i }));
 
     await user.click(screen.getByRole("button", { name: /delete all notes/i }));
     expect(screen.getByText(/breathing/i)).toBeInTheDocument();
@@ -468,10 +487,12 @@ describe("App shell", () => {
     const user = userEvent.setup();
     render(<App />);
 
-    await user.click(screen.getByRole("button", { name: /^journal$/i }));
+    await user.click(screen.getByRole("button", { name: /^practice$/i }));
+    await user.click(screen.getByRole("button", { name: /my journal/i }));
     await user.click(screen.getByRole("button", { name: /^skip$/i }));
 
-    await user.click(screen.getByRole("button", { name: /^journal$/i }));
+    await user.click(screen.getByRole("button", { name: /^practice$/i }));
+    await user.click(screen.getByRole("button", { name: /my journal/i }));
 
     expect(screen.getByText(/no notes yet/i)).toBeInTheDocument();
   });
@@ -480,6 +501,7 @@ describe("App shell", () => {
     const user = userEvent.setup();
     render(<App />);
 
+    await user.click(screen.getByRole("button", { name: /^practice$/i }));
     await user.click(screen.getByRole("button", { name: /spark joy/i }));
 
     expect(
@@ -493,7 +515,7 @@ describe("App shell", () => {
 
     await user.click(screen.getByRole("button", { name: /^done$/i }));
     expect(
-      screen.getByRole("button", { name: /start calming support/i }),
+      screen.getByRole("button", { name: /help me through this/i }),
     ).toBeInTheDocument();
   });
 });
@@ -503,7 +525,7 @@ describe("Choices during support", () => {
     userEvent.click(screen.getByRole("button", { name }));
   it("opens urgent help from the first cue, returns focus, and keeps the cue in place", async () => {
     render(<App />);
-    await click(/start calming support/i);
+    await click(/help me through this/i);
     const opener = screen.getByRole("button", { name: /urgent help/i });
     await userEvent.click(opener);
     const help = screen.getByRole("dialog", { name: /get urgent help/i });
@@ -528,7 +550,7 @@ describe("Choices during support", () => {
     );
     view.unmount();
     render(<App />);
-    await click(/start calming support/i);
+    await click(/help me through this/i);
     expect(
       screen.getByRole("heading", { name: /find one color nearby/i }),
     ).toBeVisible();
@@ -538,7 +560,7 @@ describe("Choices during support", () => {
 
   it("allows grounding to finish without tallying, and saves worsening without attributing benefit", async () => {
     render(<App />);
-    await click(/start calming support/i);
+    await click(/help me through this/i);
     await click(/try a different exercise/i);
     await click(/5-4-3-2-1 grounding/i);
     await click(/next sense/i);
@@ -546,6 +568,9 @@ describe("Choices during support", () => {
       screen.getByRole("heading", { name: /name 4 things/i }),
     ).toHaveFocus();
     await click(/done for now/i);
+    await click(/ready for what’s next/i);
+    await userEvent.click(screen.getByText("Keep a note (optional)"));
+    await click(/how do i feel now/i);
     await click(/more intense/i);
     await click(/save check-in/i);
     const [entry] = JSON.parse(
@@ -557,7 +582,7 @@ describe("Choices during support", () => {
 
   it("keeps a session mute across tools after urgent help interrupts audio", async () => {
     render(<App />);
-    await click(/start calming support/i);
+    await click(/help me through this/i);
     await click(/listen/i);
     await click(/urgent help/i);
     await click(/go back/i);

@@ -40,3 +40,22 @@ The first cue orients attention to an external object. Touch and visual alternat
 ### What to test with people
 
 Invite people with lived experience to try ordinary scenarios on their own phones while comfortable. Do not induce panic. Ask them to start a guide, leave a breath exercise they dislike, find urgent help, and make the guide quiet, without coaching. Record time to first cue, independent completion, mistaken taps, unexpected sound and whether the wording felt assumptive. Include a screen reader session and users who prefer a visual opening. Test the stock voice before investing in voice customization. If anyone cannot reach help or stop audio unaided, fix and observe that task again. Evaluation of symptom or clinical outcomes would need a separate prospective design.
+
+
+## Before, during and after
+
+The home uses the person's situation as the entry point. Immediate help opens directly. Anticipatory fear can open a saved plan in one tap. Aftercare is available without first logging or experiencing an episode inside the app. Practice supports manageable actions, understanding a sensation/thought/response pattern and working with uncertainty.
+
+| Need | Interaction | Basis |
+| --- | --- | --- |
+| Anticipatory fear and avoidance | Name something that matters, choose a manageable action, optionally write a feared outcome, recall the card at the door | [CCI on facing feared situations](https://www.cci.health.wa.gov.au/Resources/Looking-After-Yourself/Panic) |
+| Returning after an attempt | Preserve what actually happened and what the person wants to remember, including changed or abandoned plans | CCI behavioral experiment approach |
+| Post-episode fatigue or uncertainty | An untimed pause, contact, direct return to support or ordinary activity, with reflection available on request | UX design choice to limit demands, with no claim of clinical efficacy |
+| Repeated “what if” thoughts | Choose one practical action or practice returning attention while a question remains open | [NHS worry resources](https://www.nhs.uk/every-mind-matters/mental-wellbeing-tips/self-help-cbt-techniques/tackling-your-worries/) |
+| Difficulty speaking in public | Show a locally saved personal message and close it with focus restored | User-controlled accommodation |
+
+### Usability questions for the next patient sessions
+
+Ask people with lived experience to try these flows on their own phones while comfortable. Use fictional details if they prefer. Observe whether they can find a route without explanation, make a plan without typing, recall it after leaving and returning, change a step without shame, and reach someone when they want help. Include someone who uses enlarged text and someone who uses a screen reader.
+
+Measure independent task completion, mistaken taps, time to the intended support, unwanted sound, and whether participants would choose to return to the app. Ask what wording felt judgmental or over-assuring. Ask whether the plan helped them approach something important. Participants can report that the app felt unhelpful. A task test cannot establish reductions in attacks, avoidance or disability. A clinical study and clinician review of the application remain future work.

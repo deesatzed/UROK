@@ -121,3 +121,57 @@ export const storageValidators = {
   supportContact: isSupportContact,
   toolkitItems: isToolkitItems,
 };
+
+function isStepDraft(value: unknown): value is import("../types").StepDraft {
+  return (
+    isRecord(value) &&
+    typeof value.activity === "string" &&
+    value.activity.length <= 120 &&
+    typeof value.action === "string" &&
+    value.action.length <= 300 &&
+    typeof value.prediction === "string" &&
+    value.prediction.length <= 300 &&
+    (value.source === "mine" || value.source === "therapist")
+  );
+}
+
+function isStepAttempt(
+  value: unknown,
+): value is import("../types").StepAttempt {
+  return (
+    isRecord(value) &&
+    typeof value.id === "string" &&
+    value.id.length > 0 &&
+    typeof value.createdAt === "string" &&
+    Number.isFinite(Date.parse(value.createdAt)) &&
+    typeof value.happened === "string" &&
+    value.happened.length <= 600 &&
+    typeof value.learned === "string" &&
+    value.learned.length <= 600
+  );
+}
+
+export function isSmallSteps(
+  value: unknown,
+): value is import("../types").SmallStep[] {
+  return (
+    Array.isArray(value) &&
+    value.every(
+      (item) =>
+        isStepDraft(item) &&
+        "id" in item &&
+        typeof item.id === "string" &&
+        item.id.length > 0 &&
+        item.activity.trim().length > 0 &&
+        item.action.trim().length > 0 &&
+        "createdAt" in item &&
+        typeof item.createdAt === "string" &&
+        Number.isFinite(Date.parse(item.createdAt)) &&
+        "attempts" in item &&
+        Array.isArray(item.attempts) &&
+        item.attempts.every(isStepAttempt),
+    )
+  );
+}
+
+export { isStepDraft };

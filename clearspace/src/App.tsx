@@ -1,4 +1,9 @@
 import { useEffect, useState } from "react";
+import { AftercareView } from "./components/AftercareView";
+import { StepsView } from "./components/StepsView";
+import { WorryView } from "./components/WorryView";
+import { PanicPattern } from "./components/PanicPattern";
+import { SupportCard, defaultSupportMessage } from "./components/SupportCard";
 import { UrgentHelp } from "./components/UrgentHelp";
 import { loadPack, type PreparedPack } from "./services/voicePack";
 import type { OpeningCue } from "./data/guide";
@@ -17,13 +22,20 @@ import { defaultReassurancePhrases } from "./data/reassurance";
 import { defaultToolkitItems } from "./data/toolkit";
 import { useLocalStorage } from "./hooks/useLocalStorage";
 import { useSpeechGuide } from "./hooks/useSpeechGuide";
-import { migrateToolkitItems, storageValidators } from "./storage/appStorage";
+import {
+  isSmallSteps,
+  migrateToolkitItems,
+  storageValidators,
+} from "./storage/appStorage";
 import type {
   FocusProfileId,
   JournalEntry,
   SupportCheckIn,
   SupportContact,
   ViewName,
+  SmallStep,
+  StepDraft,
+  StepAttempt,
 } from "./types";
 
 const viewLabels: Record<ViewName, string> = {
@@ -36,6 +48,11 @@ const viewLabels: Record<ViewName, string> = {
   journal: "Journal",
   joy: "Spark Joy",
   checkin: "Check In",
+  before: "Before an activity",
+  after: "Aftercare",
+  steps: "My steps",
+  worry: "Working with worry",
+  pattern: "My panic pattern",
 };
 
 const emptySupportContact: SupportContact = {
@@ -52,6 +69,54 @@ const createJournalEntryId = () => {
 };
 
 function App() {
+  const [smallSteps, setSmallSteps] = useLocalStorage<SmallStep[]>(
+    "small-steps",
+    [],
+    { validate: isSmallSteps },
+  );
+  const [supportMessage, setSupportMessage] = useLocalStorage(
+    "support-message",
+    defaultSupportMessage,
+    {
+      validate: (value): value is string =>
+        typeof value === "string" && value.length <= 500,
+    },
+  );
+  const [selectedStepId, setSelectedStepId] = useState<string>();
+  const [cardOpen, setCardOpen] = useState(false);
+  const [checkInAvailable, setCheckInAvailable] = useState(false);
+  const saveSmallStep = (draft: StepDraft, id?: string) => {
+    const stepId = id ?? createJournalEntryId();
+    const plan: SmallStep = {
+      ...draft,
+      id: stepId,
+      createdAt: new Date().toISOString(),
+      attempts: [],
+    };
+    setSmallSteps((current) =>
+      id
+        ? current.map((item) => (item.id === id ? { ...item, ...draft } : item))
+        : [plan, ...current],
+    );
+    return stepId;
+  };
+  const recordStep = (
+    id: string,
+    attempt: Omit<StepAttempt, "id" | "createdAt">,
+  ) => {
+    const entry = {
+      ...attempt,
+      id: createJournalEntryId(),
+      createdAt: new Date().toISOString(),
+    };
+    setSmallSteps((current) =>
+      current.map((item) =>
+        item.id === id
+          ? { ...item, attempts: [...item.attempts, entry] }
+          : item,
+      ),
+    );
+  };
   const [currentView, setCurrentView] = useState<ViewName>("home");
   const [checkInSource, setCheckInSource] =
     useState<SupportCheckIn["source"]>("breathing");
@@ -125,7 +190,7 @@ function App() {
     };
   }, []);
   const speechGuide = useSpeechGuide(
-    !helpOpen && (voiceOverride ?? voiceGuideEnabled),
+    !helpOpen && !cardOpen && (voiceOverride ?? voiceGuideEnabled),
     pack,
     setVoiceOverride,
   );
@@ -135,13 +200,22 @@ function App() {
     currentView === "ground";
   const navigate = (view: ViewName) => {
     speechGuide.stop();
-    if (view !== "sos" && view !== "breathe" && view !== "ground")
+    if (!["sos", "breathe", "ground", "after", "worry"].includes(view))
       setVoiceOverride(null);
     setCurrentView(view);
   };
+  const openSteps = (id?: string) => {
+    setSelectedStepId(id);
+    navigate("steps");
+  };
+  const openCard = () => {
+    speechGuide.stop();
+    setVoiceOverride(false);
+    setCardOpen(true);
+  };
   const openHelp = () => {
     speechGuide.stop();
-    if (inGuide) setVoiceOverride(false);
+    setVoiceOverride(false);
     setHelpOpen(true);
   };
 
@@ -167,13 +241,15 @@ function App() {
   };
 
   const startSos = () => {
+    setCheckInAvailable(false);
     setSosSessionCount((current) => current + 1);
     navigate("sos");
   };
 
   const finishTool = (source: SupportCheckIn["source"]) => {
     setCheckInSource(source);
-    navigate("checkin");
+    setCheckInAvailable(true);
+    navigate("after");
   };
 
   const addSupportCheckIn = (
@@ -194,7 +270,12 @@ function App() {
     <AppShell
       currentView={currentView}
       currentViewLabel={viewLabels[currentView]}
-      focusMode={inGuide}
+      focusMode={
+        inGuide ||
+        currentView === "after" ||
+        currentView === "worry" ||
+        currentView === "before"
+      }
       onHelp={openHelp}
       lowStimEnabled={lowStimEnabled}
       onHome={() => navigate("home")}
@@ -209,11 +290,17 @@ function App() {
       )}
       {currentView === "home" ? (
         <HomeView
-          focusProfile={focusProfile}
-          lastCheckIn={supportCheckIns[0]}
-          onOpenBreathing={() => navigate("breathe")}
-          onOpenGrounding={() => navigate("ground")}
-          onOpenJoy={() => navigate("joy")}
+          nextStep={smallSteps[0]}
+          onBefore={() => {
+            setSelectedStepId(undefined);
+            navigate("before");
+          }}
+          onAfter={() => {
+            setCheckInAvailable(false);
+            navigate("after");
+          }}
+          onPractice={() => navigate("practice")}
+          onOpenStep={openSteps}
           onOpenSettings={() => navigate("settings")}
           onStartSos={startSos}
         />
@@ -227,13 +314,14 @@ function App() {
           speechGuide={speechGuide}
           supportContact={supportContact}
           onExitHome={() => navigate("home")}
+          onAfter={() => navigate("after")}
           onExitJournal={() => navigate("journal")}
           onStartBreathing={() => navigate("breathe")}
           onStartGrounding={() => navigate("ground")}
         />
       ) : currentView === "breathe" ? (
         <BreathingTool
-          suspended={helpOpen}
+          suspended={helpOpen || cardOpen}
           speechGuide={speechGuide}
           onDone={() => finishTool("breathing")}
           onSwitchGrounding={() => navigate("ground")}
@@ -250,11 +338,55 @@ function App() {
           onSave={addSupportCheckIn}
           onSkip={() => navigate("home")}
         />
+      ) : currentView === "after" ? (
+        <AftercareView
+          guide={speechGuide}
+          contact={supportContact}
+          checkInAvailable={checkInAvailable}
+          onSupport={startSos}
+          onHome={() => navigate("home")}
+          onSteps={() => openSteps()}
+          onJournal={() => navigate("journal")}
+          onCheckIn={() => navigate("checkin")}
+        />
+      ) : currentView === "steps" || currentView === "before" ? (
+        <StepsView
+          key={currentView}
+          plans={smallSteps}
+          initialId={selectedStepId}
+          anticipatory={currentView === "before"}
+          onSave={saveSmallStep}
+          onRecord={recordStep}
+          onDelete={(id) =>
+            setSmallSteps((current) => current.filter((s) => s.id !== id))
+          }
+          onHome={() => navigate("home")}
+          onWorry={() => navigate("worry")}
+          onSupport={startSos}
+        />
+      ) : currentView === "worry" ? (
+        <WorryView
+          guide={speechGuide}
+          onHome={() => navigate("home")}
+          onPlan={() => openSteps()}
+          onSupport={startSos}
+        />
+      ) : currentView === "pattern" ? (
+        <PanicPattern
+          onDone={() => navigate("practice")}
+          onPlan={() => openSteps()}
+        />
       ) : currentView === "practice" ? (
         <EducationView
+          focusProfile={focusProfile}
           onBreathe={() => navigate("breathe")}
           onGround={() => navigate("ground")}
           onPlan={() => navigate("settings")}
+          onSteps={() => openSteps()}
+          onPattern={() => navigate("pattern")}
+          onWorry={() => navigate("worry")}
+          onJoy={() => navigate("joy")}
+          onJournal={() => navigate("journal")}
           onDone={() => navigate("home")}
         />
       ) : currentView === "journal" ? (
@@ -269,6 +401,8 @@ function App() {
         <SparkJoyView onDone={() => navigate("home")} />
       ) : currentView === "settings" ? (
         <SettingsView
+          supportMessage={supportMessage}
+          setSupportMessage={setSupportMessage}
           opening={opening}
           setOpening={setOpening}
           favorite={savedPhrase}
@@ -290,22 +424,19 @@ function App() {
           setToolkitItems={setToolkitItems}
           setVoiceGuideEnabled={setVoiceGuideEnabled}
         />
-      ) : (
-        <section className="placeholder-view" aria-labelledby="view-title">
-          <p className="eyebrow">{viewLabels[currentView]}</p>
-          <h1 id="view-title">{viewLabels[currentView]} is next.</h1>
-          <p>
-            This route is wired so the next task can fill it without changing
-            the first-screen navigation.
-          </p>
-          <button
-            className="secondary-button"
-            type="button"
-            onClick={() => navigate("home")}
-          >
-            Back to home
+      ) : null}
+      {(inGuide || currentView === "after") && (
+        <div className="support-options">
+          <button className="text-action" onClick={openCard}>
+            Show someone what I need
           </button>
-        </section>
+        </div>
+      )}
+      {cardOpen && (
+        <SupportCard
+          message={supportMessage}
+          onClose={() => setCardOpen(false)}
+        />
       )}
     </AppShell>
   );

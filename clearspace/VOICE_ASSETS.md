@@ -1,6 +1,6 @@
 # Spoken cues
 
-The 18 bundled MP3s (447,480 bytes total) are produced ahead of time. The text lives in `src/data/guideCues.json` and `src/data/reminders.json`. Personal reminders are keyed by their full text, so changing a reminder never plays a stale clip.
+The 23 bundled MP3s (640,756 bytes total) are produced ahead of time. The text lives in `src/data/guideCues.json` and `src/data/reminders.json`. The aftercare and worry paths use the same recordings and local playback mechanism as SOS. Personal reminders are keyed by their full text, so changing a reminder never plays a stale clip.
 
 These stock clips use Piper 1.8.0 with the US English LJSpeech medium voice, length scale 1.08. The model card identifies its training dataset as public domain. The final files are mono MP3 at 24 kHz and 48 kbps, normalized with FFmpeg loudnorm at −19 LUFS and −2 dBTP. Piper and its weights are offline production tools. Neither ships in the app.
 

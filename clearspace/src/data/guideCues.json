@@ -50,5 +50,25 @@
   "ownPace": {
     "title": "Breathe at your own pace.",
     "body": "Let the breath come and go comfortably. Follow the optional count only if it feels easy."
+  },
+  "after": {
+    "title": "A moment for yourself.",
+    "body": "You can take a pause before deciding what comes next."
+  },
+  "rest": {
+    "title": "Take the time you need.",
+    "body": "Let your hands rest wherever they feel comfortable. Notice one thing around you."
+  },
+  "worry": {
+    "title": "Caught in “what if”?",
+    "body": "Is there a practical step you want to take, or is your mind asking for certainty?"
+  },
+  "worryLater": {
+    "title": "Leave a little room for uncertainty.",
+    "body": "You can let the question stay unanswered for now and return to one thing in front of you."
+  },
+  "worryAction": {
+    "title": "One thing you can do.",
+    "body": "Choose a small, practical action. You can use your saved step or make a new plan."
   }
 }

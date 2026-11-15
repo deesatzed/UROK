@@ -1,6 +1,14 @@
 # PROGRESS.md
 
-## Current support flow
+## Current experience
+
+TQ-025 adds four home entry points for immediate support, anticipatory fear, aftercare and practice. A short planner stores user-chosen actions, optional expectations and multiple user-authored reflections. Drafts survive interruptions. A saved plan can be recalled immediately or changed without an outcome score. Aftercare is available independently of using SOS and makes the post-tool check-in optional. Practice includes a personal panic-pattern exercise and a worry exercise. A customizable message card supports people who would prefer to show someone what they need.
+
+New local-storage keys are `small-steps`, `small-step-draft`, `my-panic-pattern` and `support-message`, all under the existing `clearspace:` prefix. Plans and reflections can be removed together after confirmation. Pattern words and drafts can be cleared. Existing notes and settings are preserved. All new fixed spoken cues are bundled for offline playback.
+
+Verification for TQ-025 includes 62 unit/component tests and four production-browser scenarios. The browser checks cover all four home choices at 320, 390 and 1280 pixels, cached audio, and recall/reflection of a saved plan after an offline reload. Automated WCAG A/AA checks found no violations across 16 representative screens at each width, including the support-message dialog and dim mode. Text enlarged to 200% reflows. Clinical benefit, participant preferences and physical-device ZONOS synthesis remain unverified.
+
+## Previous support revision
 
 The November 15 revision implements TQ-024. Home leads to one sensory cue. Switching, leaving and urgent help are reachable immediately. Practice carries the medical sources. Counting, listening and personal outcomes are user-controlled. A production service worker caches the core and included audio. Optional ZONOS3-Mini runs only during voice preparation. See the [current README](README.md), [voice implementation](clearspace/VOICE_ASSETS.md) and [usability evaluation](clearspace/UX_MITIGATION_AUDIT.md#support-flow-evaluation).
 

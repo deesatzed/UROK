@@ -1,8 +1,5 @@
 import { describe, expect, it } from "vitest";
-import {
-  migrateToolkitItems,
-  storageValidators,
-} from "./appStorage";
+import { migrateToolkitItems, storageValidators } from "./appStorage";
 
 describe("app storage schemas", () => {
   it("accepts valid support contact data", () => {
@@ -60,5 +57,34 @@ describe("app storage schemas", () => {
         checked: false,
       },
     ]);
+  });
+});
+
+describe("small step storage", () => {
+  it("rejects incomplete or corrupt records while accepting user-authored setbacks", async () => {
+    const { isSmallSteps } = await import("./appStorage");
+    const plan = {
+      id: "one",
+      createdAt: "2026-11-15T16:00:00.000Z",
+      activity: "Go to a shop",
+      action: "Look at one item.",
+      prediction: "I will leave.",
+      source: "mine",
+      attempts: [
+        {
+          id: "first",
+          createdAt: "2026-11-15T17:00:00.000Z",
+          happened: "I left.",
+          learned: "Try again when ready.",
+        },
+      ],
+    };
+    expect(isSmallSteps([plan])).toBe(true);
+    expect(isSmallSteps([{ ...plan, activity: "" }])).toBe(false);
+    expect(isSmallSteps([{ ...plan, attempts: [{ id: "invalid" }] }])).toBe(
+      false,
+    );
+    expect(isSmallSteps([{ ...plan, createdAt: "tomorrow" }])).toBe(false);
+    expect(isSmallSteps([{ ...plan, source: "automatic" }])).toBe(false);
   });
 });

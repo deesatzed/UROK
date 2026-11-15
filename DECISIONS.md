@@ -32,6 +32,9 @@ This file records durable project decisions. Future agents should add rows rathe
 | D-023 | 2026-05-16 | Validate local-storage data at read time with per-key schemas and targeted migrations instead of trusting parsed JSON. | Active | Malformed but parseable local data can break UI state. Validators preserve valid existing data, migrate known legacy shapes, and fall back safely without adding accounts, sync, telemetry, or dependencies. |
 | D-024 | 2026-11-15 | Offer a sensory opening, immediate exercise switch and always-visible urgent help. Make pacing, listening and self-report optional. | Active | Someone under stress can act or leave with minimal reading. Practice holds source notes and guidance for recurring symptoms. |
 | D-025 | 2026-11-15 | Precache the core and included audio. Allow explicit, setup-only ZONOS rendering of fixed or user-authored words, saved atomically on-device. | Active | SOS can run offline after cache preparation, including where WebGPU and local device voices are unavailable. |
+| D-026 | 2026-11-15 | Center the home on the person's current need. Plans and reflections measure what the person chose to try, without automatic outcome labels. Aftercare opens without a questionnaire. | Active | Fear between episodes and difficulty returning to life need dedicated paths. A completed step can remain meaningful when anxiety is present. |
+| D-027 | 2026-11-15 | Keep small plans, reflections, pattern words and displayable support messages in validated local storage with deletion controls. Offer clinician-agreed practice as user-authored steps. | Active | These activities work offline, support continuity and avoid requiring personal disclosure or symptom induction in the application. |
+
 
 
 ## Initial Default Decisions
@@ -47,7 +50,6 @@ This file records durable project decisions. Future agents should add rows rathe
 | ID | Superseded Date | Replacement | Notes |
 | --- | --- | --- | --- |
 | D-017 | 2026-11-15 | D-025 | The original Web Speech guide is now a local fallback for custom text. |
-| None | N/A | N/A | No decisions have been superseded yet. |
 
 ## Decision Rules For Future Agents
 

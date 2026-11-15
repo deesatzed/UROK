@@ -4,7 +4,7 @@ import {
   House,
   LifeBuoy,
   Moon,
-  NotebookPen,
+  Footprints,
   Settings,
   Sun,
   Wind,
@@ -27,7 +27,7 @@ type AppShellProps = {
 const items = [
   { Icon: House, view: "home", label: "Home" },
   { Icon: BookOpen, view: "practice", label: "Practice" },
-  { Icon: NotebookPen, view: "journal", label: "Journal" },
+  { Icon: Footprints, view: "steps", label: "My steps" },
   { Icon: Settings, view: "settings", label: "Settings" },
 ] as const;
 
@@ -111,10 +111,12 @@ export function AppShell({
         id="main-content"
         aria-label={currentViewLabel + " content"}
       >
-        {focusMode && (
+        {focusMode && currentView !== "before" && currentView !== "worry" && (
           <button type="button" className="exit-guide" onClick={onHome}>
             <X size={16} aria-hidden="true" />
-            Exit guide
+            {["sos", "breathe", "ground"].includes(currentView)
+              ? "Exit guide"
+              : "Back to home"}
           </button>
         )}
         {children}

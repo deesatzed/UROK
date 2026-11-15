@@ -1,7 +1,23 @@
-import { ArrowRight, ExternalLink } from "lucide-react";
+import {
+  ArrowRight,
+  ExternalLink,
+  Footprints,
+  Lightbulb,
+  MessageCircle,
+  Hand,
+  Wind,
+  Sparkles,
+} from "lucide-react";
+import { getFocusProfile } from "../data/focusProfiles";
+import type { FocusProfileId } from "../types";
 import { SafetyNotice } from "./SafetyNotice";
 
 const reading = [
+  {
+    title: "Facing feared situations",
+    source: "Centre for Clinical Interventions",
+    url: "https://www.cci.health.wa.gov.au/Resources/Looking-After-Yourself/Panic",
+  },
   {
     title: "Grounding through your senses",
     source: "NHS inform",
@@ -11,6 +27,11 @@ const reading = [
     title: "Comfortable breathing",
     source: "NHS",
     url: "https://www.nhs.uk/mental-health/self-help/guides-tools-and-activities/breathing-exercises-for-stress/",
+  },
+  {
+    title: "Working with worry",
+    source: "NHS",
+    url: "https://www.nhs.uk/every-mind-matters/mental-wellbeing-tips/self-help-cbt-techniques/tackling-your-worries/",
   },
   {
     title: "Care for recurring episodes",
@@ -24,54 +45,108 @@ const reading = [
   },
 ];
 type Props = {
+  focusProfile: FocusProfileId;
   onDone: () => void;
   onBreathe: () => void;
   onGround: () => void;
   onPlan: () => void;
+  onSteps: () => void;
+  onPattern: () => void;
+  onWorry: () => void;
+  onJoy: () => void;
+  onJournal: () => void;
 };
-export function EducationView({ onDone, onBreathe, onGround, onPlan }: Props) {
+export function EducationView({
+  focusProfile,
+  onDone,
+  onBreathe,
+  onGround,
+  onPlan,
+  onSteps,
+  onPattern,
+  onWorry,
+  onJoy,
+  onJournal,
+}: Props) {
+  const options = [
+    {
+      title: "Take one small step",
+      body: "Make room for something fear has been getting in the way of.",
+      Icon: Footprints,
+      open: onSteps,
+    },
+    {
+      title: "Understand my pattern",
+      body: "Explore a sensation, the thought that followed, and what I did next.",
+      Icon: Lightbulb,
+      open: onPattern,
+    },
+    {
+      title: "Untangle a worry",
+      body: "Find one action, or practice leaving a question open.",
+      Icon: MessageCircle,
+      open: onWorry,
+    },
+  ];
   return (
     <section className="learn-view">
-      <h1>Practice when you feel ready.</h1>
-      <p className="intro">
-        Try one exercise on an ordinary day. You can choose what feels workable
-        before a harder moment.
-      </p>
-      <article>
-        <h2>Notice your surroundings</h2>
-        <p>
-          Bring your attention to a color, a texture, or a sound. The five
-          senses offer a sequence you can adapt or skip.
-        </p>
-        <button className="text-action" onClick={onGround}>
-          Try grounding <ArrowRight size={17} />
-        </button>
-      </article>
-      <article>
-        <h2>Find a comfortable breath</h2>
-        <p>
-          Let air move gently, without forcing a deep breath. Some people like
-          an even count. If focusing on breathing feels uncomfortable, return to
-          your usual rhythm or try grounding.
-        </p>
-        <button className="text-action" onClick={onBreathe}>
-          Try breathing <ArrowRight size={17} />
-        </button>
-      </article>
-      <article>
-        <h2>When episodes keep coming back</h2>
-        <p>
-          If worry about the next episode is changing where you go or what you
-          do, talk with a clinician. Cognitive behavioral therapy (CBT) is an
-          established treatment for panic disorder.
-        </p>
-      </article>
+      <div className="flow-intro">
+        <h1>Practice when you feel ready.</h1>
+        <p>Pick one thing that feels useful today.</p>
+      </div>
+      <div className="practice-options">
+        {options.map(({ title, body, Icon, open }) => (
+          <button key={title} onClick={open}>
+            <Icon aria-hidden="true" size={22} />
+            <span>
+              <strong>{title}</strong>
+              <small>{body}</small>
+            </span>
+            <ArrowRight size={18} aria-hidden="true" />
+          </button>
+        ))}
+      </div>
+      <section className="familiar-tools" aria-label="Support areas">
+        <h2>A familiar exercise</h2>
+        <div className="tool-links">
+          {getFocusProfile(focusProfile).toolOrder.map((tool) =>
+            tool === "breathe" ? (
+              <button key={tool} onClick={onBreathe}>
+                <Wind aria-hidden="true" />
+                Paced breathing
+              </button>
+            ) : (
+              <button key={tool} onClick={onGround}>
+                <Hand aria-hidden="true" />
+                5-4-3-2-1 senses
+              </button>
+            ),
+          )}
+          <button onClick={onJoy}>
+            <Sparkles aria-hidden="true" />
+            Spark Joy
+          </button>
+        </div>
+      </section>
       <details className="source-links">
-        <summary>About these exercises and sources</summary>
+        <summary>How these practices can help</summary>
         <p>
-          The counts and wording are flexible ways to practice. Which cue you
-          prefer is personal. These exercises have not been tested as a
-          treatment in ClearSpace.
+          Cognitive behavioral therapy (CBT) helps people work with feared
+          sensations, interpretations, and avoidance. These short activities can
+          support reflection and practice alongside care.
+        </p>
+        <p>
+          When trying a step, you can notice what actually happened, even if you
+          still felt anxious. Over time, a therapist can help you practice using
+          less reassurance or other things you have come to rely on.
+        </p>
+        <p>
+          For exercises that deliberately bring on physical sensations, work
+          from a plan agreed with a suitable clinician. Your health and
+          circumstances help determine what is appropriate.
+        </p>
+        <p>
+          These activities have not been tested as a treatment in ClearSpace.
         </p>
         {reading.map((item) => (
           <a key={item.url} href={item.url} target="_blank" rel="noreferrer">
@@ -80,15 +155,26 @@ export function EducationView({ onDone, onBreathe, onGround, onPlan }: Props) {
           </a>
         ))}
       </details>
-      <SafetyNotice />
+      <details className="source-links">
+        <summary>When worry keeps getting in the way</summary>
+        <p>
+          If fear of another episode is changing where you go, who you see, or
+          how you live, a clinician can help you find care that fits. CBT is an
+          established treatment for panic disorder.
+        </p>
+      </details>
       <div className="guide-links">
-        <button className="action-secondary" onClick={onPlan}>
+        <button className="text-action" onClick={onJournal}>
+          My journal
+        </button>
+        <button className="text-action" onClick={onPlan}>
           Set up my guide
         </button>
         <button className="text-action" onClick={onDone}>
           Back to home
         </button>
       </div>
+      <SafetyNotice />
     </section>
   );
 }

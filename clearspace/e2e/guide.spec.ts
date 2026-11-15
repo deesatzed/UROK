@@ -17,8 +17,16 @@ for (const [width, height] of [
           unexpected.push(url.href);
       });
       await page.goto("./");
-      const start = page.getByRole("button", { name: "Start calming support" });
+      const start = page.getByRole("button", { name: /Help me through this/ });
       await expect(start).toBeInViewport();
+      for (const name of [
+        /afraid it might happen/i,
+        /it just happened/i,
+        /i want to practice/i,
+      ]) {
+        const box = await page.getByRole("button", { name }).boundingBox();
+        expect(box!.y + box!.height).toBeLessThanOrEqual(height - 56);
+      }
       expect(
         await page.evaluate(
           () => document.documentElement.scrollWidth <= innerWidth,
@@ -72,3 +80,56 @@ for (const [width, height] of [
     },
   );
 }
+
+test("a saved small step and reflection stay available offline after an interrupted visit", async ({
+  page,
+  context,
+}) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("./");
+  await page.getByRole("button", { name: /afraid it might happen/i }).click();
+  await page.getByRole("button", { name: /make a small plan/i }).click();
+  await page.getByRole("button", { name: "Go to a shop", exact: true }).click();
+  await page.getByRole("button", { name: /choose my step/i }).click();
+  await page.getByRole("button", { name: /see my plan/i }).click();
+  await page.getByRole("button", { name: /keep this plan/i }).click();
+  await page.getByRole("button", { name: /i’ll try this step/i }).click();
+  await expect(page.getByText(/put your phone away/i)).toBeVisible();
+  await page.evaluate(() => navigator.serviceWorker.ready);
+  await page.waitForFunction(() => !!navigator.serviceWorker.controller);
+  await context.setOffline(true);
+  await page.reload();
+  await page
+    .getByRole("button", { name: /my saved step.*go to a shop/i })
+    .click();
+  await expect(
+    page.getByText("Go inside and look at one thing."),
+  ).toBeVisible();
+  await page.getByRole("button", { name: /look back on it/i }).click();
+  await page
+    .getByLabel(/what happened/i)
+    .fill("I went in and left after a minute.");
+  await page.getByRole("button", { name: /keep this reflection/i }).click();
+  await page.getByText("What I noticed before", { exact: true }).click();
+  await expect(
+    page.getByText("I went in and left after a minute."),
+  ).toBeVisible();
+  await page.getByRole("button", { name: "Go to home", exact: true }).click();
+  await page.getByRole("button", { name: /it just happened/i }).click();
+  await expect(
+    page.getByRole("heading", { name: "A moment for yourself." }),
+  ).toBeVisible();
+  const clipSeconds = await page.evaluate(async () => {
+    const audio = new AudioContext();
+    try {
+      return (
+        await audio.decodeAudioData(
+          await (await fetch("./voices/after.mp3")).arrayBuffer(),
+        )
+      ).duration;
+    } finally {
+      await audio.close();
+    }
+  });
+  expect(clipSeconds).toBeGreaterThan(1);
+});

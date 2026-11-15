@@ -1,6 +1,6 @@
 # UROK / ClearSpace
 
-ClearSpace offers one concrete step when stress feels overwhelming. Open **Start calming support**, read or listen to a single cue, and move on when ready. Urgent help, a change of exercise, and a way to leave are available from the first cue.
+ClearSpace opens with four choices in the person’s own words. **Help me through this** starts immediate support. **I’m afraid it might happen** recalls or creates a manageable plan. **It just happened** opens aftercare directly. **I want to practice** offers short activities informed by CBT.
 
 ## Try the app
 
@@ -15,12 +15,16 @@ Open the local address printed by Vite. For the production build and offline beh
 
 To repeat the small-screen and offline browser checks, run `npx playwright install chromium` and `npm run test:browser` in `clearspace/`.
 
+[View the current home screen](docs/clearspace-home.png)
+
 ## Design and evidence
 
+- **Before an activity** a short plan names something the person wants to do, a manageable action and an optional feared outcome. Drafts survive interruptions. Saved plans can be recalled, changed, reflected on or removed. Reflections preserve the person’s words about what happened.
+- **After an episode** a quiet, untimed screen lets the person pause, return to the day, contact someone or choose support again. Journaling and the existing check-in are optional.
 - **During support** the user can ground through touch or sight, switch exercises immediately, call a saved person, or exit. Sound starts only on request or through an explicitly saved preference. Breathing begins at the person's own pace. Counting is optional for both breathing and the senses sequence.
-- **Between episodes** Practice explains the exercises and links to NHS, NHS inform, NIMH, and NICE guidance. Settings lets the person choose a first cue, pin a reminder and prepare optional audio. The optional check-in asks how things changed, including whether they were more intense. No answer or cause of improvement is assumed.
+- **Between episodes** Practice offers a small-step planner, a sensation/thought/response exercise, a practical-action or uncertainty exercise, and the familiar breathing and grounding tools. Source notes link to CCI, NHS, NHS inform, NIMH and NICE guidance. Settings lets the person choose a first cue, pin a reminder and prepare optional audio. The optional check-in asks how things changed, including whether they were more intense. No answer or cause of improvement is assumed.
 - **Voice** uses bundled recordings for the fixed cues and default reminders. On supported devices an optional WebGPU ZONOS3-Mini studio renders a different voice in advance. During support the app plays saved audio. A local browser voice can read a custom reminder without a prepared clip. [Voice assets and provenance](clearspace/VOICE_ASSETS.md)
-- **Local data** includes preferences, contact, optional journal, and check-ins in browser local storage, plus explicitly prepared clips in IndexedDB. Users can delete notes and remove prepared clips. The app has no account, analytics, cloud transcription, microphone input or generated medical advice.
+- **Local data** includes preferences, contact, small plans and reflections, an optional personal pattern, journal and check-ins in browser local storage, plus explicitly prepared clips in IndexedDB. Users can delete notes and remove prepared clips. The app has no account, analytics, cloud transcription, microphone input or generated medical advice.
 
 The exercise guidance draws on self-help resources. ClearSpace has no patient outcome validation. [Clinical sources and usability evaluation](clearspace/UX_MITIGATION_AUDIT.md#support-flow-evaluation)
 

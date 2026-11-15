@@ -35,6 +35,7 @@
 | TQ-020 | 10 | Implement `redesign.md` visual refresh | High | Done | User request |
 | TQ-021 | 11 | Implement UX theory mitigations | High | Done | User `/goal` |
 | TQ-022 | 12 | Replace user-facing stronger symptom labels with stress language and clarify AI/TTS/STT status | High | Done | User request |
+| TQ-025 | 15 | Build before, during, after and CBT-informed practice paths with patient language and saved real-world steps | High | Done | User request |
 | TQ-024 | 14 | Simplify active support, source the practice guidance and prepare voice clips outside SOS | High | Done | User request |
 | TQ-023 | 13 | Expand deterministic guardrails before AI/STT | High | Ready | TQ-017 |
 

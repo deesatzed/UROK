@@ -8,6 +8,8 @@ import type { PreparedPack } from "../services/voicePack";
 import { SafetyNotice } from "./SafetyNotice";
 
 type SettingsViewProps = {
+  supportMessage: string;
+  setSupportMessage: (value: string) => void;
   opening: OpeningCue;
   setOpening: (v: OpeningCue) => void;
   favorite: string;
@@ -37,6 +39,8 @@ type SettingsViewProps = {
 };
 
 export function SettingsView({
+  supportMessage,
+  setSupportMessage,
   opening,
   setOpening,
   favorite,
@@ -223,6 +227,15 @@ export function SettingsView({
 
       <div className="settings-section">
         <h2>Support contact</h2>
+        <label>
+          What I’d like someone to know
+          <textarea
+            maxLength={500}
+            value={supportMessage}
+            onChange={(e) => setSupportMessage(e.target.value)}
+          />
+        </label>
+        <p>You can show this message to someone during support or afterward.</p>
         <div className="contact-grid">
           <label>
             <span>Name</span>
