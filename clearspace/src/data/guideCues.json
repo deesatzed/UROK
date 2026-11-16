@@ -24,23 +24,23 @@
     "body": ""
   },
   "see": {
-    "title": "Name 5 things you can see.",
+    "title": "Something you can see.",
     "body": "Look for colors, shapes, or shadows."
   },
   "touch": {
-    "title": "Name 4 things you can touch.",
+    "title": "Something you can touch.",
     "body": "Notice the texture of clothing or a nearby surface."
   },
   "hear": {
-    "title": "Name 3 things you can hear.",
+    "title": "Something you can hear.",
     "body": "A quiet sound nearby counts."
   },
   "smell": {
-    "title": "Name 2 things you can smell.",
+    "title": "A scent you can notice.",
     "body": "If nothing comes to mind, move on whenever you like."
   },
   "taste": {
-    "title": "Name 1 thing you can taste.",
+    "title": "A taste or familiar flavor.",
     "body": "You can also remember a familiar flavor."
   },
   "finished": {

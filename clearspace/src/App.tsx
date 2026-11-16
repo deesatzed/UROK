@@ -7,7 +7,7 @@ import { SupportCard, defaultSupportMessage } from "./components/SupportCard";
 import { StorageNotice } from "./components/StorageNotice";
 import { UrgentHelp } from "./components/UrgentHelp";
 import { loadPack, type PreparedPack } from "./services/voicePack";
-import type { OpeningCue } from "./data/guide";
+import type { OpeningCue, VoiceStyle } from "./data/guide";
 import { AppShell } from "./components/AppShell";
 import { BreathingTool } from "./components/BreathingTool";
 import { CheckInView } from "./components/CheckInView";
@@ -122,6 +122,11 @@ function App() {
     false,
     { validate: storageValidators.boolean },
   );
+  const [voiceStyle, setVoiceStyle] = useLocalStorage<VoiceStyle>(
+    "voice-style",
+    "gentle",
+    { validate: (v): v is VoiceStyle => v === "gentle" || v === "brief" },
+  );
   const [reassurancePhrases, setReassurancePhrases] = useLocalStorage(
     "reassurance-phrases",
     defaultReassurancePhrases,
@@ -185,6 +190,7 @@ function App() {
     !helpOpen && !cardOpen && (voiceOverride ?? voiceGuideEnabled),
     pack,
     setVoiceOverride,
+    voiceStyle,
   );
   const inGuide =
     currentView === "sos" ||
@@ -410,6 +416,8 @@ function App() {
           supportContact={supportContact}
           toolkitItems={toolkitItems}
           voiceGuideEnabled={voiceGuideEnabled}
+          voiceStyle={voiceStyle}
+          setVoiceStyle={setVoiceStyle}
           voiceGuideSupported={speechGuide.supported}
           onBackHome={() => navigate("home")}
           setFocusProfile={setFocusProfile}

@@ -81,6 +81,7 @@ export function SosWizard({
           {cue.title}
         </h1>
         <p>{cue.body}</p>
+        <p className="guide-hint">Take your time. Move on whenever you choose.</p>
       </div>
       {choosing ? (
         <div className="guide-actions" aria-label="Next support options">

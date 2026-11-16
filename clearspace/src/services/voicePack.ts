@@ -1,4 +1,4 @@
-import { spokenCue, type OpeningCue } from "../data/guide";
+import { narratedCue, type OpeningCue, type VoiceStyle } from "../data/guide";
 
 export const studioVoices = {
   default_b78b28baf5c31a1d: "Imogen",
@@ -7,16 +7,17 @@ export const studioVoices = {
 export type StudioVoice = keyof typeof studioVoices;
 export type PreparedPack = {
   voice: StudioVoice;
+  style?: VoiceStyle;
   clips: { text: string; audio: Blob }[];
 };
-export function packTexts(opening: OpeningCue, phrase: string) {
+export function packTexts(opening: OpeningCue, phrase: string, style: VoiceStyle = "gentle") {
   return [
     ...new Set(
       [
-        spokenCue(opening),
+        narratedCue(opening, style),
         phrase.trim(),
-        spokenCue("ease"),
-        spokenCue("choice"),
+        narratedCue("ease", style),
+        narratedCue("choice", style),
       ].filter(Boolean),
     ),
   ];
@@ -31,6 +32,7 @@ export function validPack(value: unknown): value is PreparedPack {
     return false;
   return (
     Object.prototype.hasOwnProperty.call(studioVoices, String(value.voice)) &&
+    (!("style" in value) || value.style === "gentle" || value.style === "brief") &&
     Array.isArray(value.clips) &&
     value.clips.length > 0 &&
     value.clips.length <= 4 &&

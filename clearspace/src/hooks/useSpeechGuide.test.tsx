@@ -1,6 +1,6 @@
 import { act, cleanup, renderHook } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { spokenCue } from "../data/guide";
+import { narratedCue, spokenCue } from "../data/guide";
 import type { PreparedPack } from "../services/voicePack";
 import { useSpeechGuide } from "./useSpeechGuide";
 
@@ -31,7 +31,7 @@ const pack: PreparedPack = {
 
 function setup(initialPack: PreparedPack | null = null) {
   return renderHook(
-    ({ enabled, savedPack }) => useSpeechGuide(enabled, savedPack, vi.fn()),
+    ({ enabled, savedPack }) => useSpeechGuide(enabled, savedPack, vi.fn(), "brief"),
     { initialProps: { enabled: true, savedPack: initialPack } },
   );
 }
@@ -53,6 +53,22 @@ describe("guide audio playback", () => {
   afterEach(() => {
     cleanup();
     vi.unstubAllGlobals();
+  });
+
+  it("uses gentle narration by default and only matches a prepared clip with the same words", async () => {
+    const gentlePack: PreparedPack = {
+      ...pack, style: "gentle",
+      clips: [{ text: narratedCue("surface"), audio: pack.clips[0].audio }],
+    };
+    const { result } = renderHook(() => useSpeechGuide(true, gentlePack, vi.fn()));
+    await act(async () => { result.current.read(cue); });
+    expect(TestAudio.instances[0].src).toBe("blob:prepared-cue");
+  });
+
+  it("uses the gentle recording rather than a stale brief recording", async () => {
+    const { result } = renderHook(() => useSpeechGuide(true, pack, vi.fn()));
+    await act(async () => { result.current.read(cue); });
+    expect(TestAudio.instances[0].src).toMatch(/voices\/surface-gentle\.mp3$/);
   });
 
   it("plays a recorded cue once and fully releases it on stop", async () => {
@@ -185,6 +201,18 @@ describe("guide audio playback", () => {
     expect(TestAudio.instances).toHaveLength(1);
     expect(result.current.status).toBe("speaking");
     expect(TestAudio.instances[0].play).toHaveBeenCalledTimes(2);
+  });
+
+  it("keeps voice paused when the person moves on to another cue", async () => {
+    const { result } = setup();
+    await act(async () => { result.current.read(cue); });
+    act(() => { result.current.pause(); result.current.stop(); });
+    act(() => { result.current.read(spokenCue("ease")); });
+    expect(result.current.status).toBe("paused");
+    expect(TestAudio.instances[1].play).not.toHaveBeenCalled();
+    await act(async () => { result.current.resume(); });
+    expect(TestAudio.instances[1].play).toHaveBeenCalledOnce();
+    expect(result.current.status).toBe("speaking");
   });
 
   it("allows only one guide instance to speak at a time", async () => {

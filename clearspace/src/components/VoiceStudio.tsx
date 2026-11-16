@@ -8,15 +8,16 @@ import {
   type PreparedPack,
   type StudioVoice,
 } from "../services/voicePack";
-import type { OpeningCue } from "../data/guide";
+import { voiceStyles, type OpeningCue, type VoiceStyle } from "../data/guide";
 
 type Props = {
   opening: OpeningCue;
   phrase: string;
   pack: PreparedPack | null;
   onPack: (p: PreparedPack | null) => void;
+  style: VoiceStyle;
 };
-export function VoiceStudio({ opening, phrase, pack, onPack }: Props) {
+export function VoiceStudio({ opening, phrase, pack, onPack, style }: Props) {
   const [voice, setVoice] = useState<StudioVoice>(
     pack?.voice ?? "default_b78b28baf5c31a1d",
   );
@@ -47,12 +48,13 @@ export function VoiceStudio({ opening, phrase, pack, onPack }: Props) {
     setBusy(true);
     setMessage("Opening the voice studio…");
     try {
-      const p = await renderPack(
+      const rendered = await renderPack(
         voice,
-        packTexts(opening, phrase),
+        packTexts(opening, phrase, style),
         controller.signal,
         setMessage,
       );
+      const p = { ...rendered, style };
       await savePack(p, controller.signal);
       if (!controller.signal.aborted) {
         onPack(p);
@@ -91,7 +93,14 @@ export function VoiceStudio({ opening, phrase, pack, onPack }: Props) {
       )}
       {pack && (
         <div className="saved-voice">
-          <p>Saved voice · {studioVoices[pack.voice]}</p>
+          <p>Saved voice · {studioVoices[pack.voice]} · {voiceStyles[pack.style ?? "brief"]}</p>
+          {(pack.style ?? "brief") !== style && (
+            <p>
+              This saved voice uses {voiceStyles[pack.style ?? "brief"].toLowerCase()}.
+              Choose that guidance style to use it, or prepare your voice again
+              for {voiceStyles[style].toLowerCase()}.
+            </p>
+          )}
           {preview && (
             <audio
               ref={player}

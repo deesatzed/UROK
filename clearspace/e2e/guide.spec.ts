@@ -55,7 +55,7 @@ for (const [width, height] of [
       await page.getByRole("button", { name: "Try grounding instead" }).click();
       await page.getByRole("button", { name: "Next sense" }).click();
       await expect(
-        page.getByRole("heading", { name: /4 things you can touch/i }),
+        page.getByRole("heading", { name: /something you can touch/i }),
       ).toBeFocused();
 
       await page.evaluate(() => navigator.serviceWorker.ready);
@@ -69,7 +69,7 @@ for (const [width, height] of [
       const seconds = await page.evaluate(async () => {
         const ac = new AudioContext();
         try {
-          const clip = await fetch("./voices/surface.mp3");
+          const clip = await fetch("./voices/surface-gentle.mp3");
           return (await ac.decodeAudioData(await clip.arrayBuffer())).duration;
         } finally {
           await ac.close();
@@ -124,7 +124,7 @@ test("a saved small step and reflection stay available offline after an interrup
     try {
       return (
         await audio.decodeAudioData(
-          await (await fetch("./voices/after.mp3")).arrayBuffer(),
+          await (await fetch("./voices/after-gentle.mp3")).arrayBuffer(),
         )
       ).duration;
     } finally {

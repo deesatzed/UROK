@@ -1,21 +1,24 @@
 import { describe, expect, it } from "vitest";
 import { packTexts, validPack } from "./voicePack";
-import { spokenCue } from "../data/guide";
+import { narratedCue, spokenCue } from "../data/guide";
 
 describe("prepared guide audio", () => {
   it("includes the chosen opening and only an explicitly selected reminder", () => {
     expect(packTexts("look", "  My reminder.  ")).toEqual([
-      spokenCue("look"),
+      narratedCue("look"),
       "My reminder.",
-      spokenCue("ease"),
-      spokenCue("choice"),
+      narratedCue("ease"),
+      narratedCue("choice"),
     ]);
     expect(packTexts("surface", "")).toEqual([
-      spokenCue("surface"),
-      spokenCue("ease"),
-      spokenCue("choice"),
+      narratedCue("surface"),
+      narratedCue("ease"),
+      narratedCue("choice"),
     ]);
-    expect(packTexts("look", spokenCue("look"))).toHaveLength(3);
+    expect(packTexts("look", narratedCue("look"))).toHaveLength(3);
+    expect(packTexts("surface", "", "brief")).toEqual([
+      spokenCue("surface"), spokenCue("ease"), spokenCue("choice"),
+    ]);
   });
 
   it("ignores malformed saved packs and unknown voices", () => {
@@ -28,6 +31,7 @@ describe("prepared guide audio", () => {
     for (const pack of [
       null,
       { voice: "__proto__", clips: [clip] },
+      { voice, clips: [], style: "unknown" },
       { voice, clips: [] },
       { voice, clips: Array(5).fill(clip) },
       { voice, clips: [{ text: "My cue", audio: "https://example.com" }] },

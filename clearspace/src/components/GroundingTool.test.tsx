@@ -28,13 +28,13 @@ describe("GroundingTool", () => {
     render(<GroundingTool onDone={vi.fn()} />);
 
     expect(
-      screen.getByRole("heading", { name: /name 5 things you can see/i }),
+      screen.getByRole("heading", { name: /something you can see/i }),
     ).toBeInTheDocument();
 
     await user.click(screen.getByText("Count with taps"));
     await user.click(screen.getByRole("button", { name: /item 1/i }));
     expect(
-      screen.getByRole("heading", { name: /name 5 things you can see/i }),
+      screen.getByRole("heading", { name: /something you can see/i }),
     ).toBeInTheDocument();
 
     await user.click(screen.getByRole("button", { name: /item 2/i }));
@@ -43,7 +43,7 @@ describe("GroundingTool", () => {
     await user.click(screen.getByRole("button", { name: /item 5/i }));
 
     expect(
-      screen.getByRole("heading", { name: /name 4 things you can touch/i }),
+      screen.getByRole("heading", { name: /something you can touch/i }),
     ).toBeInTheDocument();
   });
 
@@ -55,7 +55,7 @@ describe("GroundingTool", () => {
     render(<GroundingTool onDone={onDone} speechGuide={speechGuide} />);
 
     expect(speechGuide.read).toHaveBeenCalledWith(
-      expect.stringMatching(/Name 5 things you can see/i),
+      expect.stringMatching(/Something you can see/i),
     );
 
     await user.click(screen.getByText("Count with taps"));
@@ -66,7 +66,7 @@ describe("GroundingTool", () => {
     await user.click(screen.getByRole("button", { name: /item 5/i }));
 
     expect(speechGuide.read).toHaveBeenLastCalledWith(
-      expect.stringMatching(/Name 4 things you can touch/i),
+      expect.stringMatching(/Something you can touch/i),
     );
 
     const stopCount = vi.mocked(speechGuide.stop).mock.calls.length;

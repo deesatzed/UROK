@@ -3,7 +3,7 @@ import { Plus, Trash2 } from "lucide-react";
 import { focusProfiles } from "../data/focusProfiles";
 import type { FocusProfileId, SupportContact, ToolkitItem } from "../types";
 import { VoiceStudio } from "./VoiceStudio";
-import { cues, type OpeningCue } from "../data/guide";
+import { cues, voiceStyles, type OpeningCue, type VoiceStyle } from "../data/guide";
 import type { PreparedPack } from "../services/voicePack";
 import { SafetyNotice } from "./SafetyNotice";
 
@@ -23,6 +23,8 @@ type SettingsViewProps = {
   toolkitItems: ToolkitItem[];
   voiceGuideEnabled: boolean;
   voiceGuideSupported: boolean;
+  voiceStyle: VoiceStyle;
+  setVoiceStyle: (value: VoiceStyle) => void;
   onBackHome: () => void;
   setFocusProfile: (value: FocusProfileId) => void;
   setLowStimEnabled: (value: boolean | ((current: boolean) => boolean)) => void;
@@ -54,6 +56,8 @@ export function SettingsView({
   toolkitItems,
   voiceGuideEnabled,
   voiceGuideSupported,
+  voiceStyle,
+  setVoiceStyle,
   onBackHome,
   setFocusProfile,
   setLowStimEnabled,
@@ -130,11 +134,24 @@ export function SettingsView({
               : "Voice guide unavailable"}
           </button>
         </div>
+        <label>
+          Spoken guidance
+          <select value={voiceStyle} onChange={(e) => setVoiceStyle(e.target.value as VoiceStyle)}>
+            {Object.entries(voiceStyles).map(([value, label]) => (
+              <option key={value} value={value}>{label}</option>
+            ))}
+          </select>
+        </label>
+        <p>
+          Gentle guidance adds a little context and space between suggestions.
+          Brief cues use fewer words. Choose what feels easier to hear.
+        </p>
         <VoiceStudio
           opening={opening}
           phrase={favorite}
           pack={pack}
           onPack={onPack}
+          style={voiceStyle}
         />
       </div>
 

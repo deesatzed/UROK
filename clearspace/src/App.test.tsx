@@ -141,7 +141,7 @@ describe("App shell", () => {
     );
 
     expect(
-      screen.getByRole("heading", { name: /name 5 things you can see/i }),
+      screen.getByRole("heading", { name: /something you can see/i }),
     ).toBeInTheDocument();
   });
 
@@ -293,13 +293,31 @@ describe("App shell", () => {
     );
     const players = vi.mocked(HTMLMediaElement.prototype.play).mock.contexts;
     const clip = players[players.length - 1] as HTMLAudioElement;
-    expect(clip.src).toMatch(/voices\/surface\.mp3$/);
+    expect(clip.src).toMatch(/voices\/surface-gentle\.mp3$/);
     const pauses = vi.mocked(HTMLMediaElement.prototype.pause).mock.calls
       .length;
     await user.click(screen.getByRole("button", { name: /mute guide/i }));
     expect(
       vi.mocked(HTMLMediaElement.prototype.pause).mock.calls.length,
     ).toBeGreaterThan(pauses);
+  });
+
+  it("remembers a preference for brief cues across visits", async () => {
+    const user = userEvent.setup();
+    const first = render(<App />);
+    await user.click(screen.getByRole("button", { name: /^settings$/i }));
+    expect(screen.getByLabelText("Spoken guidance")).toHaveValue("gentle");
+    await user.selectOptions(screen.getByLabelText("Spoken guidance"), "brief");
+    first.unmount();
+    render(<App />);
+    await user.click(screen.getByRole("button", { name: /^settings$/i }));
+    expect(screen.getByLabelText("Spoken guidance")).toHaveValue("brief");
+    await user.click(screen.getByRole("button", { name: /back to home/i }));
+    await user.click(screen.getByRole("button", { name: /help me through this/i }));
+    await user.click(screen.getByRole("button", { name: /^listen$/i }));
+    const players = vi.mocked(HTMLMediaElement.prototype.play).mock.contexts;
+    const clip = players[players.length - 1] as HTMLAudioElement;
+    expect(clip.src).toMatch(/voices\/surface\.mp3$/);
   });
 
   it("does not read SOS guidance when voice guide is disabled", async () => {
@@ -565,7 +583,7 @@ describe("Choices during support", () => {
     await click(/5-4-3-2-1 grounding/i);
     await click(/next sense/i);
     expect(
-      screen.getByRole("heading", { name: /name 4 things/i }),
+      screen.getByRole("heading", { name: /something you can touch/i }),
     ).toHaveFocus();
     await click(/done for now/i);
     await click(/ready for what’s next/i);

@@ -72,3 +72,13 @@ Measure independent task completion, mistaken taps, time to the intended support
 | A browser could reject a save while the UI appeared successful | A status message offers retry and keeps pending values in the open tab |
 
 The recovery screenshot uses fictional example text. Participant testing and clinical outcome validation remain open.
+
+## Spoken pacing review, November 16
+
+The user's report that terse clips feel more anxiety provoking is a usability signal. Short utterances are not established as inherently harmful, and longer speech can also feel intrusive or demanding. This revision treats abruptness, imperative wording and uncertain transitions as plausible sources of pressure, without claiming that a particular clip length treats panic.
+
+The default spoken guidance now offers a small amount of orientation, one optional action, and space before another invitation. The screen retains a short cue. Brief narration remains selectable; silence and leaving remain easy choices. Grounding headlines no longer impose a number of things to find. The optional tap counter remains available. A voice pause persists when moving between cues, and audio ending never moves the person forward or initiates a check-in. No narration asserts that physical symptoms are harmless or that the person should already feel calmer.
+
+This design draws on the supportive, non-pressuring communication principles in the [WHO psychological first aid guide](https://www.who.int/publications/i/item/9789241548205) and the emphasis on choice and sensory needs in the [NHS inform panic guide](https://www.nhsinform.scot/illnesses-and-conditions/mental-health/mental-health-self-help-guides/panic-self-help-guide). Neither source validates ClearSpace or these recordings.
+
+For evaluation, invite people with lived experience to compare the brief and gentle versions while comfortable, in counterbalanced order. Ask whether the voice felt hurried, demanding, patronizing, too wordy, or supportive; whether silence felt like a choice or an unexplained stop; and whether pause, switching and exit were easy to find. Include sensory-sensitive and screen-reader users. Record preference and unwanted effects alongside task completion. Do not induce an attack, assume reduced anxiety, or optimize for longer app sessions.

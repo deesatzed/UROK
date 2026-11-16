@@ -6,7 +6,7 @@ import {
   useRef,
   useState,
 } from "react";
-import { bundledClips } from "../data/guide";
+import { guideAudio, type VoiceStyle } from "../data/guide";
 import {
   stopSpeech,
   type SpeechStatus,
@@ -53,6 +53,7 @@ export function useSpeechGuide(
   enabled: boolean,
   pack: PreparedPack | null,
   setEnabled: (v: boolean) => void,
+  voiceStyle: VoiceStyle = "gentle",
 ): SpeechGuideControls {
   const [status, setStatus] = useState<SpeechStatus>("idle");
   const active = useRef<{
@@ -63,11 +64,14 @@ export function useSpeechGuide(
     start?: () => void;
   }>({});
   const savedPack = useRef(pack);
+  const savedStyle = useRef(voiceStyle);
+  const pausedByUser = useRef(false);
   const channel = useRef<BroadcastChannel | null>(null);
   // Loading a saved pack must not change read's identity and replay the current cue.
   useLayoutEffect(() => {
     savedPack.current = pack;
-  }, [pack]);
+    savedStyle.current = voiceStyle;
+  }, [pack, voiceStyle]);
   const hasAudio = typeof Audio !== "undefined";
   const supported = hasAudio;
 
@@ -82,7 +86,10 @@ export function useSpeechGuide(
     return true;
   }, []);
   useEffect(() => {
-    if (!enabled) stop();
+    if (!enabled) {
+      pausedByUser.current = false;
+      stop();
+    }
   }, [enabled, stop]);
   useEffect(() => {
     window.addEventListener("pagehide", stop);
@@ -112,8 +119,9 @@ export function useSpeechGuide(
   );
   const read = useCallback(
     (value: string) => {
-      const text = value.trim();
-      if (!supported || !text) return false;
+      const requested = value.trim();
+      if (!supported || !requested) return false;
+      const { text, id } = guideAudio(requested, savedStyle.current);
       if (active.current.text === text) return true;
       stop();
       audioOwner?.();
@@ -121,6 +129,7 @@ export function useSpeechGuide(
       channel.current?.postMessage("playing");
       const slot = active.current;
       slot.text = text;
+      slot.paused = pausedByUser.current;
       const live = () => active.current === slot;
       const releaseUrl = () => {
         if (slot.url) URL.revokeObjectURL(slot.url);
@@ -167,10 +176,9 @@ export function useSpeechGuide(
             fallback(error);
           }
         };
-        slot.start();
+        if (!slot.paused) slot.start();
       };
-      setStatus("speaking");
-      const id = bundledClips.get(text);
+      setStatus(slot.paused ? "paused" : "speaking");
       const standard = () => {
         if (id && hasAudio) {
           play(import.meta.env.BASE_URL + "voices/" + id + ".mp3", () =>
@@ -190,6 +198,7 @@ export function useSpeechGuide(
   const pause = useCallback(() => {
     const slot = active.current;
     if (!slot.audio) return false;
+    pausedByUser.current = true;
     slot.paused = true;
     slot.audio.pause();
     setStatus("paused");
@@ -198,6 +207,7 @@ export function useSpeechGuide(
   const resume = useCallback(() => {
     const slot = active.current;
     if (!slot.audio || !slot.start || !slot.paused) return false;
+    pausedByUser.current = false;
     slot.paused = false;
     setStatus("speaking");
     slot.start();

@@ -66,7 +66,7 @@ export function GroundingTool({
       {!complete && (
         <>
           <p className="guide-hint">
-            Stay with one detail or move to another sense.
+            One detail is enough. Counting is optional.
           </p>
           <button className="action-primary" onClick={next}>
             {step === 4 ? "Finish exercise" : "Next sense"}{" "}

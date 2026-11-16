@@ -1,0 +1,358 @@
+{
+  "engine": "Piper 1.8.0",
+  "model": "en_US-ljspeech-medium.onnx",
+  "modelSha256": "6f52a751e2349abe7a76735eb09dc1875298c77ea2342ffd2fef79ff81b87f22",
+  "clips": {
+    "surface": {
+      "text": "Feel one steady surface. Rest a hand on your chair, your clothing, or the floor. Notice the texture.",
+      "style": "brief",
+      "durationSeconds": 8.976,
+      "leadSeconds": 0.2,
+      "tailSeconds": 1.4,
+      "sentenceGapSeconds": 0.35,
+      "sha256": "01c927397a8e1f6c038790c407dd9ae64d7258927a77d457f0691a361f813f81"
+    },
+    "look": {
+      "text": "Find one color nearby. Let your eyes rest on one object. Notice a shade or an edge.",
+      "style": "brief",
+      "durationSeconds": 8.136,
+      "leadSeconds": 0.2,
+      "tailSeconds": 1.4,
+      "sentenceGapSeconds": 0.35,
+      "sha256": "1bba5f739a29d518c51375e956dede5f74b8cfdf3176915b8c00718d6cc551bd"
+    },
+    "ease": {
+      "text": "Give your hands a rest. If it feels comfortable, let your fingers loosen a little.",
+      "style": "brief",
+      "durationSeconds": 7.608,
+      "leadSeconds": 0.2,
+      "tailSeconds": 1.4,
+      "sentenceGapSeconds": 0.35,
+      "sha256": "b5006517cf69f108f9c9d99e105e16a34b8629a7170eb388727b755fe693b10d"
+    },
+    "choice": {
+      "text": "What would help next? Choose a different exercise or finish here.",
+      "style": "brief",
+      "durationSeconds": 5.808,
+      "leadSeconds": 0.2,
+      "tailSeconds": 1.4,
+      "sentenceGapSeconds": 0.35,
+      "sha256": "79fdc1fa93c1db6af0ff6da926d138c050acddac921852936959ebc1bb5d6573"
+    },
+    "breathIn": {
+      "text": "Breathe in gently.",
+      "style": "brief",
+      "durationSeconds": 1.488,
+      "leadSeconds": 0.08,
+      "tailSeconds": 0.12,
+      "sentenceGapSeconds": 0.35,
+      "sha256": "a15404622765808963c6b3ba4281e9f1ee4eaa9603312021d6f4f3f229421aa3"
+    },
+    "breathOut": {
+      "text": "Let the breath out.",
+      "style": "brief",
+      "durationSeconds": 1.44,
+      "leadSeconds": 0.08,
+      "tailSeconds": 0.12,
+      "sentenceGapSeconds": 0.35,
+      "sha256": "22eb837fd849430d145b2cc5a77a681f84f44f98579b08bde2c7e4659080b7f5"
+    },
+    "see": {
+      "text": "Something you can see. Look for colors, shapes, or shadows.",
+      "style": "brief",
+      "durationSeconds": 6.048,
+      "leadSeconds": 0.2,
+      "tailSeconds": 1.4,
+      "sentenceGapSeconds": 0.35,
+      "sha256": "34c71ad6a4b4acda6f310481e943c65e25b5f490ae56d204a110dcd0c2ac669c"
+    },
+    "touch": {
+      "text": "Something you can touch. Notice the texture of clothing or a nearby surface.",
+      "style": "brief",
+      "durationSeconds": 6.936,
+      "leadSeconds": 0.2,
+      "tailSeconds": 1.4,
+      "sentenceGapSeconds": 0.35,
+      "sha256": "d4bc76db0083ee492f59c72f29068d84ff2c81f7a790567e2e12c73a013d885f"
+    },
+    "hear": {
+      "text": "Something you can hear. A quiet sound nearby counts.",
+      "style": "brief",
+      "durationSeconds": 5.592,
+      "leadSeconds": 0.2,
+      "tailSeconds": 1.4,
+      "sentenceGapSeconds": 0.35,
+      "sha256": "d466fe3a0e2d6638a7e5d88a37f3ada99590c2b2ed3a0669c93e5a0c35afbc0b"
+    },
+    "smell": {
+      "text": "A scent you can notice. If nothing comes to mind, move on whenever you like.",
+      "style": "brief",
+      "durationSeconds": 7.272,
+      "leadSeconds": 0.2,
+      "tailSeconds": 1.4,
+      "sentenceGapSeconds": 0.35,
+      "sha256": "e42d1585ec32fcd32cacbbfd2f6d6b536e97137d609eb4f7f6c5c8c706a67f36"
+    },
+    "taste": {
+      "text": "A taste or familiar flavor. You can also remember a familiar flavor.",
+      "style": "brief",
+      "durationSeconds": 6.288,
+      "leadSeconds": 0.2,
+      "tailSeconds": 1.4,
+      "sentenceGapSeconds": 0.35,
+      "sha256": "cad5ee6b56a95697beb83fb37bbe63ff15271849fefeb04f47b16b02b9b012fb"
+    },
+    "finished": {
+      "text": "You can finish here. Take a moment to decide what you want to do next.",
+      "style": "brief",
+      "durationSeconds": 6.144,
+      "leadSeconds": 0.2,
+      "tailSeconds": 1.4,
+      "sentenceGapSeconds": 0.35,
+      "sha256": "5ad5dfd41a7f1a7032215dc3f8f27653bb05da5915350a79f7f08821549a2d13"
+    },
+    "ownPace": {
+      "text": "Breathe at your own pace. Let the breath come and go comfortably. Follow the optional count only if it feels easy.",
+      "style": "brief",
+      "durationSeconds": 9.432,
+      "leadSeconds": 0.2,
+      "tailSeconds": 1.4,
+      "sentenceGapSeconds": 0.35,
+      "sha256": "bbda40ed049f8f0a73374de049f122d52abb242d53d1228ed24298ef7032025f"
+    },
+    "after": {
+      "text": "A moment for yourself. You can take a pause before deciding what comes next.",
+      "style": "brief",
+      "durationSeconds": 7.056,
+      "leadSeconds": 0.2,
+      "tailSeconds": 1.4,
+      "sentenceGapSeconds": 0.35,
+      "sha256": "470c93e6ef5cc9faa2c1973c104c99452e1742c628376d28bc27f0d8d1821618"
+    },
+    "rest": {
+      "text": "Take the time you need. Let your hands rest wherever they feel comfortable. Notice one thing around you.",
+      "style": "brief",
+      "durationSeconds": 8.448,
+      "leadSeconds": 0.2,
+      "tailSeconds": 1.4,
+      "sentenceGapSeconds": 0.35,
+      "sha256": "f6e011e0ac9c9fbf3458cf6492edcb010dbd7dcbaffdd7aa11cc72b30fd6bc3d"
+    },
+    "worry": {
+      "text": "Caught in \u201cwhat if\u201d? Is there a practical step you want to take, or is your mind asking for certainty?",
+      "style": "brief",
+      "durationSeconds": 8.184,
+      "leadSeconds": 0.2,
+      "tailSeconds": 1.4,
+      "sentenceGapSeconds": 0.35,
+      "sha256": "5b99770beb73c23c434da2c627274d41c1688d7dc3d0cdcfeb8ae0ce3ebb36ef"
+    },
+    "worryLater": {
+      "text": "Leave a little room for uncertainty. You can let the question stay unanswered for now and return to one thing in front of you.",
+      "style": "brief",
+      "durationSeconds": 9.336,
+      "leadSeconds": 0.2,
+      "tailSeconds": 1.4,
+      "sentenceGapSeconds": 0.35,
+      "sha256": "df6822843834fd8d89867baced38c5afb8ac36c78344b53221f80119b530a397"
+    },
+    "worryAction": {
+      "text": "One thing you can do. Choose a small, practical action. You can use your saved step or make a new plan.",
+      "style": "brief",
+      "durationSeconds": 9.144,
+      "leadSeconds": 0.2,
+      "tailSeconds": 1.4,
+      "sentenceGapSeconds": 0.35,
+      "sha256": "d31b2f61b07a96c78eb0a64328483db9241e96c138b13b35f8a1d513ddba1fc8"
+    },
+    "reminder1": {
+      "text": "This feeling is intense, and it can pass.",
+      "style": "brief",
+      "durationSeconds": 4.92,
+      "leadSeconds": 0.2,
+      "tailSeconds": 1.4,
+      "sentenceGapSeconds": 0.35,
+      "sha256": "8ac7cc7695f6503f2c8fb20460b6c501f6712f36e9e0a3d592ff676f9709ce39"
+    },
+    "reminder2": {
+      "text": "I can take the next small step.",
+      "style": "brief",
+      "durationSeconds": 3.552,
+      "leadSeconds": 0.2,
+      "tailSeconds": 1.4,
+      "sentenceGapSeconds": 0.35,
+      "sha256": "23e9f14b99cef0fad21575a252ec429eae0fa68d0370314ca209d015fa428b61"
+    },
+    "reminder3": {
+      "text": "I can choose one thing to notice.",
+      "style": "brief",
+      "durationSeconds": 3.888,
+      "leadSeconds": 0.2,
+      "tailSeconds": 1.4,
+      "sentenceGapSeconds": 0.35,
+      "sha256": "ffedace61598a011a1b699c3e75a6841612889e69d035dd7ad5684254ef03351"
+    },
+    "reminder4": {
+      "text": "I do not have to solve everything right now.",
+      "style": "brief",
+      "durationSeconds": 4.392,
+      "leadSeconds": 0.2,
+      "tailSeconds": 1.4,
+      "sentenceGapSeconds": 0.35,
+      "sha256": "bcaa97afb4b74a1b7655cc9686d30effe5730b99d4ceb4e81215cd4b7ed48109"
+    },
+    "reminder5": {
+      "text": "I can come back to this moment one breath at a time.",
+      "style": "brief",
+      "durationSeconds": 4.68,
+      "leadSeconds": 0.2,
+      "tailSeconds": 1.4,
+      "sentenceGapSeconds": 0.35,
+      "sha256": "6ca759f5612c502f1621d337031166939f3226f0c4ee30eb29368f7ccb776534"
+    },
+    "surface-gentle": {
+      "text": "We can take this one small part at a time. If it feels comfortable, rest a hand on your chair, your clothing, or another surface nearby. You might notice just one texture. There is no need to hurry. You can stay here, or choose the next cue whenever you want.",
+      "style": "gentle",
+      "durationSeconds": 22.656,
+      "leadSeconds": 0.2,
+      "tailSeconds": 1.4,
+      "sentenceGapSeconds": 0.7,
+      "sha256": "010201cc05a36beca5df1e47f614d1b9debccb42666dfa4fb87ff998fbc874c8"
+    },
+    "look-gentle": {
+      "text": "We can start with something around you. Let your eyes rest on one object nearby, if that feels comfortable. Perhaps there is a color, a shade, or an edge you can notice. One detail is enough. You decide how long to stay with it.",
+      "style": "gentle",
+      "durationSeconds": 19.464,
+      "leadSeconds": 0.2,
+      "tailSeconds": 1.4,
+      "sentenceGapSeconds": 0.7,
+      "sha256": "be0e70b07f4b3c96dc6244c486dd94d843b96bab1139beee7352c451dc5adfd9"
+    },
+    "ease-gentle": {
+      "text": "We can leave a little space here. If it feels comfortable, let your hands rest where they are, and allow your fingers to loosen a little. You can leave them as they are, too. When you want to move on, the next cue is there.",
+      "style": "gentle",
+      "durationSeconds": 17.76,
+      "leadSeconds": 0.2,
+      "tailSeconds": 1.4,
+      "sentenceGapSeconds": 0.7,
+      "sha256": "5ff529f420d94649a57af60c7f485fe63f11cc76392ca8c811e88cd47ee82240"
+    },
+    "choice-gentle": {
+      "text": "You can take a moment before choosing what comes next. There is an optional breathing exercise, or you can notice things around you. You can also finish here. You do not have to complete an exercise, or feel a particular way, before you leave.",
+      "style": "gentle",
+      "durationSeconds": 20.136,
+      "leadSeconds": 0.2,
+      "tailSeconds": 1.4,
+      "sentenceGapSeconds": 0.7,
+      "sha256": "e96f9648b36e48a40faa3fad5de651fbf5ed5d01bf8b52903ffcfed6aedfcecf"
+    },
+    "see-gentle": {
+      "text": "If looking around feels helpful, let your eyes settle on something nearby. You could notice a color, a shape, or where light meets a shadow. One detail is enough. Counting more things is optional. Take the time you want before choosing another sense.",
+      "style": "gentle",
+      "durationSeconds": 20.544,
+      "leadSeconds": 0.2,
+      "tailSeconds": 1.4,
+      "sentenceGapSeconds": 0.7,
+      "sha256": "149cc90ce8f7d42280be04182a6461679c67e4c4d9d0013759c4ee3646867dbb"
+    },
+    "touch-gentle": {
+      "text": "You could notice a texture that is already nearby, if touch feels comfortable. Perhaps your clothing, the chair, or something you are holding. There is no need to search for several things. One detail is enough, and you can move on whenever you choose.",
+      "style": "gentle",
+      "durationSeconds": 20.208,
+      "leadSeconds": 0.2,
+      "tailSeconds": 1.4,
+      "sentenceGapSeconds": 0.7,
+      "sha256": "168c2162613d2ea7106e1ada14eb43162bf675f5493b54e22b942ce2d2b53968"
+    },
+    "hear-gentle": {
+      "text": "If listening feels comfortable, notice one sound nearby. It might be quiet, or a little farther away. There is no need to name every sound or find a certain number. You can stay with one, or choose another sense.",
+      "style": "gentle",
+      "durationSeconds": 17.808,
+      "leadSeconds": 0.2,
+      "tailSeconds": 1.4,
+      "sentenceGapSeconds": 0.7,
+      "sha256": "a7973016cbe2c9613ddf51b68724c7e7d0145a3eafe84eff1cd02815b63bf276"
+    },
+    "smell-gentle": {
+      "text": "You can notice whether there is a familiar scent around you, if you would like. If nothing comes to mind, that is fine. There is nothing you need to find. Stay for a moment, or move on whenever you want.",
+      "style": "gentle",
+      "durationSeconds": 16.848,
+      "leadSeconds": 0.2,
+      "tailSeconds": 1.4,
+      "sentenceGapSeconds": 0.7,
+      "sha256": "12bea1671194d72586dc56e5f95f2c05c48ca3e0e04de94c912204e8cfe402d2"
+    },
+    "taste-gentle": {
+      "text": "If it feels useful, you could notice a taste, or remember a familiar flavor. You can also leave this sense out. This is an invitation to notice something, without needing to complete a list. When you are ready, you can finish here.",
+      "style": "gentle",
+      "durationSeconds": 18.624,
+      "leadSeconds": 0.2,
+      "tailSeconds": 1.4,
+      "sentenceGapSeconds": 0.7,
+      "sha256": "a82a1ac9cd1a5e32c0f60a564e6af312e7005521637b8e1a4b78f20492c6c11e"
+    },
+    "finished-gentle": {
+      "text": "You have reached the end of these suggestions. You can take a moment before deciding what to do next. There is no particular feeling you need to reach. You can return to your day, choose some more support, or simply finish here.",
+      "style": "gentle",
+      "durationSeconds": 19.416,
+      "leadSeconds": 0.2,
+      "tailSeconds": 1.4,
+      "sentenceGapSeconds": 0.7,
+      "sha256": "19738c067ed8de503330c53db9150a6e65cad26ebdddd5de8967abcd3d6e2b17"
+    },
+    "ownPace-gentle": {
+      "text": "For now, let your breathing come and go at a pace that feels comfortable. There is no need to make it deeper or force a count. If you would like, you can try the optional gentle count. If paying attention to breathing feels uncomfortable, you can choose grounding instead.",
+      "style": "gentle",
+      "durationSeconds": 22.68,
+      "leadSeconds": 0.2,
+      "tailSeconds": 1.4,
+      "sentenceGapSeconds": 0.7,
+      "sha256": "edc1d6f2153c438bdd75f2b76e03726f1b373c9943f5f225c46dc178c0f78e9a"
+    },
+    "after-gentle": {
+      "text": "You can have a little space before deciding what comes next. If you would like, let your attention rest on something around you. You do not need to explain what happened or work anything out right now. You can take a quiet moment, or return to your day whenever you choose.",
+      "style": "gentle",
+      "durationSeconds": 20.952,
+      "leadSeconds": 0.2,
+      "tailSeconds": 1.4,
+      "sentenceGapSeconds": 0.7,
+      "sha256": "e0f2d0e4ca36b2f8f196eefe282f376d54171f4f36c614404e946c3b11a1cdc5"
+    },
+    "rest-gentle": {
+      "text": "There is no timer for this pause. You could let your hands rest wherever they feel comfortable and notice one thing nearby. You can leave things as they are for a moment. When you want to move on, you can choose what would help next.",
+      "style": "gentle",
+      "durationSeconds": 18.0,
+      "leadSeconds": 0.2,
+      "tailSeconds": 1.4,
+      "sentenceGapSeconds": 0.7,
+      "sha256": "222e0dd0269534984080f692fa37dcd54a8093e906bdeb029f9def5d911a199d"
+    },
+    "worry-gentle": {
+      "text": "A worried thought can keep asking for your attention. You can take a moment to decide whether there is one practical action you want to take. If there is not, you might leave the question open for now. There is no need to solve it all on this screen.",
+      "style": "gentle",
+      "durationSeconds": 18.024,
+      "leadSeconds": 0.2,
+      "tailSeconds": 1.4,
+      "sentenceGapSeconds": 0.7,
+      "sha256": "2efc6eaa10f764fc203d7e483ee96a5b1643b044bc4be83f334e8fc3b1b22dca"
+    },
+    "worryLater-gentle": {
+      "text": "You can let this question stay unanswered for now. If you would like, choose one ordinary thing to give your attention to, such as making tea or continuing a conversation. The thought may return. You can notice that and choose where to put your attention again.",
+      "style": "gentle",
+      "durationSeconds": 20.016,
+      "leadSeconds": 0.2,
+      "tailSeconds": 1.4,
+      "sentenceGapSeconds": 0.7,
+      "sha256": "c25ebd1b21a205ce042d78b7d494cdc030d86f7b9696c8477299b611df3d1d9b"
+    },
+    "worryAction-gentle": {
+      "text": "You can choose one small, practical action. It might be something from a plan you have already saved, or something you want to decide now. You do not have to plan every part of what happens next. Take a moment to choose what feels manageable today.",
+      "style": "gentle",
+      "durationSeconds": 19.992,
+      "leadSeconds": 0.2,
+      "tailSeconds": 1.4,
+      "sentenceGapSeconds": 0.7,
+      "sha256": "08dc94181a0436257eeebe6f677b7ac5b62fe1a90b3c16f3c36e0e9acc9b42e9"
+    }
+  }
+}
