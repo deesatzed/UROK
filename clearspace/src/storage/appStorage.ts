@@ -29,7 +29,9 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 }
 
 function isStringArray(value: unknown): value is string[] {
-  return Array.isArray(value) && value.every((item) => typeof item === "string");
+  return (
+    Array.isArray(value) && value.every((item) => typeof item === "string")
+  );
 }
 
 function isBoolean(value: unknown): value is boolean {
@@ -90,8 +92,8 @@ function isSupportCheckIn(value: unknown): value is SupportCheckIn {
     (value.source === "breathing" || value.source === "grounding") &&
     typeof value.shift === "string" &&
     checkInShifts.includes(value.shift as CheckInShift) &&
-    typeof value.helped === "string" &&
-    checkInHelpedValues.includes(value.helped as CheckInHelped)
+    (value.helped === undefined ||
+      checkInHelpedValues.includes(value.helped as CheckInHelped))
   );
 }
 
@@ -119,3 +121,79 @@ export const storageValidators = {
   supportContact: isSupportContact,
   toolkitItems: isToolkitItems,
 };
+
+function isStepDraft(value: unknown): value is import("../types").StepDraft {
+  return (
+    isRecord(value) &&
+    typeof value.activity === "string" &&
+    value.activity.length <= 120 &&
+    typeof value.action === "string" &&
+    value.action.length <= 300 &&
+    typeof value.prediction === "string" &&
+    value.prediction.length <= 300 &&
+    (value.source === "mine" || value.source === "therapist")
+  );
+}
+
+function isStepAttempt(
+  value: unknown,
+): value is import("../types").StepAttempt {
+  return (
+    isRecord(value) &&
+    typeof value.id === "string" &&
+    value.id.length > 0 &&
+    typeof value.createdAt === "string" &&
+    Number.isFinite(Date.parse(value.createdAt)) &&
+    typeof value.happened === "string" &&
+    value.happened.length <= 600 &&
+    typeof value.learned === "string" &&
+    value.learned.length <= 600
+  );
+}
+
+export function isSmallSteps(
+  value: unknown,
+): value is import("../types").SmallStep[] {
+  return (
+    Array.isArray(value) &&
+    value.every(
+      (item) =>
+        isStepDraft(item) &&
+        "id" in item &&
+        typeof item.id === "string" &&
+        item.id.length > 0 &&
+        item.activity.trim().length > 0 &&
+        item.action.trim().length > 0 &&
+        "createdAt" in item &&
+        typeof item.createdAt === "string" &&
+        Number.isFinite(Date.parse(item.createdAt)) &&
+        "attempts" in item &&
+        Array.isArray(item.attempts) &&
+        item.attempts.every(isStepAttempt),
+    )
+  );
+}
+
+export { isStepDraft };
+
+export function isReflectionDrafts(
+  value: unknown,
+): value is Record<string, import("../types").ReflectionDraft> {
+  return (
+    isRecord(value) &&
+    Object.values(value).every(
+      (draft) =>
+        isRecord(draft) &&
+        typeof draft.happened === "string" &&
+        draft.happened.length <= 600 &&
+        typeof draft.learned === "string" &&
+        draft.learned.length <= 600,
+    )
+  );
+}
+
+export function isPendingStepEdits(
+  value: unknown,
+): value is Record<string, import("../types").StepDraft> {
+  return isRecord(value) && Object.values(value).every(isStepDraft);
+}

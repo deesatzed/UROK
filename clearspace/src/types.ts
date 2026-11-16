@@ -7,7 +7,37 @@ export type ViewName =
   | "ground"
   | "journal"
   | "joy"
-  | "checkin";
+  | "checkin"
+  | "before"
+  | "after"
+  | "steps"
+  | "worry"
+  | "pattern";
+
+export type StepDraft = {
+  activity: string;
+  action: string;
+  prediction: string;
+  source: "mine" | "therapist";
+};
+
+export type StepAttempt = {
+  id: string;
+  createdAt: string;
+  happened: string;
+  learned: string;
+};
+
+export type ReflectionDraft = {
+  happened: string;
+  learned: string;
+};
+
+export type SmallStep = StepDraft & {
+  id: string;
+  createdAt: string;
+  attempts: StepAttempt[];
+};
 
 export type FocusProfileId =
   | "steady"
@@ -49,7 +79,7 @@ export type SupportCheckIn = {
   createdAt: string;
   source: "breathing" | "grounding";
   shift: CheckInShift;
-  helped: CheckInHelped;
+  helped?: CheckInHelped;
 };
 
 export type AppPreferences = {

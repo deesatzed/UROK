@@ -1,5 +1,5 @@
 import "@testing-library/jest-dom/vitest";
-import { vi } from "vitest";
+import { beforeEach, vi } from "vitest";
 
 class MemoryStorage implements Storage {
   private values = new Map<string, string>();
@@ -49,6 +49,9 @@ class MockSpeechSynthesisUtterance {
 }
 
 const speechSynthesisMock = {
+  getVoices: vi.fn(() => [
+    { lang: "en-US", localService: true, name: "Local English" },
+  ]),
   cancel: vi.fn(() => {
     speechSynthesisMock.speaking = false;
     speechSynthesisMock.paused = false;
@@ -77,4 +80,33 @@ Object.defineProperty(window, "SpeechSynthesisUtterance", {
 Object.defineProperty(window, "speechSynthesis", {
   value: speechSynthesisMock,
   configurable: true,
+});
+
+Object.defineProperty(window, "scrollTo", {
+  value: vi.fn(),
+  configurable: true,
+});
+Object.defineProperty(HTMLMediaElement.prototype, "play", {
+  value: vi.fn().mockResolvedValue(undefined),
+  configurable: true,
+});
+Object.defineProperty(HTMLMediaElement.prototype, "pause", {
+  value: vi.fn(),
+  configurable: true,
+});
+Object.defineProperty(HTMLMediaElement.prototype, "load", {
+  value: vi.fn(),
+  configurable: true,
+});
+if (!HTMLDialogElement.prototype.showModal) {
+  HTMLDialogElement.prototype.showModal = function () {
+    this.setAttribute("open", "");
+  };
+  HTMLDialogElement.prototype.close = function () {
+    this.removeAttribute("open");
+  };
+}
+
+beforeEach(() => {
+  history.replaceState(null, "", "/");
 });

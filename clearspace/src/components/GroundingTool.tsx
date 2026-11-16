@@ -1,163 +1,106 @@
-import { useEffect, useMemo, useState } from "react";
-import { CheckCircle2, Circle, Volume2, VolumeX } from "lucide-react";
-import { groundingSteps } from "../data/grounding";
+import { useEffect, useRef, useState } from "react";
+import { ArrowRight, Check } from "lucide-react";
+import { VoiceControl } from "./VoiceControl";
+import { cues, spokenCue } from "../data/guide";
 import {
   inactiveSpeechGuide,
   type SpeechGuideControls,
 } from "../hooks/useSpeechGuide";
 
-type GroundingToolProps = {
+const senses = ["see", "touch", "hear", "smell", "taste"] as const;
+type Props = {
   speechGuide?: SpeechGuideControls;
   onDone: () => void;
+  onSwitchBreathing?: () => void;
 };
-
 export function GroundingTool({
   speechGuide = inactiveSpeechGuide,
   onDone,
-}: GroundingToolProps) {
-  const [activeStepIndex, setActiveStepIndex] = useState(0);
-  const [checkedItems, setCheckedItems] = useState<number[]>([]);
-  const {
-    enabled: voiceEnabled,
-    isPaused: voicePaused,
-    isSpeaking: voiceSpeaking,
-    read: readVoice,
-    stop: stopVoice,
-    supported: voiceSupported,
-  } = speechGuide;
-  const activeStep = groundingSteps[activeStepIndex];
-  const isComplete =
-    activeStepIndex === groundingSteps.length - 1 &&
-    checkedItems.length === activeStep.count;
-  const showVoiceControls = voiceEnabled && voiceSupported;
-  const speechText = useMemo(
-    () =>
-      isComplete
-        ? "You finished the grounding steps. Notice whether anything feels even slightly more settled or clear."
-        : `Name ${activeStep.count} ${activeStep.sense}. ${activeStep.hint}`,
-    [activeStep.count, activeStep.hint, activeStep.sense, isComplete],
-  );
-
+  onSwitchBreathing,
+}: Props) {
+  const [step, setStep] = useState(0);
+  const [checked, setChecked] = useState<number[]>([]);
+  const heading = useRef<HTMLHeadingElement>(null);
+  const complete = step >= senses.length;
+  const id = complete ? "finished" : senses[step];
+  const cue = cues[id];
+  const { enabled, supported, read, stop } = speechGuide;
   useEffect(() => {
-    if (!showVoiceControls) return undefined;
-
-    readVoice(speechText);
+    if (!enabled || !supported) return;
+    read(spokenCue(id));
     return () => {
-      stopVoice();
+      stop();
     };
-  }, [readVoice, showVoiceControls, speechText, stopVoice]);
-
-  const toggleVoice = () => {
-    if (voiceSpeaking || voicePaused) {
-      stopVoice();
-      return;
-    }
-
-    readVoice(speechText);
+  }, [enabled, supported, id, read, stop]);
+  useEffect(() => {
+    if (step > 0) heading.current?.focus();
+  }, [step]);
+  const next = () => {
+    setChecked([]);
+    setStep((i) => Math.min(senses.length, i + 1));
   };
-
   const finish = () => {
-    stopVoice();
+    stop();
     onDone();
   };
-
-  const toggleItem = (index: number) => {
-    setCheckedItems((current) => {
-      if (current.includes(index)) {
-        return current.filter((item) => item !== index);
-      }
-
-      const next = [...current, index];
-      if (next.length === activeStep.count && activeStepIndex < groundingSteps.length - 1) {
-        setActiveStepIndex((value) => value + 1);
-        return [];
-      }
-
-      return next;
-    });
+  const count = senses.length - step;
+  const checkItem = (index: number) => {
+    const items = checked.includes(index)
+      ? checked.filter((n) => n !== index)
+      : [...checked, index];
+    if (items.length === count) next();
+    else setChecked(items);
   };
-
-  if (isComplete) {
-    return (
-      <section className="tool-view" aria-labelledby="grounding-complete-title">
-        <p className="eyebrow">Grounding</p>
-        <h1 id="grounding-complete-title">You finished the grounding steps.</h1>
-        <p>Notice whether anything feels even slightly more settled or clear.</p>
-        <div className="tool-actions compact-actions">
-          {showVoiceControls ? (
-            <button type="button" onClick={toggleVoice}>
-              {voiceSpeaking || voicePaused ? (
-                <VolumeX size={18} aria-hidden="true" />
-              ) : (
-                <Volume2 size={18} aria-hidden="true" />
-              )}
-              {voiceSpeaking || voicePaused ? "Stop voice" : "Read aloud"}
-            </button>
-          ) : null}
-          <button type="button" onClick={finish}>
-            Done
-          </button>
-        </div>
-      </section>
-    );
-  }
-
   return (
-    <section className="tool-view" aria-labelledby="grounding-title">
-      <p className="eyebrow">5-4-3-2-1 grounding</p>
-      <h1 id="grounding-title">
-        Name {activeStep.count} {activeStep.sense}.
-      </h1>
-      <p>{activeStep.hint}</p>
-
-      <div className="grounding-progress" aria-label="Grounding progress">
-        {groundingSteps.map((step, index) => (
-          <span
-            key={step.sense}
-            className={index <= activeStepIndex ? "active" : ""}
-            aria-current={index === activeStepIndex ? "step" : undefined}
-          >
-            {step.count}
-          </span>
-        ))}
+    <section className="guide-card" aria-labelledby="grounding-title">
+      <div className="guide-meta">
+        <span>5-4-3-2-1 grounding</span>
+        <VoiceControl guide={speechGuide} text={spokenCue(id)} />
       </div>
-
-      <div className="grounding-list" aria-label={`${activeStep.count} items`}>
-        {Array.from({ length: activeStep.count }, (_, index) => {
-          const checked = checkedItems.includes(index);
-
-          return (
-            <button
-              key={`${activeStepIndex}-${index}`}
-              type="button"
-              aria-pressed={checked}
-              onClick={() => toggleItem(index)}
-            >
-              {checked ? (
-                <CheckCircle2 size={20} aria-hidden="true" />
-              ) : (
-                <Circle size={20} aria-hidden="true" />
-              )}
-              <span>Item {index + 1}</span>
-            </button>
-          );
-        })}
+      <div className="guide-body">
+        <h1 id="grounding-title" ref={heading} tabIndex={-1}>
+          {cue.title}
+        </h1>
+        <p>{cue.body}</p>
       </div>
-
-      <div className="tool-actions compact-actions">
-        {showVoiceControls ? (
-          <button type="button" onClick={toggleVoice}>
-            {voiceSpeaking || voicePaused ? (
-              <VolumeX size={18} aria-hidden="true" />
-            ) : (
-              <Volume2 size={18} aria-hidden="true" />
-            )}
-            {voiceSpeaking || voicePaused ? "Stop voice" : "Read aloud"}
+      {!complete && (
+        <>
+          <p className="guide-hint">
+            One detail is enough. Counting is optional.
+          </p>
+          <button className="action-primary" onClick={next}>
+            {step === 4 ? "Finish exercise" : "Next sense"}{" "}
+            <ArrowRight size={18} />
           </button>
-        ) : null}
-        <button type="button" onClick={finish}>
+          <details className="count-details" key={step}>
+            <summary>Count with taps</summary>
+            <div className="count-buttons">
+              {Array.from({ length: count }, (_, i) => (
+                <button
+                  key={i}
+                  aria-label={"Item " + (i + 1)}
+                  aria-pressed={checked.includes(i)}
+                  onClick={() => checkItem(i)}
+                >
+                  {checked.includes(i) ? <Check size={18} /> : i + 1}
+                </button>
+              ))}
+            </div>
+          </details>
+        </>
+      )}
+      <div className="guide-links">
+        <button
+          className={complete ? "action-primary" : "text-action"}
+          onClick={finish}
+        >
           Done for now
         </button>
+        {onSwitchBreathing && !complete && (
+          <button className="text-action" onClick={onSwitchBreathing}>
+            Try breathing instead
+          </button>
+        )}
       </div>
     </section>
   );

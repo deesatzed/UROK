@@ -23,13 +23,13 @@ export const focusProfiles: FocusProfile[] = [
   {
     id: "sensory-overload",
     label: "Sensory overload",
-    description: "Lead with simple grounding and low-stimulation choices.",
+    description: "Suggest the senses exercise first.",
     toolOrder: ["ground", "breathe"],
   },
   {
     id: "night",
     label: "Nighttime stress",
-    description: "Keep guidance quiet and predictable for waking from sleep.",
+    description: "Suggest comfortable breathing first.",
     toolOrder: ["breathe", "ground"],
   },
 ];

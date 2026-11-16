@@ -1,4 +1,13 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { AftercareView } from "./components/AftercareView";
+import { StepsView } from "./components/StepsView";
+import { WorryView } from "./components/WorryView";
+import { PanicPattern } from "./components/PanicPattern";
+import { SupportCard, defaultSupportMessage } from "./components/SupportCard";
+import { StorageNotice } from "./components/StorageNotice";
+import { UrgentHelp } from "./components/UrgentHelp";
+import { loadPack, type PreparedPack } from "./services/voicePack";
+import type { OpeningCue, VoiceStyle } from "./data/guide";
 import { AppShell } from "./components/AppShell";
 import { BreathingTool } from "./components/BreathingTool";
 import { CheckInView } from "./components/CheckInView";
@@ -12,9 +21,11 @@ import { SparkJoyView } from "./components/SparkJoyView";
 import { defaultFocusProfile } from "./data/focusProfiles";
 import { defaultReassurancePhrases } from "./data/reassurance";
 import { defaultToolkitItems } from "./data/toolkit";
+import { useAppNavigation, viewLabels } from "./hooks/useAppNavigation";
 import { useLocalStorage } from "./hooks/useLocalStorage";
 import { useSpeechGuide } from "./hooks/useSpeechGuide";
 import {
+  isSmallSteps,
   migrateToolkitItems,
   storageValidators,
 } from "./storage/appStorage";
@@ -24,19 +35,10 @@ import type {
   SupportCheckIn,
   SupportContact,
   ViewName,
+  SmallStep,
+  StepDraft,
+  StepAttempt,
 } from "./types";
-
-const viewLabels: Record<ViewName, string> = {
-  home: "Home",
-  sos: "Calming Support",
-  practice: "Practice",
-  settings: "Settings",
-  breathe: "Paced Breathing",
-  ground: "Grounding",
-  journal: "Journal",
-  joy: "Spark Joy",
-  checkin: "Check In",
-};
 
 const emptySupportContact: SupportContact = {
   name: "",
@@ -52,7 +54,62 @@ const createJournalEntryId = () => {
 };
 
 function App() {
-  const [currentView, setCurrentView] = useState<ViewName>("home");
+  const [smallSteps, setSmallSteps] = useLocalStorage<SmallStep[]>(
+    "small-steps",
+    [],
+    { validate: isSmallSteps },
+  );
+  const [supportMessage, setSupportMessage] = useLocalStorage(
+    "support-message",
+    defaultSupportMessage,
+    {
+      validate: (value): value is string =>
+        typeof value === "string" && value.length <= 500,
+    },
+  );
+  const [selectedStepId, setSelectedStepId] = useState<string>();
+  const [stepsVisit, setStepsVisit] = useState(0);
+  const [lastStepId, setLastStepId] = useLocalStorage("last-step-id", "", {
+    validate: (value): value is string => typeof value === "string",
+  });
+  const lastStep =
+    smallSteps.find((step) => step.id === lastStepId) ?? smallSteps[0];
+  const [cardOpen, setCardOpen] = useState(false);
+  const [checkInAvailable, setCheckInAvailable] = useState(false);
+  const saveSmallStep = (draft: StepDraft, id?: string) => {
+    const stepId = id ?? createJournalEntryId();
+    const plan: SmallStep = {
+      ...draft,
+      id: stepId,
+      createdAt: new Date().toISOString(),
+      attempts: [],
+    };
+    setSmallSteps((current) =>
+      id
+        ? current.map((item) => (item.id === id ? { ...item, ...draft } : item))
+        : [plan, ...current],
+    );
+    setLastStepId(stepId);
+    return stepId;
+  };
+  const recordStep = (
+    id: string,
+    attempt: Omit<StepAttempt, "id" | "createdAt">,
+  ) => {
+    const entry = {
+      ...attempt,
+      id: createJournalEntryId(),
+      createdAt: new Date().toISOString(),
+    };
+    setSmallSteps((current) =>
+      current.map((item) =>
+        item.id === id
+          ? { ...item, attempts: [...item.attempts, entry] }
+          : item,
+      ),
+    );
+  };
+  const [currentView, setCurrentView] = useAppNavigation();
   const [checkInSource, setCheckInSource] =
     useState<SupportCheckIn["source"]>("breathing");
   const [lowStimEnabled, setLowStimEnabled] = useLocalStorage(
@@ -64,6 +121,11 @@ function App() {
     "voice-guide-enabled",
     false,
     { validate: storageValidators.boolean },
+  );
+  const [voiceStyle, setVoiceStyle] = useLocalStorage<VoiceStyle>(
+    "voice-style",
+    "gentle",
+    { validate: (v): v is VoiceStyle => v === "gentle" || v === "brief" },
   );
   const [reassurancePhrases, setReassurancePhrases] = useLocalStorage(
     "reassurance-phrases",
@@ -93,17 +155,69 @@ function App() {
     [],
     { validate: storageValidators.journalEntries },
   );
-  const [supportCheckIns, setSupportCheckIns] = useLocalStorage<SupportCheckIn[]>(
-    "support-check-ins",
-    [],
-    { validate: storageValidators.supportCheckIns },
-  );
+  const [supportCheckIns, setSupportCheckIns] = useLocalStorage<
+    SupportCheckIn[]
+  >("support-check-ins", [], { validate: storageValidators.supportCheckIns });
   const [sosSessionCount, setSosSessionCount] = useLocalStorage(
     "sos-session-count",
     0,
     { validate: storageValidators.nonNegativeInteger },
   );
-  const speechGuide = useSpeechGuide(voiceGuideEnabled);
+  const [opening, setOpening] = useLocalStorage<OpeningCue>(
+    "opening-cue",
+    "surface",
+    { validate: (v): v is OpeningCue => v === "surface" || v === "look" },
+  );
+  const [favorite, setFavorite] = useLocalStorage("favorite-reminder", "", {
+    validate: (v): v is string => typeof v === "string",
+  });
+  const savedPhrase = reassurancePhrases.includes(favorite) ? favorite : "";
+  const [pack, setPack] = useState<PreparedPack | null>(null);
+  const [voiceOverride, setVoiceOverride] = useState<boolean | null>(null);
+  const [helpOpen, setHelpOpen] = useState(false);
+  useEffect(() => {
+    let current = true;
+    loadPack()
+      .then((p) => {
+        if (current && p) setPack(p);
+      })
+      .catch(() => {});
+    return () => {
+      current = false;
+    };
+  }, []);
+  const speechGuide = useSpeechGuide(
+    !helpOpen && !cardOpen && (voiceOverride ?? voiceGuideEnabled),
+    pack,
+    setVoiceOverride,
+    voiceStyle,
+  );
+  const inGuide =
+    currentView === "sos" ||
+    currentView === "breathe" ||
+    currentView === "ground";
+  const navigate = (view: ViewName) => {
+    speechGuide.stop();
+    if (!["sos", "breathe", "ground", "after", "worry"].includes(view))
+      setVoiceOverride(null);
+    setCurrentView(view);
+  };
+  const openSteps = (id?: string) => {
+    setStepsVisit((current) => current + 1);
+    setSelectedStepId(id);
+    if (id) setLastStepId(id);
+    navigate("steps");
+  };
+  const openCard = () => {
+    speechGuide.stop();
+    setVoiceOverride(false);
+    setCardOpen(true);
+  };
+  const openHelp = () => {
+    speechGuide.stop();
+    setVoiceOverride(false);
+    setHelpOpen(true);
+  };
 
   const addJournalEntry = (entry: Omit<JournalEntry, "id" | "createdAt">) => {
     setJournalEntries((current) => [
@@ -127,13 +241,15 @@ function App() {
   };
 
   const startSos = () => {
+    setCheckInAvailable(false);
     setSosSessionCount((current) => current + 1);
-    setCurrentView("sos");
+    navigate("sos");
   };
 
   const finishTool = (source: SupportCheckIn["source"]) => {
     setCheckInSource(source);
-    setCurrentView("checkin");
+    setCheckInAvailable(true);
+    navigate("after");
   };
 
   const addSupportCheckIn = (
@@ -147,50 +263,72 @@ function App() {
       },
       ...current,
     ]);
-    setCurrentView("home");
+    navigate("home");
   };
 
   return (
     <AppShell
       currentView={currentView}
       currentViewLabel={viewLabels[currentView]}
-      focusMode={currentView === "sos"}
+      focusMode={
+        inGuide ||
+        currentView === "after" ||
+        currentView === "worry" ||
+        currentView === "before"
+      }
+      onHelp={openHelp}
       lowStimEnabled={lowStimEnabled}
-      onHome={() => setCurrentView("home")}
-      onNavigate={setCurrentView}
+      onHome={() => navigate("home")}
+      onNavigate={(view) => (view === "steps" ? openSteps() : navigate(view))}
       onToggleLowStim={() => setLowStimEnabled((value) => !value)}
     >
+      {helpOpen && (
+        <UrgentHelp
+          contact={supportContact}
+          onClose={() => setHelpOpen(false)}
+        />
+      )}
       {currentView === "home" ? (
         <HomeView
-          focusProfile={focusProfile}
-          lastCheckIn={supportCheckIns[0]}
-          onOpenBreathing={() => setCurrentView("breathe")}
-          onOpenGrounding={() => setCurrentView("ground")}
-          onOpenJoy={() => setCurrentView("joy")}
-          onOpenPractice={() => setCurrentView("practice")}
-          onOpenSettings={() => setCurrentView("settings")}
+          nextStep={lastStep}
+          onBefore={() => {
+            setSelectedStepId(lastStep?.id);
+            navigate("before");
+          }}
+          onAfter={() => {
+            setCheckInAvailable(false);
+            navigate("after");
+          }}
+          onPractice={() => navigate("practice")}
+          onOpenStep={openSteps}
+          onOpenSettings={() => navigate("settings")}
           onStartSos={startSos}
         />
       ) : currentView === "sos" ? (
         <SosWizard
+          opening={opening}
+          selectedPhrase={savedPhrase}
           focusProfile={focusProfile}
           phraseOffset={Math.max(sosSessionCount - 1, 0)}
           phrases={reassurancePhrases}
           speechGuide={speechGuide}
           supportContact={supportContact}
-          onExitHome={() => setCurrentView("home")}
-          onExitJournal={() => setCurrentView("journal")}
-          onStartBreathing={() => setCurrentView("breathe")}
-          onStartGrounding={() => setCurrentView("ground")}
+          onExitHome={() => navigate("home")}
+          onAfter={() => navigate("after")}
+          onExitJournal={() => navigate("journal")}
+          onStartBreathing={() => navigate("breathe")}
+          onStartGrounding={() => navigate("ground")}
         />
       ) : currentView === "breathe" ? (
         <BreathingTool
+          suspended={helpOpen || cardOpen}
           speechGuide={speechGuide}
           onDone={() => finishTool("breathing")}
-          onSwitchGrounding={() => setCurrentView("ground")}
+          onSwitchGrounding={() => navigate("ground")}
         />
       ) : currentView === "ground" ? (
         <GroundingTool
+          onSwitchBreathing={() => navigate("breathe")}
           speechGuide={speechGuide}
           onDone={() => finishTool("grounding")}
         />
@@ -198,30 +336,90 @@ function App() {
         <CheckInView
           source={checkInSource}
           onSave={addSupportCheckIn}
-          onSkip={() => setCurrentView("home")}
+          onSkip={() => navigate("home")}
+        />
+      ) : currentView === "after" ? (
+        <AftercareView
+          guide={speechGuide}
+          contact={supportContact}
+          checkInAvailable={checkInAvailable}
+          onSupport={startSos}
+          onHome={() => navigate("home")}
+          onSteps={() => openSteps(lastStep?.id)}
+          onJournal={() => navigate("journal")}
+          onCheckIn={() => navigate("checkin")}
+        />
+      ) : currentView === "steps" || currentView === "before" ? (
+        <StepsView
+          key={currentView + "-" + stepsVisit}
+          plans={smallSteps}
+          initialId={selectedStepId}
+          anticipatory={currentView === "before"}
+          onSelect={setLastStepId}
+          onSave={saveSmallStep}
+          onRecord={recordStep}
+          onDelete={(id) =>
+            setSmallSteps((current) => current.filter((s) => s.id !== id))
+          }
+          onHome={() => navigate("home")}
+          onWorry={() => navigate("worry")}
+          onSupport={startSos}
+        />
+      ) : currentView === "worry" ? (
+        <WorryView
+          guide={speechGuide}
+          onHome={() => navigate("home")}
+          onPlan={() => openSteps()}
+          onSupport={startSos}
+        />
+      ) : currentView === "pattern" ? (
+        <PanicPattern
+          onDone={() => navigate("practice")}
+          onPlan={() => openSteps()}
         />
       ) : currentView === "practice" ? (
-        <EducationView onDone={() => setCurrentView("home")} />
+        <EducationView
+          focusProfile={focusProfile}
+          onBreathe={() => navigate("breathe")}
+          onGround={() => navigate("ground")}
+          onPlan={() => navigate("settings")}
+          onSteps={() => openSteps()}
+          onPattern={() => navigate("pattern")}
+          onWorry={() => navigate("worry")}
+          onJoy={() => navigate("joy")}
+          onJournal={() => navigate("journal")}
+          onDone={() => navigate("home")}
+        />
       ) : currentView === "journal" ? (
         <JournalView
           entries={journalEntries}
-          onBackHome={() => setCurrentView("home")}
+          onBackHome={() => navigate("home")}
           onClearEntries={clearJournalEntries}
           onDeleteEntry={deleteJournalEntry}
           onSaveEntry={addJournalEntry}
         />
       ) : currentView === "joy" ? (
-        <SparkJoyView onDone={() => setCurrentView("home")} />
+        <SparkJoyView onDone={() => navigate("home")} />
       ) : currentView === "settings" ? (
         <SettingsView
+          supportMessage={supportMessage}
+          setSupportMessage={setSupportMessage}
+          opening={opening}
+          setOpening={setOpening}
+          favorite={savedPhrase}
+          setFavorite={setFavorite}
+          pack={pack}
+          onPack={setPack}
           focusProfile={focusProfile}
           lowStimEnabled={lowStimEnabled}
           phrases={reassurancePhrases}
           supportContact={supportContact}
           toolkitItems={toolkitItems}
           voiceGuideEnabled={voiceGuideEnabled}
+          voiceStyle={voiceStyle}
+          setVoiceStyle={setVoiceStyle}
           voiceGuideSupported={speechGuide.supported}
-          onBackHome={() => setCurrentView("home")}
+          onBackHome={() => navigate("home")}
           setFocusProfile={setFocusProfile}
           setLowStimEnabled={setLowStimEnabled}
           setPhrases={setReassurancePhrases}
@@ -229,22 +427,20 @@ function App() {
           setToolkitItems={setToolkitItems}
           setVoiceGuideEnabled={setVoiceGuideEnabled}
         />
-      ) : (
-        <section className="placeholder-view" aria-labelledby="view-title">
-          <p className="eyebrow">{viewLabels[currentView]}</p>
-          <h1 id="view-title">{viewLabels[currentView]} is next.</h1>
-          <p>
-            This route is wired so the next task can fill it without changing
-            the first-screen navigation.
-          </p>
-          <button
-            className="secondary-button"
-            type="button"
-            onClick={() => setCurrentView("home")}
-          >
-            Back to home
+      ) : null}
+      {(inGuide || currentView === "after") && (
+        <div className="support-options">
+          <button className="text-action" onClick={openCard}>
+            Show someone what I need
           </button>
-        </section>
+        </div>
+      )}
+      {!inGuide && <StorageNotice />}
+      {cardOpen && (
+        <SupportCard
+          message={supportMessage}
+          onClose={() => setCardOpen(false)}
+        />
       )}
     </AppShell>
   );

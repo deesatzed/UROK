@@ -21,22 +21,15 @@ const helpedOptions: Array<{ id: CheckInHelped; label: string }> = [
 ];
 
 export function CheckInView({ source, onSave, onSkip }: CheckInViewProps) {
-  const [selectedShift, setSelectedShift] = useState<CheckInShift>(
-    shiftOptions[0].id,
-  );
-  const [selectedHelped, setSelectedHelped] = useState<CheckInHelped>(
-    helpedOptions[0].id,
-  );
+  const [selectedShift, setSelectedShift] = useState<CheckInShift>();
+  const [selectedHelped, setSelectedHelped] = useState<CheckInHelped>();
 
   return (
     <section className="checkin-view" aria-labelledby="checkin-title">
       <div>
         <p className="eyebrow">Optional check-in</p>
         <h1 id="checkin-title">What changed?</h1>
-        <p>
-          This is not a score. It helps ClearSpace suggest a calmer first step
-          next time and stays only in this browser.
-        </p>
+        <p>Save a note on this device if you want to remember how it felt.</p>
       </div>
 
       <div className="checkin-section">
@@ -56,14 +49,18 @@ export function CheckInView({ source, onSave, onSkip }: CheckInViewProps) {
       </div>
 
       <div className="checkin-section">
-        <h2>What seemed most helpful?</h2>
+        <h2>Was anything helpful? (optional)</h2>
         <div className="checkin-options">
           {helpedOptions.map((option) => (
             <button
               key={option.id}
               type="button"
               aria-pressed={option.id === selectedHelped}
-              onClick={() => setSelectedHelped(option.id)}
+              onClick={() =>
+                setSelectedHelped(
+                  selectedHelped === option.id ? undefined : option.id,
+                )
+              }
             >
               {option.label}
             </button>
@@ -74,7 +71,9 @@ export function CheckInView({ source, onSave, onSkip }: CheckInViewProps) {
       <div className="tool-actions">
         <button
           type="button"
+          disabled={selectedShift === undefined}
           onClick={() =>
+            selectedShift &&
             onSave({
               source,
               shift: selectedShift,

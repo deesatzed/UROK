@@ -1,204 +1,136 @@
-import { useEffect, useMemo, useState } from "react";
-import { ArrowRight, Heart, Home, Volume2, VolumeX, Wind } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { ArrowRight, Heart } from "lucide-react";
+import { getFocusProfile } from "../data/focusProfiles";
+import { VoiceControl } from "./VoiceControl";
+import { cues, type OpeningCue } from "../data/guide";
 import {
   inactiveSpeechGuide,
   type SpeechGuideControls,
 } from "../hooks/useSpeechGuide";
 import type { FocusProfileId, SupportContact } from "../types";
 
-type SosWizardProps = {
-  focusProfile: FocusProfileId;
+type Props = {
+  focusProfile?: FocusProfileId;
+  opening?: OpeningCue;
+  selectedPhrase?: string;
   phraseOffset?: number;
   phrases: string[];
   speechGuide?: SpeechGuideControls;
   supportContact: SupportContact;
+  onAfter?: () => void;
   onExitHome: () => void;
   onExitJournal: () => void;
   onStartBreathing: () => void;
   onStartGrounding: () => void;
 };
 
-type Step = {
-  title: string;
-  body: string;
-  action: string;
-};
-
-const baseSteps: Step[] = [
-  {
-    title: "Plant your feet.",
-    body: "Sit down if you can. Press both feet into the floor and notice what is holding you up.",
-    action: "I am here",
-  },
-  {
-    title: "Release one layer of tension.",
-    body: "Drop your shoulders. Let your jaw loosen. Open your hands or rest them somewhere steady.",
-    action: "Next",
-  },
-  {
-    title: "Reduce stimulation.",
-    body: "If it is safe to do so, step away from bright light, noise, crowds, or anything demanding your attention.",
-    action: "Next",
-  },
-];
-
 export function SosWizard({
-  focusProfile,
+  focusProfile = "steady",
+  opening = "surface",
+  selectedPhrase,
   phraseOffset = 0,
   phrases,
   speechGuide = inactiveSpeechGuide,
   supportContact,
+  onAfter,
   onExitHome,
   onExitJournal,
   onStartBreathing,
   onStartGrounding,
-}: SosWizardProps) {
-  const [stepIndex, setStepIndex] = useState(0);
-  const [selectedPhrase] = useState(
-    () => phrases[phraseOffset % phrases.length] ?? "Take one small step.",
-  );
-  const {
-    enabled: voiceEnabled,
-    isPaused: voicePaused,
-    isSpeaking: voiceSpeaking,
-    read: readVoice,
-    stop: stopVoice,
-    supported: voiceSupported,
-  } = speechGuide;
-
-  const steps: Step[] = [
-    baseSteps[0],
-    {
-      title: "Read this slowly.",
-      body: selectedPhrase,
-      action: "I read it",
-    },
-    ...baseSteps.slice(1),
-  ];
-
-  const currentStep = steps[stepIndex];
-  const isBranchStep = stepIndex >= steps.length;
-  const speechText = useMemo(
+}: Props) {
+  const [step, setStep] = useState(0);
+  const [toolsOpen, setToolsOpen] = useState(false);
+  const [phrase] = useState(
     () =>
-      isBranchStep
-        ? "What would help next? You can slow your breathing or ground through your senses. Pick the option that feels easiest to start."
-        : `${currentStep.title} ${currentStep.body}`,
-    [currentStep?.body, currentStep?.title, isBranchStep],
+      selectedPhrase ||
+      (phrases.length ? phrases[phraseOffset % phrases.length] : ""),
   );
-  const progressText = isBranchStep
-    ? "Choose a tool"
-    : `Step ${stepIndex + 1} of ${steps.length}`;
-  const hasSupportContact = supportContact.phone.trim().length > 0;
-  const showVoiceControls = voiceEnabled && voiceSupported;
-  const branchOptions =
-    focusProfile === "breath-sensitive" || focusProfile === "sensory-overload"
-      ? [
-          {
-            label: "5-4-3-2-1 grounding",
-            icon: null,
-            onClick: onStartGrounding,
-          },
-          {
-            label: "Paced breathing",
-            icon: Wind,
-            onClick: onStartBreathing,
-          },
-        ]
-      : [
-          {
-            label: "Paced breathing",
-            icon: Wind,
-            onClick: onStartBreathing,
-          },
-          {
-            label: "5-4-3-2-1 grounding",
-            icon: null,
-            onClick: onStartGrounding,
-          },
-        ];
-
+  const heading = useRef<HTMLHeadingElement>(null);
+  const steps = [
+    cues[opening],
+    ...(phrase ? [{ title: "Your reminder", body: phrase }] : []),
+    cues.ease,
+  ];
+  const choosing = toolsOpen || step === steps.length;
+  const cue = choosing ? cues.choice : steps[step];
+  const text =
+    cue.title === "Your reminder" ? cue.body : cue.title + " " + cue.body;
+  const { enabled, supported, read, stop } = speechGuide;
   useEffect(() => {
-    if (!showVoiceControls) return undefined;
-
-    readVoice(speechText);
+    if (!enabled || !supported) return;
+    read(text);
     return () => {
-      stopVoice();
+      stop();
     };
-  }, [readVoice, showVoiceControls, speechText, stopVoice]);
-
-  const toggleVoice = () => {
-    if (voiceSpeaking || voicePaused) {
-      stopVoice();
-      return;
-    }
-
-    readVoice(speechText);
-  };
-
+  }, [enabled, supported, read, stop, text]);
+  const previousText = useRef(text);
+  useEffect(() => {
+    if (previousText.current !== text) heading.current?.focus();
+    previousText.current = text;
+  }, [text]);
+  const openTool = { breathe: onStartBreathing, ground: onStartGrounding };
+  const labels = { breathe: "Paced breathing", ground: "5-4-3-2-1 grounding" };
   return (
-    <section className="sos-view" aria-labelledby="sos-title">
-      <div className="sos-top-row">
-        <span>{progressText}</span>
-        <div className="sos-exit-actions">
-          {showVoiceControls ? (
-            <button type="button" onClick={toggleVoice}>
-              {voiceSpeaking || voicePaused ? (
-                <VolumeX size={16} aria-hidden="true" />
-              ) : (
-                <Volume2 size={16} aria-hidden="true" />
-              )}
-              {voiceSpeaking || voicePaused ? "Stop voice" : "Read aloud"}
+    <section className="guide-card" aria-labelledby="cue-title">
+      <div className="guide-meta">
+        <span>Guided support</span>
+        <VoiceControl guide={speechGuide} text={text} />
+      </div>
+      <div className="guide-body">
+        <h1 ref={heading} tabIndex={-1} id="cue-title">
+          {cue.title}
+        </h1>
+        <p>{cue.body}</p>
+        <p className="guide-hint">Take your time. Move on whenever you choose.</p>
+      </div>
+      {choosing ? (
+        <div className="guide-actions" aria-label="Next support options">
+          {getFocusProfile(focusProfile).toolOrder.map((tool, i) => (
+            <button
+              type="button"
+              key={tool}
+              className={i === 0 ? "action-primary" : "action-secondary"}
+              onClick={openTool[tool]}
+            >
+              {labels[tool]} <ArrowRight size={18} aria-hidden="true" />
             </button>
-          ) : null}
-          <button type="button" onClick={onExitJournal}>
+          ))}
+          {toolsOpen && step < steps.length && (
+            <button className="text-action" onClick={() => setToolsOpen(false)}>
+              Back to my cue
+            </button>
+          )}
+          <button className="text-action" onClick={onExitJournal}>
             Journal
           </button>
-          <button type="button" onClick={onExitHome}>
-            <Home size={16} aria-hidden="true" />
-            Home
-          </button>
-        </div>
-      </div>
-
-      {!isBranchStep ? (
-        <div className="sos-card">
-          <p className="eyebrow">Guided support</p>
-          <h1 id="sos-title">{currentStep.title}</h1>
-          <p>{currentStep.body}</p>
-          <button
-            className="sos-next-button"
-            type="button"
-            onClick={() => setStepIndex((value) => value + 1)}
-          >
-            <span>{currentStep.action}</span>
-            <ArrowRight size={20} aria-hidden="true" />
+          <button className="text-action" onClick={onExitHome}>
+            Finish here
           </button>
         </div>
       ) : (
-        <div className="sos-card">
-          <p className="eyebrow">Choose the next support</p>
-          <h1 id="sos-title">What would help next?</h1>
-          <p>
-            You can slow your breathing or ground through your senses. Pick the
-            option that feels easiest to start.
-          </p>
-          <div className="sos-branch-actions" aria-label="Next support options">
-            {branchOptions.map(({ icon: Icon, label, onClick }) => (
-              <button key={label} type="button" onClick={onClick}>
-                {Icon ? <Icon size={20} aria-hidden="true" /> : null}
-                {label}
-              </button>
-            ))}
-          </div>
+        <div className="guide-actions">
+          <button
+            className="action-primary"
+            onClick={() => setStep((n) => n + 1)}
+          >
+            Next step <ArrowRight size={18} aria-hidden="true" />
+          </button>
+          <button className="text-action" onClick={() => setToolsOpen(true)}>
+            Try a different exercise
+          </button>
         </div>
       )}
-
-      {hasSupportContact ? (
-        <a className="support-contact-link" href={`tel:${supportContact.phone}`}>
-          <Heart size={18} aria-hidden="true" />
-          Call {supportContact.name.trim() || "support"}
+      {onAfter && (
+        <button className="text-action" onClick={onAfter}>
+          I’m ready for what’s next
+        </button>
+      )}
+      {supportContact.phone.trim() && (
+        <a className="person-link" href={"tel:" + supportContact.phone}>
+          <Heart size={17} aria-hidden="true" />
+          Call {supportContact.name.trim() || "my support person"}
         </a>
-      ) : null}
+      )}
     </section>
   );
 }

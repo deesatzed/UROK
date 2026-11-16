@@ -1,0 +1,97 @@
+{
+  "surface": [
+    "We can take this one small part at a time.",
+    "If it feels comfortable, rest a hand on your chair, your clothing, or another surface nearby.",
+    "You might notice just one texture.",
+    "There is no need to hurry. You can stay here, or choose the next cue whenever you want."
+  ],
+  "look": [
+    "We can start with something around you.",
+    "Let your eyes rest on one object nearby, if that feels comfortable.",
+    "Perhaps there is a color, a shade, or an edge you can notice.",
+    "One detail is enough. You decide how long to stay with it."
+  ],
+  "ease": [
+    "We can leave a little space here.",
+    "If it feels comfortable, let your hands rest where they are, and allow your fingers to loosen a little.",
+    "You can leave them as they are, too.",
+    "When you want to move on, the next cue is there."
+  ],
+  "choice": [
+    "You can take a moment before choosing what comes next.",
+    "There is an optional breathing exercise, or you can notice things around you.",
+    "You can also finish here.",
+    "You do not have to complete an exercise, or feel a particular way, before you leave."
+  ],
+  "see": [
+    "If looking around feels helpful, let your eyes settle on something nearby.",
+    "You could notice a color, a shape, or where light meets a shadow.",
+    "One detail is enough. Counting more things is optional.",
+    "Take the time you want before choosing another sense."
+  ],
+  "touch": [
+    "You could notice a texture that is already nearby, if touch feels comfortable.",
+    "Perhaps your clothing, the chair, or something you are holding.",
+    "There is no need to search for several things.",
+    "One detail is enough, and you can move on whenever you choose."
+  ],
+  "hear": [
+    "If listening feels comfortable, notice one sound nearby.",
+    "It might be quiet, or a little farther away.",
+    "There is no need to name every sound or find a certain number.",
+    "You can stay with one, or choose another sense."
+  ],
+  "smell": [
+    "You can notice whether there is a familiar scent around you, if you would like.",
+    "If nothing comes to mind, that is fine.",
+    "There is nothing you need to find.",
+    "Stay for a moment, or move on whenever you want."
+  ],
+  "taste": [
+    "If it feels useful, you could notice a taste, or remember a familiar flavor.",
+    "You can also leave this sense out.",
+    "This is an invitation to notice something, without needing to complete a list.",
+    "When you are ready, you can finish here."
+  ],
+  "finished": [
+    "You have reached the end of these suggestions.",
+    "You can take a moment before deciding what to do next.",
+    "There is no particular feeling you need to reach.",
+    "You can return to your day, choose some more support, or simply finish here."
+  ],
+  "ownPace": [
+    "For now, let your breathing come and go at a pace that feels comfortable.",
+    "There is no need to make it deeper or force a count.",
+    "If you would like, you can try the optional gentle count.",
+    "If paying attention to breathing feels uncomfortable, you can choose grounding instead."
+  ],
+  "after": [
+    "You can have a little space before deciding what comes next.",
+    "If you would like, let your attention rest on something around you.",
+    "You do not need to explain what happened or work anything out right now.",
+    "You can take a quiet moment, or return to your day whenever you choose."
+  ],
+  "rest": [
+    "There is no timer for this pause.",
+    "You could let your hands rest wherever they feel comfortable and notice one thing nearby.",
+    "You can leave things as they are for a moment.",
+    "When you want to move on, you can choose what would help next."
+  ],
+  "worry": [
+    "A worried thought can keep asking for your attention.",
+    "You can take a moment to decide whether there is one practical action you want to take.",
+    "If there is not, you might leave the question open for now.",
+    "There is no need to solve it all on this screen."
+  ],
+  "worryLater": [
+    "You can let this question stay unanswered for now.",
+    "If you would like, choose one ordinary thing to give your attention to, such as making tea or continuing a conversation.",
+    "The thought may return. You can notice that and choose where to put your attention again."
+  ],
+  "worryAction": [
+    "You can choose one small, practical action.",
+    "It might be something from a plan you have already saved, or something you want to decide now.",
+    "You do not have to plan every part of what happens next.",
+    "Take a moment to choose what feels manageable today."
+  ]
+}

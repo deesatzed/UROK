@@ -1,0 +1,74 @@
+{
+  "surface": {
+    "title": "Feel one steady surface.",
+    "body": "Rest a hand on your chair, your clothing, or the floor. Notice the texture."
+  },
+  "look": {
+    "title": "Find one color nearby.",
+    "body": "Let your eyes rest on one object. Notice a shade or an edge."
+  },
+  "ease": {
+    "title": "Give your hands a rest.",
+    "body": "If it feels comfortable, let your fingers loosen a little."
+  },
+  "choice": {
+    "title": "What would help next?",
+    "body": "Choose a different exercise or finish here."
+  },
+  "breathIn": {
+    "title": "Breathe in gently.",
+    "body": ""
+  },
+  "breathOut": {
+    "title": "Let the breath out.",
+    "body": ""
+  },
+  "see": {
+    "title": "Something you can see.",
+    "body": "Look for colors, shapes, or shadows."
+  },
+  "touch": {
+    "title": "Something you can touch.",
+    "body": "Notice the texture of clothing or a nearby surface."
+  },
+  "hear": {
+    "title": "Something you can hear.",
+    "body": "A quiet sound nearby counts."
+  },
+  "smell": {
+    "title": "A scent you can notice.",
+    "body": "If nothing comes to mind, move on whenever you like."
+  },
+  "taste": {
+    "title": "A taste or familiar flavor.",
+    "body": "You can also remember a familiar flavor."
+  },
+  "finished": {
+    "title": "You can finish here.",
+    "body": "Take a moment to decide what you want to do next."
+  },
+  "ownPace": {
+    "title": "Breathe at your own pace.",
+    "body": "Let the breath come and go comfortably. Follow the optional count only if it feels easy."
+  },
+  "after": {
+    "title": "A moment for yourself.",
+    "body": "You can take a pause before deciding what comes next."
+  },
+  "rest": {
+    "title": "Take the time you need.",
+    "body": "Let your hands rest wherever they feel comfortable. Notice one thing around you."
+  },
+  "worry": {
+    "title": "Caught in “what if”?",
+    "body": "Is there a practical step you want to take, or is your mind asking for certainty?"
+  },
+  "worryLater": {
+    "title": "Leave a little room for uncertainty.",
+    "body": "You can let the question stay unanswered for now and return to one thing in front of you."
+  },
+  "worryAction": {
+    "title": "One thing you can do.",
+    "body": "Choose a small, practical action. You can use your saved step or make a new plan."
+  }
+}

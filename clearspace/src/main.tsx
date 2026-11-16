@@ -14,3 +14,11 @@ createRoot(root).render(
     <App />
   </StrictMode>,
 );
+
+if (import.meta.env.PROD && "serviceWorker" in navigator) {
+  void navigator.serviceWorker
+    .register(import.meta.env.BASE_URL + "sw.js")
+    .catch(() => {
+      // Private browsing and restricted storage can still use the current session.
+    });
+}
