@@ -94,6 +94,10 @@ Object.defineProperty(HTMLMediaElement.prototype, "pause", {
   value: vi.fn(),
   configurable: true,
 });
+Object.defineProperty(HTMLMediaElement.prototype, "load", {
+  value: vi.fn(),
+  configurable: true,
+});
 if (!HTMLDialogElement.prototype.showModal) {
   HTMLDialogElement.prototype.showModal = function () {
     this.setAttribute("open", "");

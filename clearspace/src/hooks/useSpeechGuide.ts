@@ -1,14 +1,29 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { bundledClips } from "../data/guide";
 import {
-  isSpeechSynthesisSupported,
-  pauseSpeech,
-  resumeSpeech,
-  speakText,
   stopSpeech,
   type SpeechStatus,
 } from "../services/speechSynthesis";
 import type { PreparedPack } from "../services/voicePack";
+
+function releaseAudio(audio: HTMLAudioElement) {
+  audio.onended = null;
+  audio.onerror = null;
+  audio.onplaying = null;
+  audio.pause();
+  // Abort pending play/decode work as well as playback that has already started.
+  audio.removeAttribute("src");
+  audio.load();
+}
+
+let audioOwner: (() => boolean) | undefined;
 
 export type SpeechGuideControls = {
   enabled: boolean;
@@ -44,23 +59,51 @@ export function useSpeechGuide(
     audio?: HTMLAudioElement;
     url?: string;
     text?: string;
+    paused?: boolean;
+    start?: () => void;
   }>({});
+  const savedPack = useRef(pack);
+  const channel = useRef<BroadcastChannel | null>(null);
+  // Loading a saved pack must not change read's identity and replay the current cue.
+  useLayoutEffect(() => {
+    savedPack.current = pack;
+  }, [pack]);
   const hasAudio = typeof Audio !== "undefined";
-  const supported = hasAudio || isSpeechSynthesisSupported();
+  const supported = hasAudio;
 
   const stop = useCallback(() => {
     const old = active.current;
     active.current = {};
-    if (old.audio) {
-      old.audio.onended = null;
-      old.audio.onerror = null;
-      old.audio.pause();
-    }
+    if (audioOwner === stop) audioOwner = undefined;
+    if (old.audio) releaseAudio(old.audio);
     if (old.url) URL.revokeObjectURL(old.url);
     stopSpeech();
     setStatus("idle");
     return true;
   }, []);
+  useEffect(() => {
+    if (!enabled) stop();
+  }, [enabled, stop]);
+  useEffect(() => {
+    window.addEventListener("pagehide", stop);
+    let peer: BroadcastChannel | undefined;
+    try {
+      if (typeof window.BroadcastChannel !== "undefined") {
+        peer = new window.BroadcastChannel("clearspace-guide-audio");
+        peer.onmessage = (event) => {
+          if (event.data === "playing") stop();
+        };
+        channel.current = peer;
+      }
+    } catch {
+      // Restricted browser storage must not prevent local audio playback.
+    }
+    return () => {
+      window.removeEventListener("pagehide", stop);
+      channel.current = null;
+      peer?.close();
+    };
+  }, [stop]);
   useEffect(
     () => () => {
       stop();
@@ -68,78 +111,98 @@ export function useSpeechGuide(
     [stop],
   );
   const read = useCallback(
-    (text: string) => {
-      if (!supported || !text.trim()) return false;
+    (value: string) => {
+      const text = value.trim();
+      if (!supported || !text) return false;
       if (active.current.text === text) return true;
       stop();
+      audioOwner?.();
+      audioOwner = stop;
+      channel.current?.postMessage("playing");
       const slot = active.current;
       slot.text = text;
       const live = () => active.current === slot;
-      const ended = () => {
-        if (!live()) return;
+      const releaseUrl = () => {
         if (slot.url) URL.revokeObjectURL(slot.url);
-        active.current = {};
-        setStatus("idle");
+        slot.url = undefined;
       };
-      const deviceVoice = () => {
+      const finish = (next: SpeechStatus = "idle") => {
         if (!live()) return;
-        const unavailable = () => {
-          if (!live()) return;
-          ended();
-          setStatus("unsupported");
-        };
-        if (!speakText(text, { onEnd: ended, onError: unavailable }))
-          unavailable();
+        if (slot.audio) releaseAudio(slot.audio);
+        releaseUrl();
+        active.current = {};
+        if (audioOwner === stop) audioOwner = undefined;
+        setStatus(next);
       };
       const play = (src: string, next: () => void) => {
         if (!live()) return;
         const audio = new Audio(src);
         slot.audio = audio;
         let failed = false;
-        const fallback = () => {
+        const fallback = (error?: unknown) => {
           if (failed || !live() || slot.audio !== audio) return;
+          const name = error instanceof DOMException ? error.name : "";
+          if (name === "AbortError" && slot.paused) return;
           failed = true;
-          audio.onended = null;
-          audio.onerror = null;
+          releaseAudio(audio);
           slot.audio = undefined;
-          next();
+          releaseUrl();
+          // Autoplay restrictions affect every voice. Ask for a tap instead.
+          if (name === "NotAllowedError") finish("blocked");
+          else next();
         };
-        audio.onended = ended;
+        const started = () => {
+          if (!live() || slot.audio !== audio) releaseAudio(audio);
+          else if (slot.paused) audio.pause();
+        };
+        audio.onended = () => {
+          if (live() && slot.audio === audio) finish();
+        };
         audio.onerror = fallback;
-        try {
-          void audio.play().catch(fallback);
-        } catch {
-          fallback();
-        }
+        audio.onplaying = started;
+        slot.start = () => {
+          try {
+            void Promise.resolve(audio.play()).then(started, fallback);
+          } catch (error) {
+            fallback(error);
+          }
+        };
+        slot.start();
       };
       setStatus("speaking");
       const id = bundledClips.get(text);
       const standard = () => {
-        if (id && hasAudio)
-          play(import.meta.env.BASE_URL + "voices/" + id + ".mp3", deviceVoice);
-        else deviceVoice();
+        if (id && hasAudio) {
+          play(import.meta.env.BASE_URL + "voices/" + id + ".mp3", () =>
+            finish("unsupported"),
+          );
+        } else finish("unsupported");
       };
-      const prepared = pack?.clips.find((c) => c.text === text);
+      const prepared = savedPack.current?.clips.find((c) => c.text === text);
       if (prepared && hasAudio) {
         slot.url = URL.createObjectURL(prepared.audio);
         play(slot.url, standard);
       } else standard();
-      return true;
+      return Boolean(prepared || id);
     },
-    [supported, stop, hasAudio, pack],
+    [supported, stop, hasAudio],
   );
   const pause = useCallback(() => {
-    if (active.current.audio) active.current.audio.pause();
-    else if (!pauseSpeech()) return false;
+    const slot = active.current;
+    if (!slot.audio) return false;
+    slot.paused = true;
+    slot.audio.pause();
     setStatus("paused");
     return true;
   }, []);
   const resume = useCallback(() => {
-    if (active.current.audio) void active.current.audio.play().catch(stop);
-    else if (!resumeSpeech()) return false;
+    const slot = active.current;
+    if (!slot.audio || !slot.start || !slot.paused) return false;
+    slot.paused = false;
     setStatus("speaking");
+    slot.start();
     return true;
-  }, [stop]);
+  }, []);
   return useMemo(
     () => ({
       enabled,

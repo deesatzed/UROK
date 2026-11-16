@@ -8,7 +8,11 @@ const assets = new Set(
 
 self.addEventListener("install", (event) => {
   event.waitUntil(
-    caches.open(cacheName).then((cache) => cache.addAll([...assets])),
+    caches.open(cacheName).then(async (cache) => {
+      await cache.addAll([...assets]);
+      // Keep the current screen running; make the complete update available on reload.
+      await self.skipWaiting();
+    }),
   );
 });
 self.addEventListener("activate", (event) => {

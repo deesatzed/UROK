@@ -1,4 +1,9 @@
-export type SpeechStatus = "idle" | "speaking" | "paused" | "unsupported";
+export type SpeechStatus =
+  | "idle"
+  | "speaking"
+  | "paused"
+  | "unsupported"
+  | "blocked";
 
 type SpeechSynthesisUtteranceConstructor = new (
   text: string,

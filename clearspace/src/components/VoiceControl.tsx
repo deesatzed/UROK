@@ -1,4 +1,4 @@
-import { RotateCcw, Volume2, VolumeX } from "lucide-react";
+import { Play, RotateCcw, Volume2, VolumeX } from "lucide-react";
 import type { SpeechGuideControls } from "../hooks/useSpeechGuide";
 export function VoiceControl({
   guide,
@@ -27,14 +27,23 @@ export function VoiceControl({
         <button
           type="button"
           className="circle-control"
-          aria-label="Repeat cue"
+          aria-label={guide.status === "blocked" ? "Play cue" : "Repeat cue"}
           onClick={() => guide.read(text)}
         >
-          <RotateCcw size={16} />
+          {guide.status === "blocked" ? (
+            <Play size={16} />
+          ) : (
+            <RotateCcw size={16} />
+          )}
         </button>
       )}
+      {guide.enabled && guide.status === "blocked" && (
+        <small role="status">Tap play to hear this cue.</small>
+      )}
       {guide.enabled && guide.status === "unsupported" && (
-        <small role="status">Audio unavailable for this cue.</small>
+        <small role="status">
+          Audio unavailable for this cue. You can keep reading.
+        </small>
       )}
     </span>
   );

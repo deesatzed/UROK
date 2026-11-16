@@ -35,6 +35,10 @@ export function VoiceStudio({ opening, phrase, pack, onPack }: Props) {
     return () => URL.revokeObjectURL(url);
   }, [pack]);
   useEffect(() => () => work.current?.abort(), []);
+  useEffect(() => {
+    const audio = player.current;
+    return () => audio?.pause();
+  }, [preview]);
   const prepare = async () => {
     if (work.current) return;
     player.current?.pause();
@@ -77,6 +81,10 @@ export function VoiceStudio({ opening, phrase, pack, onPack }: Props) {
         Make audio for your SOS cues in a different voice. Preparing it can
         download about 1 GB. During support, your device simply plays the saved
         clips.
+      </p>
+      <p>
+        Prepared voices stay in this browser. Other computers use the included
+        voice.
       </p>
       {!phrase && (
         <p>Choose a personal reminder above to include it in this voice.</p>
